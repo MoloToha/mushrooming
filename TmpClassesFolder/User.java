@@ -5,25 +5,43 @@ package com.example.barto.tmp;
  */
 
 public class User {
+    private int _id; // uniqe id for every user
     private Position _pos;
-    private boolean _isConnected;
+    private long _lastUpdate = 0;
 
-    public User(Position pos) {
-        setPos(pos);
-        setConnection(true);
+    public User(int id, Position pos) {
+        this._id = id;
+        update(pos);
     }
 
-    public Position getPos() {
+    public void update(Position pos) {
+        _lastUpdate = System.currentTimeMillis();
+        setPosition(pos);
+    }
+
+    public int getId(){
+        return _id;
+    }
+
+    public Position getPosition() {
         return _pos;
     }
 
-    public void setPos(Position _pos) {
+    private void setPosition(Position _pos) {
         this._pos = _pos;
     }
 
-    public void setConnection(boolean isConnected) {
-        _isConnected = isConnected;
+    public static final long MAX_INACTIVITY_TIME = 10000;
+    public boolean isConnected() {
+        return System.currentTimeMillis() - _lastUpdate < MAX_INACTIVITY_TIME;
     }
 
-
+    @Override
+    public boolean equals(Object obj){
+        if(obj instanceof User){
+            return getId() == ((User)obj).getId();
+        }
+        // exception?
+        return false;
+    }
 }

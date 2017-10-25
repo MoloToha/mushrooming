@@ -13,11 +13,43 @@ public class Team {
 
     }
 
-    public void addUsers(User user) {
-        _users.add(user);
+    public void updateUser(int id, Position pos) {
+        User u = findUser(id);
+        if(u == null){
+            _users.add(new User(id, pos));
+        }
+        else {
+            u.update(pos);
+        }
     }
 
-    public void removeUser(User user) {
-        _users.remove(user);
+    public boolean removeUser(int id) {
+        User u = findUser(id);
+        if(u != null){
+            return _users.remove(u);
+        }
+        return false;
+    }
+
+    private User findUser(int id) {
+        for(User u : _users) {
+            if(u.getId() == id) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    private void checkDisconectionProblem() {
+        boolean problemDetected = false;
+        for(User user : _users){
+            if(!user.isConnected()) {
+                problemDetected = true;
+            }
+        }
+
+        if(problemDetected){
+            // use algortihm
+        }
     }
 }
