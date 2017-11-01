@@ -1,4 +1,4 @@
-package com.example.barto.tmp;
+package com.mushrooming.base;
 
 import java.util.ArrayList;
 
@@ -10,7 +10,7 @@ public class Team {
     private ArrayList<User> _users;
 
     public Team() {
-
+        _users = new ArrayList<User>();
     }
 
     public void updateUser(int id, Position pos) {

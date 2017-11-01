@@ -1,4 +1,7 @@
-package com.example.barto.tmp;
+package com.example.antonl.mushrooming;
+
+import com.mushrooming.base.Position;
+import com.mushrooming.base.Team;
 
 import org.junit.Test;
 
