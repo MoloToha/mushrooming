@@ -1,12 +1,15 @@
 package com.mushrooming.base;
 
+import com.mushrooming.algorithms.MapPosition;
+
 /**
  * Created by barto on 24.10.2017.
  */
 
 public class User {
     private int _id; // uniqe id for every user
-    private Position _pos;
+    private Position _GPSpos;
+    private MapPosition _MAPpos; // position on THIS device's map, may be different on other devices
     private long _lastUpdate = 0;
 
     public User(int id, Position pos) {
@@ -16,19 +19,28 @@ public class User {
 
     public void update(Position pos) {
         _lastUpdate = System.currentTimeMillis();
-        setPosition(pos);
+        setGpsPosition(pos);
+        setMapPosition(new MapPosition(pos));
     }
 
     public int getId(){
         return _id;
     }
 
-    public Position getPosition() {
-        return _pos;
+    public Position getGpsPosition() {
+        return _GPSpos;
     }
 
-    private void setPosition(Position _pos) {
-        this._pos = _pos;
+    private void setGpsPosition(Position _pos) {
+        this._GPSpos = _pos;
+    }
+
+    public MapPosition getMapPosition() {
+        return _MAPpos;
+    }
+
+    public void setMapPosition(MapPosition _MAPpos) {
+        this._MAPpos = _MAPpos;
     }
 
     public static final long MAX_INACTIVITY_TIME = 10000;

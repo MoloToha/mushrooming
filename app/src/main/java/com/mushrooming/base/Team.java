@@ -1,5 +1,12 @@
 package com.mushrooming.base;
 
+import com.mushrooming.algorithms.AssemblyManager;
+import com.mushrooming.algorithms.AvMap;
+import com.mushrooming.algorithms.DijkstraAssemblyManager;
+import com.mushrooming.algorithms.DisconnectGraphManager;
+import com.mushrooming.algorithms.GraphManager;
+import com.mushrooming.algorithms.MapPosition;
+
 import java.util.ArrayList;
 
 /**
@@ -7,7 +14,12 @@ import java.util.ArrayList;
  */
 
 public class Team {
+
     private ArrayList<User> _users;
+    // managers to be changed by team chef in some menu
+    private GraphManager _graphManager = DisconnectGraphManager.getOne(); // default
+    private AssemblyManager _assemblyManager = DijkstraAssemblyManager.getOne(); // default
+    private AvMap _terrainOKmap = new AvMap();
 
     public Team() {
         _users = new ArrayList<User>();
@@ -21,6 +33,14 @@ public class Team {
         else {
             u.update(pos);
         }
+    }
+
+    public ArrayList<User> getUsers() {
+        return _users;
+    }
+
+    public AvMap getAvMap() {
+        return _terrainOKmap;
     }
 
     public boolean removeUser(int id) {
@@ -40,6 +60,9 @@ public class Team {
         return null;
     }
 
+    // moved logic to GraphManager implementations
+    // team should now have GraphManager and AssemblyManager
+    /*
     private void checkDisconectionProblem() {
         boolean problemDetected = false;
         for(User user : _users){
@@ -50,6 +73,16 @@ public class Team {
 
         if(problemDetected){
             // use algortihm
+        }
+    }
+    */
+    // using managers:
+    private void checkIfAssemblyNeeded() {
+        if(_graphManager.checkIfAssemblyNeeded(this)){
+            MapPosition assemblyPos = _assemblyManager.chooseAssemblyPlace(this);
+            // assembly may also be ordered when graph is still consistent, depending on used manager
+
+            // here order an assembly - show that user should go there
         }
     }
 }
