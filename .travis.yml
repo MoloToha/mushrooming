@@ -14,4 +14,8 @@ android:
 before_install:
   - chmod +x ./gradlew
 script:
-- "./gradlew clean build"
+  - "./gradlew clean build"
+licenses:
+  - 'android-sdk-preview-license-.+'
+  - 'android-sdk-license-.+'
+  - 'google-gdk-license-.+'
