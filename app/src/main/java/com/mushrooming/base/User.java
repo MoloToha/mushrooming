@@ -43,7 +43,7 @@ public class User {
         this._MAPpos = _MAPpos;
     }
 
-    public static final long MAX_INACTIVITY_TIME = 10000;
+    public static final int MAX_INACTIVITY_TIME = 10000;
     public boolean isConnected() {
         return System.currentTimeMillis() - _lastUpdate < MAX_INACTIVITY_TIME;
     }

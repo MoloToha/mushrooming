@@ -1,5 +1,6 @@
 package com.mushrooming.algorithms;
 
+import com.mushrooming.base.App;
 import com.mushrooming.base.Team;
 import com.mushrooming.base.User;
 
@@ -73,7 +74,7 @@ public class DijkstraAssemblyManager implements AssemblyManager {
 
         //run one Dijkstra for each user, accumulate results and choose best place (from marked as available)
         for (User u : team.getUsers() ){
-            computeNewDijkstra(thisDijkstra, team.getAvMap(), u.getMapPosition());
+            computeNewDijkstra(thisDijkstra, App.instance().getAvMap(), u.getMapPosition());
             for (int i=0; i<AvMap.size; ++i) {
                 for (int j=0; j<AvMap.size; ++j) {
                     sumDijkstra[i][j] += (thisDijkstra[i][j])*(thisDijkstra[i][j]);
