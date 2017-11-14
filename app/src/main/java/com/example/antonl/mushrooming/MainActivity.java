@@ -23,9 +23,8 @@ public class MainActivity extends AppCompatActivity
     private BluetoothAdapter mBluetoothAdapter = null;
 
     // Intent request codes
-    private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
-    private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
-    private static final int REQUEST_ENABLE_BT = 3;
+    private static final int REQUEST_ENABLE_BT = 1;
+    private static final int REQUEST_CONNECT_DEVICE = 2;
 
     // Array adapter for logs
     private ArrayAdapter<String> mLogArrayAdapter;
@@ -99,23 +98,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initializeButtons() {
-        Button mSecureConnectButton = (Button) findViewById(R.id.connect_secure_button);
-        Button mInsecureConnectButton = (Button) findViewById(R.id.connect_insecure_button);
+        Button mConnectButton = (Button) findViewById(R.id.connect_button);
         Button mDiscoverableButton = (Button) findViewById(R.id.make_discoverable_button);
 
         // Set listeners to buttons
-        mSecureConnectButton.setOnClickListener(new View.OnClickListener() {
+        mConnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent serverIntent = new Intent(MainActivity.this, DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-            }
-        });
-        mInsecureConnectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent serverIntent = new Intent(MainActivity.this, DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
             }
         });
         mDiscoverableButton.setOnClickListener(new View.OnClickListener() {
@@ -139,7 +130,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     // Establish connection with other device
-    private void connectDevice(Intent data, boolean secure) {
+    private void connectDevice(Intent data) {
         Log.d(TAG, "connectDevice()");
 
         // Get the device MAC address
@@ -148,7 +139,7 @@ public class MainActivity extends AppCompatActivity
         // Get the BluetoothDevice object
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device
-        mBluetoothService.connect(device, secure);
+        mBluetoothService.connect(device);
     }
 
     // The Handler that gets information back from the BluetoothService
@@ -187,16 +178,10 @@ public class MainActivity extends AppCompatActivity
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE_SECURE:
+            case REQUEST_CONNECT_DEVICE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
-                    connectDevice(data, true);
-                }
-                break;
-            case REQUEST_CONNECT_DEVICE_INSECURE:
-                // When DeviceListActivity returns with a device to connect
-                if (resultCode == Activity.RESULT_OK) {
-                    connectDevice(data, false);
+                    connectDevice(data);
                 }
                 break;
             case REQUEST_ENABLE_BT:

@@ -5,17 +5,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/connect_secure_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/secure_connect" />
 
     <Button
-        android:id="@+id/connect_insecure_button"
+        android:id="@+id/connect_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/insecure_connect" />
+        android:text="@string/connect" />
 
     <Button
         android:id="@+id/make_discoverable_button"
