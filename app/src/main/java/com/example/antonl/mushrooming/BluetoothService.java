@@ -61,7 +61,7 @@ public class BluetoothService {
 
     private synchronized void updateState() {
         mState = getState();
-        Log.d(TAG, "updateUserInterfaceTitle() " + mNewState + " -> " + mState);
+        Log.d(TAG, "updateState() " + mNewState + " -> " + mState);
         if( mNewState != mState ) {
             mNewState = mState;
 

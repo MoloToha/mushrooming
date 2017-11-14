@@ -51,35 +51,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         ListView mLogView = (ListView) findViewById(R.id.in);
+        initializeButtons();
 
-        // Initialize buttons
-        Button mSecureConnectButton = (Button) findViewById(R.id.connect_secure_button);
-        Button mInsecureConnectButton = (Button) findViewById(R.id.connect_insecure_button);
-        Button mDiscoverableButton = (Button) findViewById(R.id.make_discoverable_button);
-
-        // Set listeners to buttons
-        mSecureConnectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent serverIntent = new Intent(MainActivity.this, DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-            }
-        });
-        mInsecureConnectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent serverIntent = new Intent(MainActivity.this, DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
-            }
-        });
-        mDiscoverableButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ensureDiscoverable();
-            }
-        });
-
-        // Initialize the array adapter for the conversation thread
+        // Initialize the array adapter for logs
         mLogArrayAdapter = new ArrayAdapter<>(MainActivity.this, R.layout.message);
         mLogView.setAdapter(mLogArrayAdapter);
     }
@@ -124,6 +98,33 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void initializeButtons() {
+        Button mSecureConnectButton = (Button) findViewById(R.id.connect_secure_button);
+        Button mInsecureConnectButton = (Button) findViewById(R.id.connect_insecure_button);
+        Button mDiscoverableButton = (Button) findViewById(R.id.make_discoverable_button);
+
+        // Set listeners to buttons
+        mSecureConnectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent serverIntent = new Intent(MainActivity.this, DeviceListActivity.class);
+                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+            }
+        });
+        mInsecureConnectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent serverIntent = new Intent(MainActivity.this, DeviceListActivity.class);
+                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+            }
+        });
+        mDiscoverableButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ensureDiscoverable();
+            }
+        });
+    }
 
     //Makes this device discoverable for 300 seconds (5 minutes).
     private void ensureDiscoverable() {
