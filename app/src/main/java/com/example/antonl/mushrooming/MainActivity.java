@@ -15,6 +15,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.mushrooming.bluetooth.BluetoothService;
+import com.mushrooming.bluetooth.Constants;
+import com.mushrooming.bluetooth.DeviceListActivity;
+
 public class MainActivity extends AppCompatActivity
 {
     private static final String TAG = "MainActivity";

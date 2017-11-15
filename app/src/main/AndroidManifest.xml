@@ -25,7 +25,7 @@
         </activity>
 
         <activity
-            android:name=".DeviceListActivity"
+            android:name="com.mushrooming.bluetooth.DeviceListActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/select_device"
             android:theme="@style/DeviceListTheme"/>

@@ -1,4 +1,4 @@
-package com.example.antonl.mushrooming;
+package com.mushrooming.bluetooth;
 
 // Defines several constants used between BluetoothService and the UI.
 public interface Constants {
