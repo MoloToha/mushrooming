@@ -28,8 +28,10 @@ public class BluetoothService {
     private static final String SOCKET_NAME = "BluetoothSocket";
 
     // Unique UUID for this application
-    private static final UUID MY_UUID =
-            UUID.fromString("5742fc62-a737-484c-b76b-1086d6f2b8ed");
+    private static final String baseUUID = "5742fc62-a737-484c-b76b-";
+
+    // Unique UUID for my device
+    private final UUID MY_UUID;
 
     // Member fields
     private final BluetoothAdapter mAdapter;
@@ -52,6 +54,7 @@ public class BluetoothService {
         mState = STATE_NONE;
         mNewState = mState;
         mHandler = handler;
+        MY_UUID = UUID.fromString(baseUUID + mAdapter.getAddress().replace(":",""));
     }
 
     private synchronized void updateState() {
@@ -315,14 +318,17 @@ public class BluetoothService {
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
 
-        public ConnectThread(BluetoothDevice device) {
+        ConnectThread(BluetoothDevice device) {
             mmDevice = device;
             BluetoothSocket tmp = null;
+
+            UUID OTHER_UUID = UUID.fromString(baseUUID +
+                    device.getAddress().replace(":",""));
 
             // Get a BluetoothSocket for a connection with the
             // given BluetoothDevice
             try {
-                tmp = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
+                tmp = device.createInsecureRfcommSocketToServiceRecord(OTHER_UUID);
             } catch (IOException e) {
                 Log.e(TAG, "ConnectThread: creating socket failed", e);
             }
@@ -335,7 +341,7 @@ public class BluetoothService {
             setName("ConnectThread");
 
             // Always cancel discovery because it will slow down a connection
-            mAdapter.cancelDiscovery();
+            // mAdapter.cancelDiscovery();
 
             // Make a connection to the BluetoothSocket
             try {
