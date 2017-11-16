@@ -52,7 +52,6 @@ public class DeviceListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Setup the window
-        //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_device_list);
 
         setSupportActionBar( (Toolbar) findViewById(R.id.device_list_toolbar) );
@@ -111,7 +110,6 @@ public class DeviceListActivity extends AppCompatActivity {
         Log.d(TAG, "doDiscovery()");
 
         // Indicate scanning in the title
-        setProgressBarIndeterminateVisibility(true);
         setTitle(R.string.scanning);
         progress.setVisibility(View.VISIBLE);
 
@@ -178,7 +176,6 @@ public class DeviceListActivity extends AppCompatActivity {
 
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 // When discovery is finished, change the Activity title
-                setProgressBarIndeterminateVisibility(false);
                 setTitle(R.string.select_device);
                 progress.setVisibility(View.GONE);
                 scanButton.setVisibility(View.VISIBLE);
