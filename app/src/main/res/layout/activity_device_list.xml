@@ -6,21 +6,40 @@
     android:orientation="vertical"
     >
 
+    <android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/device_list_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="0dp">
+
+
+        <ProgressBar
+            android:id="@+id/device_list_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="#795548"
+            android:indeterminateTintMode="src_in"
+            android:layout_gravity="end"
+            android:visibility="gone"
+            />
+
+    </android.support.v7.widget.Toolbar>
+
     <TextView
         android:id="@+id/title_new_devices"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#666"
+        android:background="#222222"
         android:paddingLeft="5dp"
         android:text="@string/title_other_devices"
         android:textColor="#fff"
-        android:visibility="gone"
-        />
+        android:visibility="visible" />
 
     <ListView
         android:id="@+id/new_devices"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="2"
         android:stackFromBottom="true"
         />

@@ -9,12 +9,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.util.Log;
 
@@ -26,7 +28,7 @@ import com.example.antonl.mushrooming.R;
  * by the user, the MAC address of the device is sent back to the parent
  * Activity in the result Intent.
  */
-public class DeviceListActivity extends Activity {
+public class DeviceListActivity extends AppCompatActivity {
 
     private static final String TAG = "DeviceListActivity";
 
@@ -42,13 +44,19 @@ public class DeviceListActivity extends Activity {
     // Button for scanning new devices
     private Button scanButton;
 
+    // Progress bar indicating device discovery
+    private ProgressBar progress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Setup the window
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        //requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_device_list);
+
+        setSupportActionBar( (Toolbar) findViewById(R.id.device_list_toolbar) );
+        progress = findViewById(R.id.device_list_progress_bar);
 
         // Set result CANCELED in case the user backs out
         setResult(Activity.RESULT_CANCELED);
@@ -105,6 +113,7 @@ public class DeviceListActivity extends Activity {
         // Indicate scanning in the title
         setProgressBarIndeterminateVisibility(true);
         setTitle(R.string.scanning);
+        progress.setVisibility(View.VISIBLE);
 
         // Turn on sub-title for new devices
         findViewById(R.id.title_new_devices).setVisibility(View.VISIBLE);
@@ -171,6 +180,7 @@ public class DeviceListActivity extends Activity {
                 // When discovery is finished, change the Activity title
                 setProgressBarIndeterminateVisibility(false);
                 setTitle(R.string.select_device);
+                progress.setVisibility(View.GONE);
                 scanButton.setVisibility(View.VISIBLE);
 
                 if (mDevicesArrayAdapter.getCount() == 0) {

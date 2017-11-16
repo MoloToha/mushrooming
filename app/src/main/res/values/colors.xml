@@ -3,4 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!-- Device List -->
+    <color name="colorDialogBackground">#000000</color>
+    <color name="colorDialogTextBackground">#111111</color>
 </resources>
