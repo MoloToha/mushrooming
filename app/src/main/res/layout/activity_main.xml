@@ -18,9 +18,17 @@
         android:layout_height="wrap_content"
         android:text="@string/discoverable" />
 
+    <Button
+        android:id="@+id/send_position_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/send_position" />
+
     <ListView
         android:id="@+id/in"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"/>
 
 </LinearLayout>

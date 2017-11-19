@@ -18,6 +18,9 @@ import android.widget.Toast;
 import com.mushrooming.bluetooth.BluetoothService;
 import com.mushrooming.bluetooth.DeviceListActivity;
 
+import java.nio.ByteBuffer;
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity
 {
     private static final String TAG = "MainActivity";
@@ -84,6 +87,7 @@ public class MainActivity extends AppCompatActivity
     private void initializeButtons() {
         Button mConnectButton = findViewById(R.id.connect_button);
         Button mDiscoverableButton = findViewById(R.id.make_discoverable_button);
+        Button mSendPositionButton = findViewById(R.id.send_position_button);
 
         // Set listeners to buttons
         mConnectButton.setOnClickListener(new View.OnClickListener() {
@@ -97,6 +101,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 ensureDiscoverable();
+            }
+        });
+        mSendPositionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendRandomPosition();
             }
         });
     }
@@ -126,24 +136,48 @@ public class MainActivity extends AppCompatActivity
         mBluetoothService.connect(device);
     }
 
+    private void sendRandomPosition() {
+        Random gen = new Random();
+        double x = gen.nextGaussian();
+        double y = gen.nextGaussian();
+        mLogArrayAdapter.add("Sending random position: " + x + " " + y);
+
+        byte[] buffer = new byte[16];
+        ByteBuffer.wrap(buffer,0,8).putDouble(x);
+        ByteBuffer.wrap(buffer,8,8).putDouble(y);
+        mBluetoothService.writeAll(buffer);
+    }
+
     // The Handler that gets information back from the BluetoothService
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case BluetoothService.MESSAGE_CONNECTING:
-                    mLogArrayAdapter.add(getString(R.string.connecting, msg.obj));
-                    break;
-                case BluetoothService.MESSAGE_CONNECTED:
-                    mLogArrayAdapter.add(getString(R.string.connected, msg.obj));
-                    break;
-                case BluetoothService.MESSAGE_CONNECTION_FAILED:
-                    mLogArrayAdapter.add(getString(R.string.connection_failed, msg.obj));
-                    break;
-                case BluetoothService.MESSAGE_CONNECTION_LOST:
-                    mLogArrayAdapter.add(getString(R.string.connection_lost, msg.obj));
-                    break;
-            }
+        switch (msg.what) {
+            case BluetoothService.MESSAGE_CONNECTING:
+                mLogArrayAdapter.add(getString(R.string.connecting, msg.obj));
+                break;
+            case BluetoothService.MESSAGE_CONNECTED:
+                mLogArrayAdapter.add(getString(R.string.connected, msg.obj));
+                break;
+            case BluetoothService.MESSAGE_CONNECTION_FAILED:
+                mLogArrayAdapter.add(getString(R.string.connection_failed, msg.obj));
+                break;
+            case BluetoothService.MESSAGE_CONNECTION_LOST:
+                mLogArrayAdapter.add(getString(R.string.connection_lost, msg.obj));
+                break;
+            case BluetoothService.MESSAGE_WRITE:
+                mLogArrayAdapter.add(getString(R.string.position_sent, msg.obj));
+                break;
+            case BluetoothService.MESSAGE_READ:
+                Bundle b = (Bundle) msg.obj;
+                String device_name = b.getString( BluetoothService.KEY_DEVICE_NAME );
+                byte[] buffer = b.getByteArray( BluetoothService.KEY_BUFFER );
+                double x = ByteBuffer.wrap(buffer,0,8).getDouble();
+                double y = ByteBuffer.wrap(buffer,8,8).getDouble();
+
+                mLogArrayAdapter.add(getString(R.string.position_received, device_name, x, y));
+                break;
+        }
         }
 
     };

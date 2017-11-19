@@ -5,10 +5,12 @@
     <!--  BluetoothService -->
     <string name="send">Send</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
-    <string name="connecting">connecting with <xliff:g id="device_name">%1$s</xliff:g></string>
-    <string name="connected">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
-    <string name="connection_failed">failed connecting to <xliff:g id="device_name">%1$s</xliff:g></string>
-    <string name="connection_lost">lost connection with <xliff:g id="device_name">%1$s</xliff:g></string>
+    <string name="connecting">connecting with %1$s</string>
+    <string name="connected">connected to %1$s</string>
+    <string name="connection_failed">failed connecting to %1$s</string>
+    <string name="connection_lost">lost connection with %1$s</string>
+    <string name="position_sent">position sent to %1$s</string>
+    <string name="position_received">%1$s sent position: %2$f %3$f</string>
 
     <!--  DeviceListActivity -->
     <string name="scanning">scanning for devices…</string>
@@ -17,8 +19,9 @@
     <string name="title_other_devices">Available Devices</string>
     <string name="button_scan">Scan for devices</string>
 
-    <!-- Options Menu -->
+    <!-- Buttons -->
     <string name="connect">Connect a device</string>
     <string name="discoverable">Make discoverable</string>
+    <string name="send_position">Send random position</string>
 
 </resources>
