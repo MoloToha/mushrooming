@@ -16,7 +16,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.mushrooming.bluetooth.BluetoothService;
-import com.mushrooming.bluetooth.Constants;
 import com.mushrooming.bluetooth.DeviceListActivity;
 
 public class MainActivity extends AppCompatActivity
@@ -36,9 +35,6 @@ public class MainActivity extends AppCompatActivity
     // Member object for the bluetooth services
     private BluetoothService mBluetoothService = null;
 
-    // Name of the connected device
-    private String mConnectedDeviceName = null;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,14 +49,13 @@ public class MainActivity extends AppCompatActivity
             this.finish();
         }
 
-        ListView mLogView = (ListView) findViewById(R.id.in);
+        ListView mLogView = findViewById(R.id.in);
         initializeButtons();
 
         // Initialize the array adapter for logs
         mLogArrayAdapter = new ArrayAdapter<>(MainActivity.this, R.layout.message);
         mLogView.setAdapter(mLogArrayAdapter);
     }
-
 
     @Override
     public void onStart() {
@@ -74,22 +69,7 @@ public class MainActivity extends AppCompatActivity
         }
         else if (mBluetoothService == null) {
             mBluetoothService = new BluetoothService(mHandler);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // Performing this check in onResume() covers the case in which BT was
-        // not enabled during onStart(), so we were paused to enable it...
-        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
-        if (mBluetoothService != null) {
-            // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mBluetoothService.getState() == BluetoothService.STATE_NONE) {
-                // Start the Bluetooth services
-                mBluetoothService.start();
-            }
+            mBluetoothService.start();
         }
     }
 
@@ -102,8 +82,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initializeButtons() {
-        Button mConnectButton = (Button) findViewById(R.id.connect_button);
-        Button mDiscoverableButton = (Button) findViewById(R.id.make_discoverable_button);
+        Button mConnectButton = findViewById(R.id.connect_button);
+        Button mDiscoverableButton = findViewById(R.id.make_discoverable_button);
 
         // Set listeners to buttons
         mConnectButton.setOnClickListener(new View.OnClickListener() {
@@ -151,28 +131,17 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case Constants.MESSAGE_STATE_CHANGE:
-                    switch (msg.arg1) {
-                        case BluetoothService.STATE_CONNECTED:
-                            mLogArrayAdapter.add(getString(R.string.title_connected_to, mConnectedDeviceName));
-                            break;
-                        case BluetoothService.STATE_CONNECTING:
-                            mLogArrayAdapter.add(getString(R.string.title_connecting));
-                            break;
-                        case BluetoothService.STATE_LISTEN:
-                            break;
-                        case BluetoothService.STATE_NONE:
-                            mLogArrayAdapter.add(getString(R.string.not_connected));
-                            break;
-                    }
+                case BluetoothService.MESSAGE_CONNECTING:
+                    mLogArrayAdapter.add(getString(R.string.connecting, msg.obj));
                     break;
-                case Constants.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                case BluetoothService.MESSAGE_CONNECTED:
+                    mLogArrayAdapter.add(getString(R.string.connected, msg.obj));
                     break;
-                case Constants.MESSAGE_TOAST:
-                    Toast.makeText(MainActivity.this, msg.getData().getString(Constants.TOAST),
-                            Toast.LENGTH_SHORT).show();
+                case BluetoothService.MESSAGE_CONNECTION_FAILED:
+                    mLogArrayAdapter.add(getString(R.string.connection_failed, msg.obj));
+                    break;
+                case BluetoothService.MESSAGE_CONNECTION_LOST:
+                    mLogArrayAdapter.add(getString(R.string.connection_lost, msg.obj));
                     break;
             }
         }
@@ -193,6 +162,7 @@ public class MainActivity extends AppCompatActivity
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so initialize BluetoothService
                     mBluetoothService = new BluetoothService(mHandler);
+                    mBluetoothService.start();
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled");
