@@ -1,11 +1,15 @@
 package com.mushrooming.bluetooth;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 
 import java.io.IOException;
@@ -42,21 +46,33 @@ public class BluetoothService {
     private ArrayList<ConnectedThread> mConnections = new ArrayList<>();
 
     // Constants representing handler message types
-    public static final int MESSAGE_CONNECTING = 0;
-    public static final int MESSAGE_CONNECTED = 1;
-    public static final int MESSAGE_CONNECTION_FAILED = 2;
-    public static final int MESSAGE_CONNECTION_LOST = 3;
-    public static final int MESSAGE_WRITE = 4;
-    public static final int MESSAGE_READ = 5;
+    static final int MESSAGE_CONNECTING = 0;
+    static final int MESSAGE_CONNECTED = 1;
+    static final int MESSAGE_CONNECTION_FAILED = 2;
+    static final int MESSAGE_CONNECTION_LOST = 3;
+    static final int MESSAGE_WRITE = 4;
+    static final int MESSAGE_READ = 5;
 
-    public static final String KEY_DEVICE_NAME = "device_name";
-    public static final String KEY_BUFFER = "buffer";
+    static final String KEY_DEVICE_NAME = "device_name";
+    static final String KEY_BUFFER = "buffer";
 
     // Constructor. Prepares a new Bluetooth session.
-    public BluetoothService(Handler handler) {
+    public BluetoothService(Handler handler, Context con) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mHandler = handler;
-        MY_UUID = UUID.fromString(baseUUID + mAdapter.getAddress().replace(":",""));
+
+        @SuppressLint("HardwareIds") String macAddress = mAdapter.getAddress();
+        if( macAddress.equals("02:00:00:00:00:00") ){
+            ContentResolver mContentResolver = con.getContentResolver();
+            macAddress = Settings.Secure.getString(mContentResolver, "bluetooth_address");
+
+            if( macAddress == null ){
+                Log.e(TAG, "can't get mac address of bluetooth adapter");
+                macAddress = "02:00:00:00:00:00";
+            }
+        }
+
+        MY_UUID = UUID.fromString(baseUUID + macAddress.replace(":",""));
 
         Log.i(TAG, "my uuid: " + MY_UUID);
     }
@@ -65,7 +81,7 @@ public class BluetoothService {
      * Start the bluetooth service. Specifically start AcceptThread to begin a
      * session in listening (server) mode.
      */
-    public synchronized void start() {
+    synchronized void start() {
         Log.d(TAG, "start");
 
         // Cancel Thread attempting connection
@@ -87,7 +103,7 @@ public class BluetoothService {
     }
 
     // Stop all threads
-    public synchronized void stop() {
+    synchronized void stop() {
         Log.d(TAG, "stop");
 
         // Stop accepting new connections
@@ -109,13 +125,13 @@ public class BluetoothService {
     }
 
     // Send message to all connected devices
-    public void writeAll(byte[] buffer) {
+    void writeAll(byte[] buffer) {
         for( ConnectedThread connection : mConnections )
             connection.write( buffer );
     }
 
     // Start the ConnectThread to initiate a connection to a remote device.
-    public synchronized void connect(BluetoothDevice device) {
+    synchronized void connect(BluetoothDevice device) {
         Log.d(TAG, "connect to: " + device);
 
         // Start the thread to connect with the given device
@@ -252,6 +268,9 @@ public class BluetoothService {
                 connectionFailed(mmDevice);
                 return;
             }
+
+            // Always cancel discovery because it will slow down a connection
+            mAdapter.cancelDiscovery();
 
             // Make a connection to the BluetoothSocket
             try {
