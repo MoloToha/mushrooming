@@ -1,3 +1,20 @@
 <resources>
+
     <string name="app_name">Mushrooming</string>
+
+    <!-- BluetoothModule -->
+    <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
+
+    <!--  DeviceListActivity -->
+    <string name="scanning">scanning for devices…</string>
+    <string name="select_device">select a device to connect</string>
+    <string name="none_found">No devices found</string>
+    <string name="title_other_devices">Available Devices</string>
+    <string name="button_scan">Scan for devices</string>
+
+    <!-- Buttons -->
+    <string name="connect">Connect a device</string>
+    <string name="discoverable">Make discoverable</string>
+    <string name="send_position">Send random position</string>
+
 </resources>
