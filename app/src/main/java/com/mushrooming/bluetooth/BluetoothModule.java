@@ -38,9 +38,9 @@ public class BluetoothModule{
     private final Handler mHandler;
     private final Activity mActivity;
 
-    public BluetoothModule(Context context){
-        mActivity = (Activity) context;
-        mHandler = new MyHandler<>((BluetoothEventHandler) context);
+    public BluetoothModule(Activity activity, BluetoothEventHandler handler){
+        mActivity = activity;
+        mHandler = new MyHandler<>(handler);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 

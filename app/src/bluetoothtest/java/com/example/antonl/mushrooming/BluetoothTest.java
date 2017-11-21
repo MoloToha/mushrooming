@@ -47,7 +47,7 @@ public class BluetoothTest extends AppCompatActivity implements BluetoothEventHa
         ListView mLogView = findViewById(R.id.in);
         mLogView.setAdapter(mLogArrayAdapter);
 
-        mBluetoothModule = new BluetoothModule(this);
+        mBluetoothModule = new BluetoothModule(this, this);
     }
 
     @Override
