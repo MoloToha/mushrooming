@@ -9,8 +9,8 @@ import static org.junit.Assert.*;
  */
 public class DijkstraAssemblyManagerTest {
     @Test
-    public void chooseAssemblyPlace() throws Exception {
-        // TODO write it
+    public void chooseAssemblyPlaceTest() throws Exception {
+        //TODO write it
     }
 
 }

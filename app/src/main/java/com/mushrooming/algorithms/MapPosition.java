@@ -18,6 +18,7 @@ public class MapPosition {
     }
 
     public MapPosition(double x, double y) {
+        // maybe order an assembly if gets out of map range, but rather in invocation place
         _intx = x;
         _inty = y;
     }
