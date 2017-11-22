@@ -24,25 +24,27 @@ public class AvMap {
     // taken into consideration by assembly place ordering algorithm?
     // or maybe would be taken into consideration
 
-    private int xpos, ypos;
+    private double xpos, ypos;
     private int xmin, xmax, ymin, ymax; // range of used area of a map
+
+    // all functions (except getRelativePosition) take relative positions as arguments!
 
     public AvMap() {
         xpos = size/2;
         ypos = size/2;
-        xmin = xpos;
-        xmax = xpos;
-        ymin = ypos;
-        ymax = ypos;
-        availableTerrain[xpos][ypos] = true;
+        xmin = (int)xpos;
+        xmax = (int)xpos;
+        ymin = (int)ypos;
+        ymax = (int)ypos;
+        //availableTerrain[(int)xpos][(int)ypos] = true;
     }
 
-    public boolean[][] getAvailableTerrain() {
-        return availableTerrain;
+    public boolean availableTerrain(int i, int j) {
+        return availableTerrain[i][j];
     }
 
-    public void markPosition(MapPosition pos) {
-        int x1 = pos.getIntX(), y1 = pos.getIntY();
+    public void markPosition(MapPosition relpos) {
+        int x1 = (int) (relpos.getX() + xpos), y1 = (int) (relpos.getY() + ypos);
         availableTerrain[x1][y1] = true;
         xmin = Basic.min(xmin, x1);
         xmax = Basic.max(xmax, x1);
@@ -56,6 +58,19 @@ public class AvMap {
         }
     }
 
+    public void moveToRelativePosition(MapPosition relpos) {
+        xpos += relpos.getX();
+        ypos += relpos.getY();
+    }
+
+    public MapPosition getNonRelativePosition(MapPosition relpos) {
+        return new MapPosition(relpos.getX()+xpos, relpos.getY()+ypos);
+    }
+
+    public MapPosition getRelativePosition(MapPosition pos) {
+        return new MapPosition(pos.getX()-xpos, pos.getY()-ypos);
+    }
+
     public static boolean notIn(int p) {
         return (p<0 || p>=size); //compare with defined
     }
@@ -63,8 +78,8 @@ public class AvMap {
     public void recenter() {
         if (xpos< size/3 || xpos > (2*size)/3 || ypos < size/3 || ypos > (2*size)/3) {
 
-            int xdelta = xpos - center;
-            int ydelta = ypos - center;
+            int xdelta = (int)xpos - center;
+            int ydelta = (int)ypos - center;
             int x1,x2,y1,y2,xd,yd;
 
             // determine direction of offset and thus sequence of map update
