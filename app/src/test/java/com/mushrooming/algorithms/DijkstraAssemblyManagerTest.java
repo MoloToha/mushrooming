@@ -1,5 +1,9 @@
 package com.mushrooming.algorithms;
 
+import com.mushrooming.base.App;
+import com.mushrooming.base.Position;
+import com.mushrooming.base.Team;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -8,9 +12,150 @@ import static org.junit.Assert.*;
  * Created by piotrek on 05.11.17.
  */
 public class DijkstraAssemblyManagerTest {
+
+    private void markOnAvMap(AvMap map, int[][] what) {
+        for (int i=0; i<what.length; ++i) {
+            for (int j=0; j<what[i].length; ++j) {
+                if (what[i][j] != 0) {
+                    map.markPosition(new MapPosition(i - what.length / 2,
+                            j - what[i].length / 2));
+                    //System.out.println((AvMap.size / 2 + i - what.length / 2) +" " + (AvMap.size / 2 + j - what[i].length / 2));
+                }
+            }
+        }
+    }
+
+    // here for convenience we don't center map on this user - this is AssemblyManager testing
+
     @Test
-    public void chooseAssemblyPlaceTest() throws Exception {
-        //TODO write it
+    public void chooseAssemblyPlaceTest1() throws Exception {
+
+        DijkstraAssemblyManager d = DijkstraAssemblyManager.getOne();
+
+        AvMap avmap = App.instance().getAvMap();
+        markOnAvMap(avmap, new int[][]{
+                {0,0,0,0,0},
+                {0,0,0,0,0},
+                {0,0,0,0,0},
+                {0,0,0,0,0},
+                {0,0,0,0,0}
+                });
+
+        Team team = new Team();
+
+        team.updateUser(1, new Position(0,0));
+        team.updateUser(2, new Position(0,0));
+
+        MapPosition mpos = d.chooseAssemblyPlace(team);
+
+        assertEquals(new MapPosition(0,0), d.chooseAssemblyPlace(team));
+
+    }
+
+
+    @Test
+    public void chooseAssemblyPlaceTest2() throws Exception {
+
+        DijkstraAssemblyManager d = DijkstraAssemblyManager.getOne();
+
+        AvMap avmap = App.instance().getAvMap();
+        markOnAvMap(avmap, new int[][]{
+                {0,0,0,0,0},
+                {0,0,0,0,0},
+                {0,0,0,0,0},
+                {0,0,0,0,0},
+                {0,0,0,0,0}
+        });
+
+        Team team = new Team();
+
+        team.updateUser(1, new Position(2,2));
+        team.updateUser(2, new Position(2,-2));
+
+        MapPosition mpos = d.chooseAssemblyPlace(team);
+
+        assertEquals(new MapPosition(2,0), d.chooseAssemblyPlace(team));
+
+    }
+
+
+    @Test
+    public void chooseAssemblyPlaceTest3() throws Exception {
+
+        DijkstraAssemblyManager d = DijkstraAssemblyManager.getOne();
+
+        AvMap avmap = App.instance().getAvMap();
+        markOnAvMap(avmap, new int[][]{
+                {0,0,1,0,0},
+                {0,0,0,1,0},
+                {0,0,0,1,0},
+                {0,0,0,1,0},
+                {0,0,1,0,0}
+        });
+
+        Team team = new Team();
+
+        team.updateUser(1, new Position(-2,0));
+        team.updateUser(2, new Position(2,0));
+
+        MapPosition mpos = d.chooseAssemblyPlace(team);
+
+        assertEquals(new MapPosition(0,1), d.chooseAssemblyPlace(team));
+
+    }
+
+    @Test
+    public void chooseAssemblyPlaceTest4() throws Exception {
+
+        DijkstraAssemblyManager d = DijkstraAssemblyManager.getOne();
+
+        AvMap avmap = App.instance().getAvMap();
+        markOnAvMap(avmap, new int[][]{
+                {0,1,1,1,1},
+                {1,0,0,0,1},
+                {1,0,0,0,1},
+                {1,0,0,0,1},
+                {1,1,1,1,1}
+        });
+
+        Team team = new Team();
+
+        team.updateUser(1, new Position(-2,0));
+        team.updateUser(2, new Position(1,-2));
+
+        MapPosition mpos = d.chooseAssemblyPlace(team);
+
+        assertEquals(new MapPosition(-1,-2), d.chooseAssemblyPlace(team));
+
+    }
+
+
+    @Test
+    public void chooseAssemblyPlaceTest5() throws Exception {
+
+        DijkstraAssemblyManager d = DijkstraAssemblyManager.getOne();
+
+        AvMap avmap = App.instance().getAvMap();
+        markOnAvMap(avmap, new int[][]{
+                {0,1,1,1,1},
+                {1,0,0,0,1},
+                {1,0,0,0,1},
+                {1,0,0,0,1},
+                {1,1,1,1,1}
+        });
+
+        Team team = new Team();
+
+        team.updateUser(1, new Position(-2,2));
+        team.updateUser(2, new Position(0,2));
+        team.updateUser(3, new Position(2,2));
+        team.updateUser(4, new Position(0,-2));
+
+        MapPosition mpos = d.chooseAssemblyPlace(team);
+
+        //this is the correct answer because we minimize sum of squares
+        assertEquals(new MapPosition(0,1), d.chooseAssemblyPlace(team));
+
     }
 
 }

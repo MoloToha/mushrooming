@@ -29,7 +29,7 @@ public abstract class Logger {
      */
 
     public static String INT_VARIABLE_VALUE = "Value of variable %s is %d";
-    public static String DOUBLE_VARIABLE_VALUE = "Value of variable %lf is %d";
+    public static String DOUBLE_VARIABLE_VALUE = "Value of variable %s is %f";
     public static String STRING_VARIABLE_VALUE = "Value of variable %s is '%d'";
 
     public static void error(Object o, String messageFormat, Object... formatArgs) {

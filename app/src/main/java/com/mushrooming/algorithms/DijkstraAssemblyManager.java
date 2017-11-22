@@ -21,7 +21,7 @@ public class DijkstraAssemblyManager implements AssemblyManager {
     // TODO maybe also add another strategy of choosing place, as another manager
 
     private static int infty = 1000000000;
-    private PriorityQueue< Pair<Double, MapPosition> > q = new PriorityQueue<>();
+    private PriorityQueue<PairSortedBy1<Double, MapPosition>> q = new PriorityQueue<>();
 
     private static DijkstraAssemblyManager instance = new DijkstraAssemblyManager();
 
@@ -29,17 +29,18 @@ public class DijkstraAssemblyManager implements AssemblyManager {
         return instance;
     }
 
-    private void computeNewDijkstra(double[][] map, AvMap avMap, MapPosition pos) {
-        if (pos == null || map == null || avMap == null) return;
+    private void computeNewDijkstra(double[][] map, AvMap avMap, MapPosition relpos) {
+        if (relpos == null || map == null || avMap == null) return;
         for(int i=0 ; i<map.length; ++i) {
             for (int j=0; j<map[i].length; ++j) {
                 map[i][j] = infty;
             }
         }
+        MapPosition pos = avMap.getNonRelativePosition(relpos);
         map[pos.getIntX()][pos.getIntY()] = 0;
         q.clear();
-        q.add(new Pair(0.0,pos));
-        Pair<Double, MapPosition> now;
+        q.add(new PairSortedBy1(0.0,pos));
+        PairSortedBy1<Double, MapPosition> now;
         double nowDist, newDist, modif;
         int nowX, nowY;
         while (!q.isEmpty()) {
@@ -52,10 +53,10 @@ public class DijkstraAssemblyManager implements AssemblyManager {
                 for (int j=nowY-1; j<nowY+2; ++j) {
                     if (AvMap.notIn(i) || AvMap.notIn(j)) continue;
                     if (i==nowX || j==nowY) modif=2.0; else modif = 2*sqrt(2);
-                    if (avMap.getAvailableTerrain()[i][j]) modif = 0.5*modif;
+                    if (avMap.availableTerrain(i,j)) modif = 0.5*modif;
                     newDist = nowDist + modif;
                     if (newDist < map[i][j]) {
-                        q.add(new Pair(newDist, new MapPosition(i, j)));
+                        q.add(new PairSortedBy1(newDist, new MapPosition(i, j)));
                         map[i][j] = newDist;
                     }
                 }
@@ -95,7 +96,7 @@ public class DijkstraAssemblyManager implements AssemblyManager {
             }
         }
 
-        return new MapPosition(bestx, besty);
+        return App.instance().getAvMap().getRelativePosition(new MapPosition(bestx, besty));
 
     }
 
