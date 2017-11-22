@@ -1,6 +1,7 @@
 package com.mushrooming.base;
 
 import android.app.Activity;
+import android.os.Handler;
 import android.util.Log;
 
 import com.mushrooming.algorithms.AssemblyManager;
@@ -11,9 +12,6 @@ import com.mushrooming.algorithms.GraphManager;
 import com.mushrooming.algorithms.MapPosition;
 import com.mushrooming.bluetooth.BluetoothModule;
 import com.mushrooming.bluetooth.DefaultBluetoothHandler;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static android.content.ContentValues.TAG;
 
@@ -50,7 +48,11 @@ public class App {
     private static  int START_DELAY = 100;
     private static int UPDATE_MY_POSITION_TIME = User.MAX_INACTIVITY_TIME / 4;
     private static int CHECK_DISCONNECTION_PROBLLEM_TIME = 2000;
-    private Timer _timer;
+
+    private Handler _updateHandler;
+    private Runnable _updateRunnable;
+    private Handler _disconnectionHandler;
+    private Runnable _disconnectionRunnable;
 
     public void init(Activity activity){
         _activity = activity;
@@ -59,24 +61,32 @@ public class App {
         _bluetooth = new BluetoothModule(activity, new DefaultBluetoothHandler());
         _bluetooth.start();
 
-        _timer = new Timer();
-        _timer.schedule(new TimerTask() {
+        _updateHandler = new Handler();
+        _updateRunnable = new Runnable() {
             @Override
             public void run() {
                 updateMyPosition();
-            }
-        }, START_DELAY , UPDATE_MY_POSITION_TIME);
 
-        _timer.schedule(new TimerTask() {
+                _updateHandler.postDelayed(this, UPDATE_MY_POSITION_TIME);
+            }
+        };
+        _updateHandler.postDelayed(_updateRunnable, UPDATE_MY_POSITION_TIME);
+
+        _disconnectionHandler = new Handler();
+        _disconnectionRunnable = new Runnable() {
             @Override
             public void run() {
                 checkDisconnectionProblem();
+
+                _disconnectionHandler.postDelayed(this, CHECK_DISCONNECTION_PROBLLEM_TIME);
             }
-        }, START_DELAY, CHECK_DISCONNECTION_PROBLLEM_TIME);
+        };
+        _disconnectionHandler.postDelayed(_disconnectionRunnable, CHECK_DISCONNECTION_PROBLLEM_TIME);
     }
 
     public void finish(){
-        _timer.cancel();
+        _updateHandler.removeCallbacks(_updateRunnable);
+        _disconnectionHandler.removeCallbacks(_disconnectionRunnable);
         _bluetooth.stop();
     }
 
