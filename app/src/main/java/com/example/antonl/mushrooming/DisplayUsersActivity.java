@@ -34,12 +34,12 @@ public class DisplayUsersActivity extends AppCompatActivity implements View.OnCl
         userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                User itemClicked = team.users.get(position);
+                User itemClicked = team.getUsers().get(position);
 
                 Intent intent = new Intent(DisplayUsersActivity.this, DisplayUserDataActivity.class);
                 intent.putExtra("ID", itemClicked.getId());
-                intent.putExtra("PosX", itemClicked.getPosition().getX());
-                intent.putExtra("PosY", itemClicked.getPosition().getY());
+                intent.putExtra("PosX", itemClicked.getGpsPosition().getX());
+                intent.putExtra("PosY", itemClicked.getGpsPosition().getY());
 
                 startActivity(intent);
             }
@@ -84,7 +84,7 @@ public class DisplayUsersActivity extends AppCompatActivity implements View.OnCl
         textBasedUserList = new ArrayList<String>();
         String textUserData;
 
-        for (User user: team.users) {
+        for (User user: team.getUsers()) {
             textUserData = "ID: " + user.getId();
                     //+ " xPos: " + user.getPosition().getX() + " yPos: " + user.getPosition().getY();
 
