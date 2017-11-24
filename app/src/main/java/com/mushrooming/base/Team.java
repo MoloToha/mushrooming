@@ -37,6 +37,10 @@ public class Team {
         return false;
     }
 
+    public boolean addUser(User u) {
+        return _users.add(u);
+    }
+
     private User findUser(int id) {
         for(User u : _users) {
             if(u.getId() == id) {
