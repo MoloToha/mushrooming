@@ -10,10 +10,6 @@ import java.text.DecimalFormat;
 
 public class DisplayUserDataActivity extends AppCompatActivity {
 
-    private int _userId;
-    private double _xPos;
-    private double _yPos;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,9 +17,9 @@ public class DisplayUserDataActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
 
-        _userId = bundle.getInt("ID");
-        _xPos = bundle.getDouble("PosX");
-        _yPos = bundle.getDouble("PosY");
+        int _userId = bundle.getInt("ID");
+        double _xPos = bundle.getDouble("PosX");
+        double _yPos = bundle.getDouble("PosY");
 
         TextView userText = (TextView) findViewById(R.id.userTextData);
         userText.setText(getFormattedUserText(_userId, _xPos, _yPos));
