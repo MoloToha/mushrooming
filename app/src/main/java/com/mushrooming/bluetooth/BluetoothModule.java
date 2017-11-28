@@ -16,6 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.antonl.mushrooming.R;
+import com.mushrooming.base.App;
 import com.mushrooming.base.Position;
 
 import java.lang.ref.WeakReference;
@@ -55,6 +56,7 @@ public class BluetoothModule{
         else if (mBluetoothService == null) {
             mBluetoothService = new BluetoothService(mHandler,mActivity);
             mBluetoothService.start();
+            App.instance().startSending();
         }
     }
 
@@ -129,6 +131,7 @@ public class BluetoothModule{
                     // Bluetooth is now enabled, so initialize BluetoothService
                     mBluetoothService = new BluetoothService(mHandler,mActivity);
                     mBluetoothService.start();
+                    App.instance().startSending();
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled");

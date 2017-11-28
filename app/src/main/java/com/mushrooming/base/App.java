@@ -58,8 +58,6 @@ public class App {
         _activity = activity;
 
         _ui = new UI(activity);
-        _bluetooth = new BluetoothModule(activity, new DefaultBluetoothHandler());
-        _bluetooth.start();
 
         _updateHandler = new Handler();
         _updateRunnable = new Runnable() {
@@ -70,7 +68,6 @@ public class App {
                 _updateHandler.postDelayed(this, UPDATE_MY_POSITION_TIME);
             }
         };
-        _updateHandler.postDelayed(_updateRunnable, UPDATE_MY_POSITION_TIME);
 
         _disconnectionHandler = new Handler();
         _disconnectionRunnable = new Runnable() {
@@ -82,6 +79,13 @@ public class App {
             }
         };
         _disconnectionHandler.postDelayed(_disconnectionRunnable, CHECK_DISCONNECTION_PROBLLEM_TIME);
+
+        _bluetooth = new BluetoothModule(activity, new DefaultBluetoothHandler());
+        _bluetooth.start();
+    }
+
+    public void startSending(){
+        _updateHandler.postDelayed(_updateRunnable, UPDATE_MY_POSITION_TIME);
     }
 
     public void finish(){
