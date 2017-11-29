@@ -1,6 +1,7 @@
 package com.mushrooming.base;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
@@ -25,7 +26,7 @@ public class App {
         return _instance;
     }
 
-    private Activity _activity;
+    private Context _applicationContext;
     private UI _ui;
     private BluetoothModule _bluetooth;
     private Team _team = new Team();
@@ -35,7 +36,7 @@ public class App {
     private AssemblyManager _assemblyManager = DijkstraAssemblyManager.getOne(); // default
     private AvMap _terrainOKmap = new AvMap();
 
-    public Activity getActivity() {return _activity;}
+    public Context getApplicationContext() {return _applicationContext;}
     public AvMap getAvMap(){
         return _terrainOKmap;
     }
@@ -55,7 +56,7 @@ public class App {
     private Runnable _disconnectionRunnable;
 
     public void init(Activity activity){
-        _activity = activity;
+        _applicationContext = activity.getApplicationContext();
 
         _ui = new UI(activity);
 
