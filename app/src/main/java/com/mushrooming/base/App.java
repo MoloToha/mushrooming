@@ -11,6 +11,7 @@ import com.mushrooming.algorithms.DijkstraAssemblyManager;
 import com.mushrooming.algorithms.DisconnectGraphManager;
 import com.mushrooming.algorithms.GraphManager;
 import com.mushrooming.algorithms.MapPosition;
+import com.mushrooming.bluetooth.BluetoothEventHandler;
 import com.mushrooming.bluetooth.BluetoothModule;
 import com.mushrooming.bluetooth.DefaultBluetoothHandler;
 
@@ -30,6 +31,7 @@ public class App {
     private UI _ui;
     private BluetoothModule _bluetooth;
     private Team _team = new Team();
+    private BluetoothEventHandler _bluetoothHandler;
 
     // move to Algorithm module
     private GraphManager _graphManager = DisconnectGraphManager.getOne(); // default
@@ -81,7 +83,8 @@ public class App {
         };
         _disconnectionHandler.postDelayed(_disconnectionRunnable, CHECK_DISCONNECTION_PROBLLEM_TIME);
 
-        _bluetooth = new BluetoothModule(activity, new DefaultBluetoothHandler());
+        _bluetoothHandler = new DefaultBluetoothHandler();
+        _bluetooth = new BluetoothModule(activity, _bluetoothHandler);
         _bluetooth.start();
     }
 
