@@ -30,9 +30,9 @@ public class App {
     }
 
     private Debug _debug;
-    private Context _applicationContext;    private BluetoothModule _bluetooth;
+    private Context _applicationContext;
+    private BluetoothModule _bluetooth;
     private Team _team = new Team();
-    private BluetoothEventHandler _bluetoothHandler;
 
     // move to Algorithm module
     private GraphManager _graphManager = DisconnectGraphManager.getOne(); // default
@@ -59,11 +59,8 @@ public class App {
     private Runnable _disconnectionRunnable;
 
     public void init(Activity mainActivity){
-        _applicationContext = activity.getApplicationContext();
+        _applicationContext = mainActivity.getApplicationContext();
 		_debug = new Debug();
-
-        _bluetooth = new BluetoothModule(mainActivity, new DefaultBluetoothHandler());
-        _bluetooth.start();
 
         _updateHandler = new Handler();
         _updateRunnable = new Runnable() {
@@ -84,15 +81,14 @@ public class App {
                 _disconnectionHandler.postDelayed(this, CHECK_DISCONNECTION_PROBLLEM_TIME);
             }
         };
-        _disconnectionHandler.postDelayed(_disconnectionRunnable, CHECK_DISCONNECTION_PROBLLEM_TIME);
 
-        _bluetoothHandler = new DefaultBluetoothHandler();
-        _bluetooth = new BluetoothModule(activity, _bluetoothHandler);
+        _bluetooth = new BluetoothModule(mainActivity, new DefaultBluetoothHandler());
         _bluetooth.start();
     }
 
     public void startSending(){
         _updateHandler.postDelayed(_updateRunnable, UPDATE_MY_POSITION_TIME);
+        _disconnectionHandler.postDelayed(_disconnectionRunnable, CHECK_DISCONNECTION_PROBLLEM_TIME);
     }
 
     public void finish(){

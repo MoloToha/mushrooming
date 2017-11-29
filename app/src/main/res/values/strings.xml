@@ -16,6 +16,7 @@
     <string name="connect">Connect a device</string>
     <string name="discoverable">Make discoverable</string>
     <string name="send_position">Send random position</string>
+    <string name="open_team">Open Team</string>
 
     <string name="connecting">connecting with %1$s</string>
     <string name="connected">connected to %1$s</string>

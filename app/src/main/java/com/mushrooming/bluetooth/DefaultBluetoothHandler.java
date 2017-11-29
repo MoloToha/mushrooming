@@ -17,7 +17,7 @@ public class DefaultBluetoothHandler implements BluetoothEventHandler {
     private Context _applicationContext;
 	private Debug _ui;
     public DefaultBluetoothHandler(){
-		applicationContext = App.instance().getApplicationContext();
+        _applicationContext = App.instance().getApplicationContext();
         _ui = App.instance().getDebug();
     }
     
