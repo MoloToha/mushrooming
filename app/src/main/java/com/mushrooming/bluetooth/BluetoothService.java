@@ -12,6 +12,8 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.mushrooming.base.App;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -57,13 +59,13 @@ public class BluetoothService {
     static final String KEY_BUFFER = "buffer";
 
     // Constructor. Prepares a new Bluetooth session.
-    public BluetoothService(Handler handler, Context con) {
+    public BluetoothService(Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mHandler = handler;
 
         @SuppressLint("HardwareIds") String macAddress = mAdapter.getAddress();
         if( macAddress.equals("02:00:00:00:00:00") ){
-            ContentResolver mContentResolver = con.getContentResolver();
+            ContentResolver mContentResolver = App.instance().getApplicationContext().getContentResolver();
             macAddress = Settings.Secure.getString(mContentResolver, "bluetooth_address");
 
             if( macAddress == null ){

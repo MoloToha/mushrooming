@@ -16,6 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.antonl.mushrooming.R;
+import com.mushrooming.base.App;
 import com.mushrooming.base.Position;
 
 import java.lang.ref.WeakReference;
@@ -53,8 +54,9 @@ public class BluetoothModule{
             // Otherwise, initialize BluetoothService
         }
         else if (mBluetoothService == null) {
-            mBluetoothService = new BluetoothService(mHandler,mActivity);
+            mBluetoothService = new BluetoothService(mHandler);
             mBluetoothService.start();
+            App.instance().startSending();
         }
     }
 
@@ -70,9 +72,12 @@ public class BluetoothModule{
 
         if (mBluetoothAdapter.getScanMode() !=
                 BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+
+            Context appContext = App.instance().getApplicationContext();
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-            mActivity.startActivity(discoverableIntent);
+            discoverableIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            appContext.startActivity(discoverableIntent);
         }
     }
 
@@ -127,8 +132,9 @@ public class BluetoothModule{
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so initialize BluetoothService
-                    mBluetoothService = new BluetoothService(mHandler,mActivity);
+                    mBluetoothService = new BluetoothService(mHandler);
                     mBluetoothService.start();
+                    App.instance().startSending();
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled");
