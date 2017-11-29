@@ -1,5 +1,7 @@
 package com.mushrooming.algorithms;
 
+import com.mushrooming.base.Position;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -24,6 +26,7 @@ public class AvMap {
     // taken into consideration by assembly place ordering algorithm?
     // or maybe would be taken into consideration
 
+    private Position positionGPSofcenter;
     private double xpos, ypos;
     private int xmin, xmax, ymin, ymax; // range of used area of a map
 

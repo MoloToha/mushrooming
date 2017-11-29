@@ -68,14 +68,14 @@ public class DijkstraAssemblyManager implements AssemblyManager {
 
     // can be static, but when no interface
     @Override
-    public MapPosition chooseAssemblyPlace(Team team) {
+    public MapPosition chooseAssemblyPlace(Team team, AvMap terrainOKmap) {
         // one grid for Dijkstra from current device and one for sum of distances (squares) from previous Dijkstras
         double[][] thisDijkstra = new double[AvMap.size][AvMap.size];
         double[][] sumDijkstra = new double[AvMap.size][AvMap.size];
 
         //run one Dijkstra for each user, accumulate results and choose best place (from marked as available)
         for (User u : team.getUsers() ){
-            computeNewDijkstra(thisDijkstra, App.instance().getAvMap(), u.getMapPosition());
+            computeNewDijkstra(thisDijkstra, terrainOKmap, u.getMapPosition());
             for (int i=0; i<AvMap.size; ++i) {
                 for (int j=0; j<AvMap.size; ++j) {
                     sumDijkstra[i][j] += (thisDijkstra[i][j])*(thisDijkstra[i][j]);
@@ -96,7 +96,7 @@ public class DijkstraAssemblyManager implements AssemblyManager {
             }
         }
 
-        return App.instance().getAvMap().getRelativePosition(new MapPosition(bestx, besty));
+        return terrainOKmap.getRelativePosition(new MapPosition(bestx, besty));
 
     }
 

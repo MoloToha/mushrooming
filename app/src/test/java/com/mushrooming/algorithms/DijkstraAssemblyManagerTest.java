@@ -1,6 +1,5 @@
 package com.mushrooming.algorithms;
 
-import com.mushrooming.base.App;
 import com.mushrooming.base.Position;
 import com.mushrooming.base.Team;
 
@@ -31,8 +30,9 @@ public class DijkstraAssemblyManagerTest {
     public void chooseAssemblyPlaceTest1() throws Exception {
 
         DijkstraAssemblyManager d = DijkstraAssemblyManager.getOne();
+        AlgorithmModule mod = new AlgorithmModule(new DisconnectGraphManager(), d);
 
-        AvMap avmap = App.instance().getAvMap();
+        AvMap avmap = mod.get_terrainOKmap();
         markOnAvMap(avmap, new int[][]{
                 {0,0,0,0,0},
                 {0,0,0,0,0},
@@ -46,9 +46,9 @@ public class DijkstraAssemblyManagerTest {
         team.updateUser(1, new Position(0,0));
         team.updateUser(2, new Position(0,0));
 
-        MapPosition mpos = d.chooseAssemblyPlace(team);
+        MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 
-        assertEquals(new MapPosition(0,0), d.chooseAssemblyPlace(team));
+        assertEquals(new MapPosition(0,0), d.chooseAssemblyPlace(team,avmap));
 
     }
 
@@ -57,8 +57,9 @@ public class DijkstraAssemblyManagerTest {
     public void chooseAssemblyPlaceTest2() throws Exception {
 
         DijkstraAssemblyManager d = DijkstraAssemblyManager.getOne();
+        AlgorithmModule mod = new AlgorithmModule(new DisconnectGraphManager(), d);
 
-        AvMap avmap = App.instance().getAvMap();
+        AvMap avmap = mod.get_terrainOKmap();
         markOnAvMap(avmap, new int[][]{
                 {0,0,0,0,0},
                 {0,0,0,0,0},
@@ -72,9 +73,9 @@ public class DijkstraAssemblyManagerTest {
         team.updateUser(1, new Position(2,2));
         team.updateUser(2, new Position(2,-2));
 
-        MapPosition mpos = d.chooseAssemblyPlace(team);
+        MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 
-        assertEquals(new MapPosition(2,0), d.chooseAssemblyPlace(team));
+        assertEquals(new MapPosition(2,0), d.chooseAssemblyPlace(team, avmap));
 
     }
 
@@ -83,8 +84,9 @@ public class DijkstraAssemblyManagerTest {
     public void chooseAssemblyPlaceTest3() throws Exception {
 
         DijkstraAssemblyManager d = DijkstraAssemblyManager.getOne();
+        AlgorithmModule mod = new AlgorithmModule(new DisconnectGraphManager(), d);
 
-        AvMap avmap = App.instance().getAvMap();
+        AvMap avmap = mod.get_terrainOKmap();
         markOnAvMap(avmap, new int[][]{
                 {0,0,1,0,0},
                 {0,0,0,1,0},
@@ -98,9 +100,9 @@ public class DijkstraAssemblyManagerTest {
         team.updateUser(1, new Position(-2,0));
         team.updateUser(2, new Position(2,0));
 
-        MapPosition mpos = d.chooseAssemblyPlace(team);
+        MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 
-        assertEquals(new MapPosition(0,1), d.chooseAssemblyPlace(team));
+        assertEquals(new MapPosition(0,1), d.chooseAssemblyPlace(team, avmap));
 
     }
 
@@ -108,8 +110,9 @@ public class DijkstraAssemblyManagerTest {
     public void chooseAssemblyPlaceTest4() throws Exception {
 
         DijkstraAssemblyManager d = DijkstraAssemblyManager.getOne();
+        AlgorithmModule mod = new AlgorithmModule(new DisconnectGraphManager(), d);
 
-        AvMap avmap = App.instance().getAvMap();
+        AvMap avmap = mod.get_terrainOKmap();
         markOnAvMap(avmap, new int[][]{
                 {0,1,1,1,1},
                 {1,0,0,0,1},
@@ -123,9 +126,9 @@ public class DijkstraAssemblyManagerTest {
         team.updateUser(1, new Position(-2,0));
         team.updateUser(2, new Position(1,-2));
 
-        MapPosition mpos = d.chooseAssemblyPlace(team);
+        MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 
-        assertEquals(new MapPosition(-1,-2), d.chooseAssemblyPlace(team));
+        assertEquals(new MapPosition(-1,-2), d.chooseAssemblyPlace(team, avmap));
 
     }
 
@@ -134,8 +137,9 @@ public class DijkstraAssemblyManagerTest {
     public void chooseAssemblyPlaceTest5() throws Exception {
 
         DijkstraAssemblyManager d = DijkstraAssemblyManager.getOne();
+        AlgorithmModule mod = new AlgorithmModule(new DisconnectGraphManager(), d);
 
-        AvMap avmap = App.instance().getAvMap();
+        AvMap avmap = mod.get_terrainOKmap();
         markOnAvMap(avmap, new int[][]{
                 {0,1,1,1,1},
                 {1,0,0,0,1},
@@ -147,14 +151,14 @@ public class DijkstraAssemblyManagerTest {
         Team team = new Team();
 
         team.updateUser(1, new Position(-2,2));
-        team.updateUser(2, new Position(0,2));
-        team.updateUser(3, new Position(2,2));
-        team.updateUser(4, new Position(0,-2));
+        //team.updateUser(2, new Position(-1,2));
+        team.updateUser(3, new Position(0,2));
+        team.updateUser(4, new Position(2,-1));
 
-        MapPosition mpos = d.chooseAssemblyPlace(team);
+        MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 
-        //this is the correct answer because we minimize sum of squares
-        assertEquals(new MapPosition(0,1), d.chooseAssemblyPlace(team));
+        //this is the correct answer because we minimize the sum of squares
+        assertEquals(new MapPosition(1,2), d.chooseAssemblyPlace(team, avmap));
 
     }
 

@@ -5,12 +5,9 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
-import com.mushrooming.algorithms.AssemblyManager;
-import com.mushrooming.algorithms.AvMap;
+import com.mushrooming.algorithms.AlgorithmModule;
 import com.mushrooming.algorithms.DijkstraAssemblyManager;
 import com.mushrooming.algorithms.DisconnectGraphManager;
-import com.mushrooming.algorithms.GraphManager;
-import com.mushrooming.algorithms.MapPosition;
 import com.mushrooming.bluetooth.BluetoothEventHandler;
 import com.mushrooming.bluetooth.BluetoothModule;
 import com.mushrooming.bluetooth.DefaultBluetoothHandler;
@@ -33,15 +30,12 @@ public class App {
     private Team _team = new Team();
     private BluetoothEventHandler _bluetoothHandler;
 
-    // move to Algorithm module
-    private GraphManager _graphManager = DisconnectGraphManager.getOne(); // default
-    private AssemblyManager _assemblyManager = DijkstraAssemblyManager.getOne(); // default
-    private AvMap _terrainOKmap = new AvMap();
+    private AlgorithmModule _algorithms;
 
     public Context getApplicationContext() {return _applicationContext;}
-    public AvMap getAvMap(){
-        return _terrainOKmap;
-    }
+    //public AvMap getAvMap(){
+    //    return _terrainOKmap;
+    //}
     public Team getTeam(){
         return _team;
     }
@@ -86,6 +80,9 @@ public class App {
         _bluetoothHandler = new DefaultBluetoothHandler();
         _bluetooth = new BluetoothModule(activity, _bluetoothHandler);
         _bluetooth.start();
+
+        _algorithms = new AlgorithmModule(DisconnectGraphManager.getOne(), DijkstraAssemblyManager.getOne());
+        //private AvMap _terrainOKmap = new AvMap();
     }
 
     public void startSending(){
@@ -106,7 +103,7 @@ public class App {
 
     private void checkDisconnectionProblem() {
         Log.d(TAG, "checkDisconnectionProblem");
-        if (_graphManager.checkIfAssemblyNeeded(_team)) {
+        if (_algorithms.checkIfAssemblyNeeded(_team)) {
             //MapPosition assemblyPos = _assemblyManager.chooseAssemblyPlace(_team);
 
             _ui.write("checkDisconnectionProblem() : assembly needed");
