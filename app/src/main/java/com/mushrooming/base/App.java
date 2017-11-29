@@ -9,7 +9,6 @@ import com.mushrooming.algorithms.AvMap;
 import com.mushrooming.algorithms.DijkstraAssemblyManager;
 import com.mushrooming.algorithms.DisconnectGraphManager;
 import com.mushrooming.algorithms.GraphManager;
-import com.mushrooming.algorithms.MapPosition;
 import com.mushrooming.bluetooth.BluetoothModule;
 import com.mushrooming.bluetooth.DefaultBluetoothHandler;
 
@@ -20,13 +19,15 @@ import static android.content.ContentValues.TAG;
  */
 
 public class App {
-    private static App _instance = new App();
+    private static App _instance = null;
     public static App instance(){
+        if(_instance == null){
+            _instance = new App();
+        }
         return _instance;
     }
 
-    private Activity _activity;
-    private UI _ui;
+    private Debug _debug;
     private BluetoothModule _bluetooth;
     private Team _team = new Team();
 
@@ -35,7 +36,6 @@ public class App {
     private AssemblyManager _assemblyManager = DijkstraAssemblyManager.getOne(); // default
     private AvMap _terrainOKmap = new AvMap();
 
-    public Activity getActivity() {return _activity;}
     public AvMap getAvMap(){
         return _terrainOKmap;
     }
@@ -43,7 +43,7 @@ public class App {
         return _team;
     }
     public BluetoothModule getBluetooth() { return _bluetooth; }
-    public UI getUI() { return _ui; }
+    public Debug getDebug() { return _debug; }
 
     private static  int START_DELAY = 100;
     private static int UPDATE_MY_POSITION_TIME = User.MAX_INACTIVITY_TIME / 4;
@@ -54,11 +54,10 @@ public class App {
     private Handler _disconnectionHandler;
     private Runnable _disconnectionRunnable;
 
-    public void init(Activity activity){
-        _activity = activity;
+    public void init(Activity mainActivity){
+        _debug = new Debug();
 
-        _ui = new UI(activity);
-        _bluetooth = new BluetoothModule(activity, new DefaultBluetoothHandler());
+        _bluetooth = new BluetoothModule(mainActivity, new DefaultBluetoothHandler());
         _bluetooth.start();
 
         _updateHandler = new Handler();
@@ -91,7 +90,7 @@ public class App {
     }
 
     private void updateMyPosition(){
-        _ui.write("sending my position");
+        _debug.write("sending my position");
         // GPS: get position
         _bluetooth.sendPosition(new Position(42,666));
     }
@@ -101,7 +100,7 @@ public class App {
         if (_graphManager.checkIfAssemblyNeeded(_team)) {
             //MapPosition assemblyPos = _assemblyManager.chooseAssemblyPlace(_team);
 
-            _ui.write("checkDisconnectionProblem() : assembly needed");
+            _debug.write("checkDisconnectionProblem() : assembly needed");
             // assembly may also be ordered when graph is still consistent, depending on used manager
 
             // here order an assembly - show that user should go there

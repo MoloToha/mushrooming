@@ -8,33 +8,31 @@ import android.widget.ListView;
 
 import com.example.antonl.mushrooming.R;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
  * Created by barto on 21.11.2017.
  */
 
-public class UI {
+public class Debug {
     private Activity _activity;
     // Array adapter for logs
-    private ArrayAdapter<String> _logArrayAdapter;
+    private ArrayList<String> _logArrayAdapter;
 
-    public UI(Activity activity){
-        _activity = activity;
-
-
-        _activity.setContentView(R.layout.activity_bluetoothtest);
+    public Debug() {
+        //_activity.setContentView(R.layout.activity_bluetoothtest);
 
         // Initialize the array adapter for logs
-        _logArrayAdapter = new ArrayAdapter<>(_activity, R.layout.message);
-        ListView mLogView = _activity.findViewById(R.id.in);
-        mLogView.setAdapter(_logArrayAdapter);
+        _logArrayAdapter = new ArrayList<>();//new ArrayAdapter<>(_activity, R.layout.message);
+        //ListView mLogView = _activity.findViewById(R.id.in);
+        //mLogView.setAdapter(_logArrayAdapter);
 
-        initializeButtons();
+        //initializeButtons();
     }
 
 
-    private void initializeButtons() {
+    /*private void initializeButtons() {
         Button mConnectButton = _activity.findViewById(R.id.connect_button);
         Button mDiscoverableButton = _activity.findViewById(R.id.make_discoverable_button);
         Button mSendPositionButton = _activity.findViewById(R.id.send_position_button);
@@ -67,7 +65,7 @@ public class UI {
         write("Sending random position: " + x + " " + y);
 
         App.instance().getBluetooth().sendPosition( new Position(x,y) );
-    }
+    }*/
 
     public void write(String s){
         _logArrayAdapter.add(s);
