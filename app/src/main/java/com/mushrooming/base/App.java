@@ -5,8 +5,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
-import com.mushrooming.algorithms.AssemblyManager;
-import com.mushrooming.algorithms.AvMap;
+import com.mushrooming.algorithms.AlgorithmModule;
 import com.mushrooming.algorithms.DijkstraAssemblyManager;
 import com.mushrooming.algorithms.DisconnectGraphManager;
 import com.mushrooming.algorithms.GraphManager;
@@ -34,15 +33,12 @@ public class App {
     private BluetoothModule _bluetooth;
     private Team _team = new Team();
 
-    // move to Algorithm module
-    private GraphManager _graphManager = DisconnectGraphManager.getOne(); // default
-    private AssemblyManager _assemblyManager = DijkstraAssemblyManager.getOne(); // default
-    private AvMap _terrainOKmap = new AvMap();
+    private AlgorithmModule _algorithms;
 
     public Context getApplicationContext() {return _applicationContext;}
-    public AvMap getAvMap(){
-        return _terrainOKmap;
-    }
+    //public AvMap getAvMap(){
+    //    return _terrainOKmap;
+    //}
     public Team getTeam(){
         return _team;
     }
@@ -84,6 +80,9 @@ public class App {
 
         _bluetooth = new BluetoothModule(mainActivity, new DefaultBluetoothHandler());
         _bluetooth.start();
+
+        _algorithms = new AlgorithmModule(DisconnectGraphManager.getOne(), DijkstraAssemblyManager.getOne());
+        //private AvMap _terrainOKmap = new AvMap();
     }
 
     public void startSending(){
@@ -105,7 +104,7 @@ public class App {
 
     private void checkDisconnectionProblem() {
         Log.d(TAG, "checkDisconnectionProblem");
-        if (_graphManager.checkIfAssemblyNeeded(_team)) {
+        if (_algorithms.checkIfAssemblyNeeded(_team)) {
             //MapPosition assemblyPos = _assemblyManager.chooseAssemblyPlace(_team);
 
             _debug.write("checkDisconnectionProblem() : assembly needed");
