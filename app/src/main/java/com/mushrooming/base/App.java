@@ -36,9 +36,7 @@ public class App {
     private AlgorithmModule _algorithms;
 
     public Context getApplicationContext() {return _applicationContext;}
-    //public AvMap getAvMap(){
-    //    return _terrainOKmap;
-    //}
+
     public Team getTeam(){
         return _team;
     }
@@ -82,7 +80,6 @@ public class App {
         _bluetooth.start();
 
         _algorithms = new AlgorithmModule(DisconnectGraphManager.getOne(), DijkstraAssemblyManager.getOne());
-        //private AvMap _terrainOKmap = new AvMap();
     }
 
     public void startSending(){
