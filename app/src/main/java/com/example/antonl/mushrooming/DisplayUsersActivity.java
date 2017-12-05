@@ -17,10 +17,9 @@ import com.mushrooming.base.User;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class DisplayUsersActivity extends AppCompatActivity implements View.OnClickListener {
+public class DisplayUsersActivity extends AppCompatActivity {
     private ArrayList<String> textBasedUserList;
     private ListView userListView;
-    private Button buttonClickReload;
     private Team _team;
 
     @Override
@@ -45,15 +44,19 @@ public class DisplayUsersActivity extends AppCompatActivity implements View.OnCl
             }
         });
 
-        buttonClickReload = (Button) findViewById(R.id.button_reloadList);
-        buttonClickReload.setOnClickListener(this);
+        Button button = (Button) findViewById(R.id.button_reloadList);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reloadUserList();
+            }
+        });
 
     }
 
-    public void onClick(View view) {
-        if (view == buttonClickReload) {
-            reloadUserList();
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     public void reloadUserList() {

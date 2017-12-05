@@ -17,13 +17,9 @@ import java.util.Random;
 
 public class Debug {
     private Activity _activity;
-    // Array adapter for logs
     private ArrayList<String> _logArrayAdapter;
 
     public Debug() {
-        //_activity.setContentView(R.layout.activity_bluetoothtest);
-
-        // Initialize the array adapter for logs
         _logArrayAdapter = new ArrayList<>();//new ArrayAdapter<>(_activity, R.layout.message);
         //ListView mLogView = _activity.findViewById(R.id.in);
         //mLogView.setAdapter(_logArrayAdapter);
@@ -31,41 +27,9 @@ public class Debug {
         //initializeButtons();
     }
 
-
-    /*private void initializeButtons() {
-        Button mConnectButton = _activity.findViewById(R.id.connect_button);
-        Button mDiscoverableButton = _activity.findViewById(R.id.make_discoverable_button);
-        Button mSendPositionButton = _activity.findViewById(R.id.send_position_button);
-
-        // Set listeners to buttons
-        mConnectButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                App.instance().getBluetooth().newConnection();
-            }
-        });
-        mDiscoverableButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                App.instance().getBluetooth().ensureDiscoverable();
-            }
-        });
-        mSendPositionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendRandomPosition();
-            }
-        });
+    public ArrayList<String> getLogs(){
+        return _logArrayAdapter;
     }
-
-    private void sendRandomPosition() {
-        Random gen = new Random();
-        double x = gen.nextGaussian();
-        double y = gen.nextGaussian();
-        write("Sending random position: " + x + " " + y);
-
-        App.instance().getBluetooth().sendPosition( new Position(x,y) );
-    }*/
 
     public void write(String s){
         _logArrayAdapter.add(s);

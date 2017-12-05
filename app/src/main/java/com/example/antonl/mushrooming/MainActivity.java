@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.mushrooming.base.App;
+import com.mushrooming.base.Position;
+
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -37,8 +40,53 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+
+        button = findViewById(R.id.open_debug);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, DebugActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        initializeButtons();
     }
 
+
+    private void initializeButtons() {
+        Button mConnectButton = findViewById(R.id.connect_button);
+        Button mDiscoverableButton = findViewById(R.id.make_discoverable_button);
+        Button mSendPositionButton = findViewById(R.id.send_position_button);
+
+        // Set listeners to buttons
+        mConnectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                App.instance().getBluetooth().newConnection();
+            }
+        });
+        mDiscoverableButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                App.instance().getBluetooth().ensureDiscoverable();
+            }
+        });
+        mSendPositionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendRandomPosition();
+            }
+        });
+    }
+
+    private void sendRandomPosition() {
+        Random gen = new Random();
+        double x = gen.nextGaussian();
+        double y = gen.nextGaussian();
+        App.instance().getDebug().write("Sending random position: " + x + " " + y);
+
+        App.instance().getBluetooth().sendPosition( new Position(x,y) );
+    }
 
     @Override
     public void onDestroy() {
