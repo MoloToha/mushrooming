@@ -28,8 +28,8 @@
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/select_device"
             android:theme="@style/DeviceListTheme" />
-        <activity android:name=".DisplayUserDataActivity" />
-        <activity android:name=".DisplayUsersActivity" />
+        <activity android:name=".UserActivity" />
+        <activity android:name=".TeamActivity" />
         <activity android:name=".DebugActivity"></activity>
     </application>
 

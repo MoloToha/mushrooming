@@ -17,15 +17,14 @@ import com.mushrooming.base.User;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class DisplayUsersActivity extends AppCompatActivity {
-    private ArrayList<String> textBasedUserList;
+public class TeamActivity extends AppCompatActivity {
     private ListView userListView;
     private Team _team;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_users);
+        setContentView(R.layout.activity_team);
 
         _team = App.instance().getTeam();
         userListView = (ListView) findViewById(R.id.list_users);
@@ -35,7 +34,7 @@ public class DisplayUsersActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 User itemClicked = _team.getUsers().get(position);
 
-                Intent intent = new Intent(DisplayUsersActivity.this, DisplayUserDataActivity.class);
+                Intent intent = new Intent(TeamActivity.this, UserActivity.class);
                 intent.putExtra("ID", itemClicked.getId());
                 intent.putExtra("PosX", itemClicked.getGpsPosition().getX());
                 intent.putExtra("PosY", itemClicked.getGpsPosition().getY());
@@ -52,6 +51,14 @@ public class DisplayUsersActivity extends AppCompatActivity {
             }
         });
 
+        button = (Button) findViewById(R.id.button_addUser);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createTeamExample(10);
+            }
+        });
+
     }
 
     @Override
@@ -60,11 +67,11 @@ public class DisplayUsersActivity extends AppCompatActivity {
     }
 
     public void reloadUserList() {
-        updateTextBasedUserList();
+        ArrayList<String> textBasedUserList = updateTextBasedUserList();
         userListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, textBasedUserList));
     }
 
-    public Team createTeamExample(int userCount) {
+    public void createTeamExample(int userCount) {
         Random generator = new Random();
         Team team = new Team();
 
@@ -76,18 +83,21 @@ public class DisplayUsersActivity extends AppCompatActivity {
             team.addUser(u);
         }
 
-        return team;
+        _team = team;
+        reloadUserList();
     }
 
-    public void updateTextBasedUserList() {
-        textBasedUserList = new ArrayList<String>();
+    public ArrayList<String> updateTextBasedUserList() {
+        ArrayList<String> ans = new ArrayList<String>();
         String textUserData;
 
         for (User user: _team.getUsers()) {
             textUserData = "ID: " + user.getId();
                     //+ " xPos: " + user.getPosition().getX() + " yPos: " + user.getPosition().getY();
 
-            textBasedUserList.add(textUserData);
+            ans.add(textUserData);
         }
+
+        return ans;
     }
 }

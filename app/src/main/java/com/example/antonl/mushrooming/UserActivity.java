@@ -4,16 +4,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-import java.text.DecimalFormat;
-
-public class DisplayUserDataActivity extends AppCompatActivity {
+public class UserActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_user_data);
+        setContentView(R.layout.activity_user);
 
         Bundle bundle = getIntent().getExtras();
 

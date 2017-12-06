@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity
         Button button = findViewById(R.id.open_team);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, DisplayUsersActivity.class);
+                Intent intent = new Intent(MainActivity.this, TeamActivity.class);
                 startActivity(intent);
             }
         });
