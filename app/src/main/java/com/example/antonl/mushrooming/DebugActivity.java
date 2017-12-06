@@ -8,7 +8,6 @@ import android.widget.ListView;
 import com.mushrooming.base.App;
 
 public class DebugActivity extends AppCompatActivity {
-
     private ArrayAdapter<String> _logArrayAdapter;
 
     @Override
@@ -17,9 +16,15 @@ public class DebugActivity extends AppCompatActivity {
         setContentView(R.layout.activity_debug);
 
         _logArrayAdapter = new ArrayAdapter<>(this, R.layout.message);
-        ListView mLogView = findViewById(R.id.in);
-        mLogView.setAdapter(_logArrayAdapter);
+        ListView logView = findViewById(R.id.in);
+        logView.setAdapter(_logArrayAdapter);
 
-        _logArrayAdapter.addAll(App.instance().getDebug().getLogs());
+        App.instance().getDebug().attachAdapter(_logArrayAdapter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        App.instance().getDebug().detachAdapter();
+        super.onDestroy();
     }
 }

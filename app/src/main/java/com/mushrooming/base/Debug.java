@@ -16,23 +16,30 @@ import java.util.Random;
  */
 
 public class Debug {
-    private Activity _activity;
-    private ArrayList<String> _logArrayAdapter;
+    private ArrayList<String> _logs;
+    private ArrayAdapter<String> _logArrayAdapter = null;
 
     public Debug() {
-        _logArrayAdapter = new ArrayList<>();//new ArrayAdapter<>(_activity, R.layout.message);
-        //ListView mLogView = _activity.findViewById(R.id.in);
-        //mLogView.setAdapter(_logArrayAdapter);
-
-        //initializeButtons();
+        _logs = new ArrayList<>();
     }
 
     public ArrayList<String> getLogs(){
-        return _logArrayAdapter;
+        return _logs;
+    }
+
+    public void attachAdapter(ArrayAdapter<String> adapter){
+        _logArrayAdapter = adapter;
+        _logArrayAdapter.addAll(_logs);
+    }
+    public void detachAdapter(){
+        _logArrayAdapter = null;
     }
 
     public void write(String s){
-        _logArrayAdapter.add(s);
+        _logs.add(s);
+        if(_logArrayAdapter != null){
+            _logArrayAdapter.add(s);
+        }
     }
 
 }
