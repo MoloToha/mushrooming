@@ -1,4 +1,4 @@
-package com.example.antonl.mushrooming;
+package com.mushrooming.activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.example.antonl.mushrooming.R;
 import com.mushrooming.base.App;
 import com.mushrooming.base.Position;
 import com.mushrooming.base.Team;

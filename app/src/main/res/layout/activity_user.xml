@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.antonl.mushrooming.UserActivity">
+    tools:context="com.example.antonl.mushrooming.com.mushrooming.activities.UserActivity">
 
     <TextView
         android:id="@+id/userTextData"
