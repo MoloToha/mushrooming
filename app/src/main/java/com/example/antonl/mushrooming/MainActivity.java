@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.mushrooming.base.App;
 import com.mushrooming.base.Position;
+import com.mushrooming.location.LocationProvider;
 
 import java.util.Random;
 
@@ -80,12 +81,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void sendRandomPosition() {
-        Random gen = new Random();
-        double x = gen.nextGaussian();
-        double y = gen.nextGaussian();
-        App.instance().getDebug().write("Sending random position: " + x + " " + y);
+        LocationProvider locationProvider = new LocationProvider(this);
+        try {
+            Position pos = locationProvider.getLocation();
+            App.instance().getDebug().write("Sending random position: " + pos.getX() + " " + pos.getY());
 
-        App.instance().getBluetooth().sendPosition( new Position(x,y) );
+            App.instance().getBluetooth().sendPosition( pos );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
