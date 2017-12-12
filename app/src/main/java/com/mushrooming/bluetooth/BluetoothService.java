@@ -172,8 +172,10 @@ public class BluetoothService {
     }
 
     // Indicate that the connection was lost and notify the UI Activity.
-    private void connectionLost(BluetoothDevice device) {
+    private void connectionLost(BluetoothDevice device, ConnectedThread connection) {
         Log.i(TAG, "lost connection with " + device.getName());
+
+        mConnections.remove(connection);
 
         // Sending message to handler
         mHandler.obtainMessage(MESSAGE_CONNECTION_LOST, -1,-1,device.getName())
@@ -337,7 +339,7 @@ public class BluetoothService {
             int bytes;
 
             if( mmInStream == null ){
-                connectionLost(mmDevice);
+                connectionLost(mmDevice, this);
                 return;
             }
 
@@ -356,7 +358,7 @@ public class BluetoothService {
                             .sendToTarget();
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
-                    connectionLost(mmDevice);
+                    connectionLost(mmDevice, this);
                     break;
                 }
             }
