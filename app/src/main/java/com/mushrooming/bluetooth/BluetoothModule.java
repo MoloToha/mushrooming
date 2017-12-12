@@ -147,7 +147,8 @@ public class BluetoothModule{
                     _bluetoothService = new BluetoothService(_handler);
                     _bluetoothService.start();
                     App.instance().startSending();
-                } else {
+                }
+                else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled");
                     Toast.makeText(_activity, R.string.bt_not_enabled_leaving,
