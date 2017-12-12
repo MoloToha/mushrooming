@@ -40,12 +40,16 @@ public class BluetoothModule{
     private final Activity mActivity;
 
     public BluetoothModule(Activity activity, BluetoothEventHandler handler){
+        Log.d(TAG, "CREATE BluetoothModule");
+
         mActivity = activity;
         mHandler = new MyHandler<>(handler);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     public void start() {
+        Log.d(TAG, "start()");
+
         // If BT is not on, request that it be enabled.
         // BluetoothService will then be initialized during onActivityResult
         if (!mBluetoothAdapter.isEnabled()) {
@@ -61,6 +65,8 @@ public class BluetoothModule{
     }
 
     public void stop() {
+        Log.d(TAG, "stop()");
+
         if (mBluetoothService != null) {
             mBluetoothService.stop();
         }
@@ -82,6 +88,7 @@ public class BluetoothModule{
     }
 
     public void newConnection() {
+        Log.d(TAG, "newConnection()");
 
         if (Build.VERSION.SDK_INT >= 23) {
             int permissionCheck = mActivity.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
@@ -114,6 +121,8 @@ public class BluetoothModule{
     }
 
     public void sendPosition(Position pos) {
+        Log.d(TAG, "sendPosition()");
+
         byte[] buffer = new byte[16];
         ByteBuffer.wrap(buffer,0,8).putDouble(pos.getX());
         ByteBuffer.wrap(buffer,8,8).putDouble(pos.getY());
@@ -131,13 +140,14 @@ public class BluetoothModule{
             case REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
+                    Log.i(TAG, "enabled bluetooth");
                     // Bluetooth is now enabled, so initialize BluetoothService
                     mBluetoothService = new BluetoothService(mHandler);
                     mBluetoothService.start();
                     App.instance().startSending();
                 } else {
                     // User did not enable Bluetooth or an error occurred
-                    Log.d(TAG, "BT not enabled");
+                    Log.e(TAG, "bluetooth not enabled");
                     Toast.makeText(mActivity, R.string.bt_not_enabled_leaving,
                             Toast.LENGTH_SHORT).show();
                     mActivity.finish();
@@ -148,6 +158,8 @@ public class BluetoothModule{
     // The Handler that gets information back from the BluetoothService
     public static class MyHandler<T extends BluetoothEventHandler> extends Handler {
 
+        private String TAG = "BluetoothHandler";
+
         private final WeakReference<T> mClassReference;
 
         MyHandler( T a ){
@@ -157,24 +169,34 @@ public class BluetoothModule{
         @Override
         public void handleMessage(Message msg) {
             T a = mClassReference.get();
-            if ( a != null ) {
+            if ( a == null ){
+                Log.e(TAG, "Can't get reference to handler");
+            }
+            else {
                 switch (msg.what) {
                     case BluetoothService.MESSAGE_CONNECTING:
+                        Log.d(TAG, "message: connecting");
                         a.connecting((String) msg.obj);
                         break;
                     case BluetoothService.MESSAGE_CONNECTED:
+                        Log.d(TAG, "message: connected");
                         a.connected((String) msg.obj);
                         break;
                     case BluetoothService.MESSAGE_CONNECTION_FAILED:
+                        Log.d(TAG, "message: connection failed");
                         a.connection_failed((String) msg.obj);
                         break;
                     case BluetoothService.MESSAGE_CONNECTION_LOST:
+                        Log.d(TAG, "message: connection lost");
                         a.connection_lost((String) msg.obj);
                         break;
                     case BluetoothService.MESSAGE_WRITE:
+                        Log.d(TAG, "message: write");
                         a.position_sent((String) msg.obj);
                         break;
                     case BluetoothService.MESSAGE_READ:
+                        Log.d(TAG, "message: read");
+
                         Bundle b = (Bundle) msg.obj;
                         String device_name = b.getString(BluetoothService.KEY_DEVICE_NAME);
                         byte[] buffer = b.getByteArray(BluetoothService.KEY_BUFFER);
