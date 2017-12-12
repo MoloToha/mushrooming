@@ -14,6 +14,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import com.example.antonl.mushrooming.R;
 import com.mushrooming.base.App;
@@ -82,13 +84,24 @@ public class BluetoothModule{
     }
 
     public void newConnection() {
-
+        /*
         if (Build.VERSION.SDK_INT >= 23) {
             int permissionCheck = mActivity.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
             permissionCheck += mActivity.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
             if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
                 mActivity.requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
+        }*/
+
+        int permissionCheck = ContextCompat.checkSelfPermission(App.instance().getApplicationContext(),
+                                                               "Manifest.permission.ACCESS_FINE_LOCATION");
+        permissionCheck += ContextCompat.checkSelfPermission(App.instance().getApplicationContext(),
+                                                            "Manifest.permission.ACCESS_COARSE_LOCATION");
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(mActivity,
+                                              new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
+                                              Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
 
         Intent serverIntent = new Intent(mActivity, DeviceListActivity.class);
