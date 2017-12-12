@@ -8,7 +8,6 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -29,42 +28,42 @@ public class BluetoothModule{
     private static final String TAG = "BluetoothModule";
 
     // Local Bluetooth adapter
-    private BluetoothAdapter mBluetoothAdapter = null;
+    private BluetoothAdapter _bluetoothAdapter = null;
 
     // Intent request codes
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_CONNECT_DEVICE = 2;
 
     // Member object for the bluetooth services
-    private BluetoothService mBluetoothService = null;
+    private BluetoothService _bluetoothService = null;
 
-    private final Handler mHandler;
-    private final Activity mActivity;
+    private final Handler _handler;
+    private final Activity _activity;
 
     public BluetoothModule(Activity activity, BluetoothEventHandler handler){
-        mActivity = activity;
-        mHandler = new MyHandler<>(handler);
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        _activity = activity;
+        _handler = new MyHandler<>(handler);
+        _bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     public void start() {
         // If BT is not on, request that it be enabled.
         // BluetoothService will then be initialized during onActivityResult
-        if (!mBluetoothAdapter.isEnabled()) {
+        if (!_bluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            mActivity.startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            _activity.startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, initialize BluetoothService
         }
-        else if (mBluetoothService == null) {
-            mBluetoothService = new BluetoothService(mHandler);
-            mBluetoothService.start();
+        else if (_bluetoothService == null) {
+            _bluetoothService = new BluetoothService(_handler);
+            _bluetoothService.start();
             App.instance().startSending();
         }
     }
 
     public void stop() {
-        if (mBluetoothService != null) {
-            mBluetoothService.stop();
+        if (_bluetoothService != null) {
+            _bluetoothService.stop();
         }
     }
 
@@ -72,7 +71,7 @@ public class BluetoothModule{
     public void ensureDiscoverable() {
         Log.d(TAG, "ensureDiscoverable()");
 
-        if (mBluetoothAdapter.getScanMode() !=
+        if (_bluetoothAdapter.getScanMode() !=
                 BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
 
             Context appContext = App.instance().getApplicationContext();
@@ -84,12 +83,12 @@ public class BluetoothModule{
     }
 
     public void newConnection() {
-        /*
+        /* Old version
         if (Build.VERSION.SDK_INT >= 23) {
-            int permissionCheck = mActivity.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
-            permissionCheck += mActivity.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
+            int permissionCheck = _activity.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
+            permissionCheck += _activity.checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
             if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-                mActivity.requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                _activity.requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         }*/
 
@@ -99,13 +98,13 @@ public class BluetoothModule{
                                                             "Manifest.permission.ACCESS_COARSE_LOCATION");
 
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(mActivity,
+            ActivityCompat.requestPermissions(_activity,
                                               new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
                                               Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
 
-        Intent serverIntent = new Intent(mActivity, DeviceListActivity.class);
-        mActivity.startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+        Intent serverIntent = new Intent(_activity, DeviceListActivity.class);
+        _activity.startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
     }
 
     // Establish connection with other device
@@ -121,16 +120,16 @@ public class BluetoothModule{
         }
 
         // Get the BluetoothDevice object
-        BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+        BluetoothDevice device = _bluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device
-        mBluetoothService.connect(device);
+        _bluetoothService.connect(device);
     }
 
     public void sendPosition(Position pos) {
         byte[] buffer = new byte[16];
         ByteBuffer.wrap(buffer,0,8).putDouble(pos.getX());
         ByteBuffer.wrap(buffer,8,8).putDouble(pos.getY());
-        mBluetoothService.writeAll(buffer);
+        _bluetoothService.writeAll(buffer);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -145,15 +144,15 @@ public class BluetoothModule{
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
                     // Bluetooth is now enabled, so initialize BluetoothService
-                    mBluetoothService = new BluetoothService(mHandler);
-                    mBluetoothService.start();
+                    _bluetoothService = new BluetoothService(_handler);
+                    _bluetoothService.start();
                     App.instance().startSending();
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled");
-                    Toast.makeText(mActivity, R.string.bt_not_enabled_leaving,
+                    Toast.makeText(_activity, R.string.bt_not_enabled_leaving,
                             Toast.LENGTH_SHORT).show();
-                    mActivity.finish();
+                    _activity.finish();
                 }
         }
     }
