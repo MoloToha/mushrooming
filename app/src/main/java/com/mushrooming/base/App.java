@@ -52,6 +52,12 @@ public class App {
     private Handler _disconnectionHandler;
     private Runnable _disconnectionRunnable;
 
+    // We need to store reference to handler, because MyHandler class
+    // stores a weak reference to this field in order to flush all
+    // messages when application is destroyed
+    @SuppressWarnings("FieldCanBeLocal")
+    private BluetoothEventHandler _bluetoothHandler;
+
     public void init(Activity mainActivity){
         _applicationContext = mainActivity.getApplicationContext();
 		_debug = new Debug();
@@ -76,7 +82,8 @@ public class App {
             }
         };
 
-        _bluetooth = new BluetoothModule(mainActivity, new DefaultBluetoothHandler());
+        _bluetoothHandler = new DefaultBluetoothHandler();
+        _bluetooth = new BluetoothModule(mainActivity, _bluetoothHandler);
         _bluetooth.start();
 
         _algorithms = new AlgorithmModule(DisconnectGraphManager.getOne(), DijkstraAssemblyManager.getOne());
