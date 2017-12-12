@@ -60,6 +60,8 @@ public class BluetoothService {
 
     // Constructor. Prepares a new Bluetooth session.
     public BluetoothService(Handler handler) {
+        Log.d(TAG, "CREATE BluetoothService");
+
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mHandler = handler;
 
@@ -76,7 +78,7 @@ public class BluetoothService {
 
         MY_UUID = UUID.fromString(baseUUID + macAddress.replace(":",""));
 
-        Log.i(TAG, "my uuid: " + MY_UUID);
+        Log.i(TAG, "My uuid: " + MY_UUID);
     }
 
     /*
@@ -84,7 +86,7 @@ public class BluetoothService {
      * session in listening (server) mode.
      */
     synchronized void start() {
-        Log.d(TAG, "start");
+        Log.d(TAG, "START BluetoothService");
 
         // Cancel Thread attempting connection
         if (mConnectThread != null) {
@@ -106,7 +108,7 @@ public class BluetoothService {
 
     // Stop all threads
     synchronized void stop() {
-        Log.d(TAG, "stop");
+        Log.d(TAG, "STOP BluetoothService");
 
         // Stop accepting new connections
         if (mAcceptThread != null) {
@@ -128,13 +130,15 @@ public class BluetoothService {
 
     // Send message to all connected devices
     void writeAll(byte[] buffer) {
+        Log.d(TAG, "writeAll()");
+
         for( ConnectedThread connection : mConnections )
             connection.write( buffer );
     }
 
     // Start the ConnectThread to initiate a connection to a remote device.
     synchronized void connect(BluetoothDevice device) {
-        Log.d(TAG, "connect to: " + device);
+        Log.i(TAG, "connect to: " + device);
 
         // Start the thread to connect with the given device
         mConnectThread = new ConnectThread(device);
@@ -146,25 +150,28 @@ public class BluetoothService {
 
     // Start the ConnectedThread to begin managing a Bluetooth connection
     private synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
-        Log.d(TAG, "connected");
+        Log.i(TAG, "connected to: " + device);
+
+        // Sending message to handler
+        mHandler.obtainMessage(MESSAGE_CONNECTED, -1,-1,device.getName())
+                .sendToTarget();
 
         // Remove connect thread
         mConnectThread = null;
 
-        // Start the thread to manage the connection and perform transmissions
+        // Create the thread to manage the connection and perform transmissions
         ConnectedThread connection = new ConnectedThread(socket, device);
-        connection.start();
 
         // Add connection to the list of connections
         mConnections.add( connection );
 
-        // Sending message to handler
-        mHandler.obtainMessage(MESSAGE_CONNECTED, -1,-1,device.getName()).sendToTarget();
+        // Start the thread
+        connection.start();
     }
 
     // Indicate that the connection attempt failed and notify the UI Activity.
     private void connectionFailed(BluetoothDevice device) {
-        Log.i(TAG, "failed connecting to " + device.getName());
+        Log.i(TAG, "failed connecting to " + device);
 
         // Sending message to handler
         mHandler.obtainMessage(MESSAGE_CONNECTION_FAILED, -1,-1,device.getName())
@@ -173,7 +180,7 @@ public class BluetoothService {
 
     // Indicate that the connection was lost and notify the UI Activity.
     private void connectionLost(BluetoothDevice device, ConnectedThread connection) {
-        Log.i(TAG, "lost connection with " + device.getName());
+        Log.i(TAG, "lost connection with " + device);
 
         mConnections.remove(connection);
 
@@ -184,15 +191,14 @@ public class BluetoothService {
 
     /*
      * This thread runs while listening for incoming connections. It behaves
-     * like a server-side client. It runs until a connection is accepted
-     * (or until cancelled).
+     * like a server-side client. It runs until it is interrupted
      */
     private class AcceptThread extends Thread {
         // The local server socket
         private BluetoothServerSocket mmServerSocket = null;
 
         AcceptThread() {
-            Log.d(TAG, "create AcceptThread");
+            Log.d(TAG, "CREATE AcceptThread");
             // Create a new listening server socket
             try {
                 mmServerSocket = mAdapter.listenUsingRfcommWithServiceRecord(SOCKET_NAME, MY_UUID);
@@ -224,11 +230,14 @@ public class BluetoothService {
                     }
                 }
             }
+            else Log.e(TAG, "Server Socket is null");
 
             Log.d(TAG, "END AcceptThread");
         }
 
         void cancel() {
+            Log.d(TAG, "CANCEL AcceptThread");
+
             interrupt();
             try {
                 mmServerSocket.close();
@@ -249,7 +258,7 @@ public class BluetoothService {
         private final BluetoothDevice mmDevice;
 
         ConnectThread(BluetoothDevice device) {
-            Log.d(TAG, "create ConnectThread");
+            Log.d(TAG, "CREATE ConnectThread");
             mmDevice = device;
 
             UUID OTHER_UUID = UUID.fromString(baseUUID +
@@ -266,15 +275,17 @@ public class BluetoothService {
 
         public void run() {
             Log.d(TAG, "BEGIN ConnectThread");
-            setName("ConnectThread - " + mmDevice.getName());
+            setName("ConnectThread - " + mmDevice);
 
             if( mmSocket == null ){
+                Log.e(TAG, "Connect Socket is null");
+
                 connectionFailed(mmDevice);
                 return;
             }
 
             // Always cancel discovery because it will slow down a connection
-            mAdapter.cancelDiscovery();
+            // mAdapter.cancelDiscovery();
 
             // Make a connection to the BluetoothSocket
             try {
@@ -299,6 +310,8 @@ public class BluetoothService {
         }
 
         void cancel() {
+            Log.d(TAG, "CANCEL ConnectThread");
+
             try {
                 mmSocket.close();
             } catch (IOException e) {
@@ -318,7 +331,7 @@ public class BluetoothService {
         private OutputStream mmOutStream = null;
 
         ConnectedThread(BluetoothSocket socket, BluetoothDevice device) {
-            Log.d(TAG, "create ConnectedThread");
+            Log.d(TAG, "CREATE ConnectedThread");
 
             mmSocket = socket;
             mmDevice = device;
@@ -334,11 +347,13 @@ public class BluetoothService {
 
         public void run() {
             Log.d(TAG, "BEGIN mConnectedThread");
-            setName("ConnectedThread - " + mmDevice.getName());
+            setName("ConnectedThread - " + mmDevice);
             byte[] buffer = new byte[1024];
             int bytes;
 
             if( mmInStream == null ){
+                Log.e(TAG, "Input Stream is null");
+
                 connectionLost(mmDevice, this);
                 return;
             }
@@ -353,6 +368,8 @@ public class BluetoothService {
                     Bundle b = new Bundle();
                     b.putString(KEY_DEVICE_NAME, mmDevice.getName());
                     b.putByteArray(KEY_BUFFER, buffer);
+
+                    Log.d(TAG, "read from " + mmDevice);
 
                     mHandler.obtainMessage(MESSAGE_READ, bytes, -1, b)
                             .sendToTarget();
@@ -371,6 +388,8 @@ public class BluetoothService {
             try {
                 mmOutStream.write(buffer);
 
+                Log.d(TAG, "write to " + mmDevice);
+
                 // Inform the UI Activity that the message was sent
                 mHandler.obtainMessage(MESSAGE_WRITE, -1, -1, mmDevice.getName())
                         .sendToTarget();
@@ -383,7 +402,7 @@ public class BluetoothService {
             try {
                 mmSocket.close();
             } catch (IOException e) {
-                Log.e(TAG, "close() of socket failed", e);
+                Log.e(TAG, "close() failed", e);
             }
         }
     }
