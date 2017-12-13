@@ -16,10 +16,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.mushrooming.activities.MainActivity">
+        <activity
+            android:name="com.mushrooming.activities.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -30,7 +31,7 @@
             android:theme="@style/DeviceListTheme" />
         <activity android:name="com.mushrooming.activities.UserActivity" />
         <activity android:name="com.mushrooming.activities.TeamActivity" />
-        <activity android:name="com.mushrooming.activities.DebugActivity"></activity>
+        <activity android:name="com.mushrooming.activities.DebugActivity" />
     </application>
 
 </manifest>

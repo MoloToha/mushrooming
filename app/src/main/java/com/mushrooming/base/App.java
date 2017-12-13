@@ -43,7 +43,6 @@ public class App {
     public BluetoothModule getBluetooth() { return _bluetooth; }
     public Debug getDebug() { return _debug; }
 
-    private static  int START_DELAY = 100;
     private static int UPDATE_MY_POSITION_TIME = User.MAX_INACTIVITY_TIME / 4;
     private static int CHECK_DISCONNECTION_PROBLLEM_TIME = 2000;
 
@@ -51,6 +50,12 @@ public class App {
     private Runnable _updateRunnable;
     private Handler _disconnectionHandler;
     private Runnable _disconnectionRunnable;
+
+    // We need to store reference to handler, because MyHandler class
+    // stores a weak reference to this field in order to flush all
+    // messages when application is destroyed
+    @SuppressWarnings("FieldCanBeLocal")
+    private BluetoothEventHandler _bluetoothHandler;
 
     public void init(Activity mainActivity){
         _applicationContext = mainActivity.getApplicationContext();
@@ -76,7 +81,8 @@ public class App {
             }
         };
 
-        _bluetooth = new BluetoothModule(mainActivity, new DefaultBluetoothHandler());
+        _bluetoothHandler = new DefaultBluetoothHandler();
+        _bluetooth = new BluetoothModule(mainActivity, _bluetoothHandler);
         _bluetooth.start();
 
         _algorithms = new AlgorithmModule(DisconnectGraphManager.getOne(), DijkstraAssemblyManager.getOne());
@@ -94,17 +100,16 @@ public class App {
     }
 
     private void updateMyPosition(){
-        _debug.write("sending my position");
         // GPS: get position
         _bluetooth.sendPosition(new Position(42,666));
     }
 
     private void checkDisconnectionProblem() {
-        Log.d(TAG, "checkDisconnectionProblem");
+        Logger.error(this, "checkDisconnectionProblem");
         if (_algorithms.checkIfAssemblyNeeded(_team)) {
             //MapPosition assemblyPos = _assemblyManager.chooseAssemblyPlace(_team);
 
-            _debug.write("checkDisconnectionProblem() : assembly needed");
+            Logger.error(this, "checkDisconnectionProblem() : assembly needed");
             // assembly may also be ordered when graph is still consistent, depending on used manager
 
             // here order an assembly - show that user should go there

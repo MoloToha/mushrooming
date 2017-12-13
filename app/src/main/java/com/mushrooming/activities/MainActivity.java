@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.example.antonl.mushrooming.R;
 import com.mushrooming.base.App;
+import com.mushrooming.base.Logger;
 import com.mushrooming.base.Position;
 
 import java.util.Random;
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity
         Random gen = new Random();
         double x = gen.nextGaussian();
         double y = gen.nextGaussian();
-        App.instance().getDebug().write("Sending random position: " + x + " " + y);
+        Logger.debug(this, "Sending random position: " + x + " " + y);
 
         App.instance().getBluetooth().sendPosition( new Position(x,y) );
     }
