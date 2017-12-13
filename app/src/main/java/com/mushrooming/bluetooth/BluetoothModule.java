@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.antonl.mushrooming.R;
 import com.mushrooming.base.App;
+import com.mushrooming.base.Logger;
 import com.mushrooming.base.Position;
 
 import java.lang.ref.WeakReference;
@@ -40,7 +41,7 @@ public class BluetoothModule{
     private final Activity mActivity;
 
     public BluetoothModule(Activity activity, BluetoothEventHandler handler){
-        Log.d(TAG, "CREATE BluetoothModule");
+        Logger.debug(this, "CREATE BluetoothModule");
 
         mActivity = activity;
         mHandler = new MyHandler<>(handler);
@@ -48,7 +49,7 @@ public class BluetoothModule{
     }
 
     public void start() {
-        Log.d(TAG, "start()");
+        Logger.debug(this, "start()");
 
         // If BT is not on, request that it be enabled.
         // BluetoothService will then be initialized during onActivityResult
@@ -65,7 +66,7 @@ public class BluetoothModule{
     }
 
     public void stop() {
-        Log.d(TAG, "stop()");
+        Logger.debug(this, "stop()");
 
         if (mBluetoothService != null) {
             mBluetoothService.stop();
@@ -74,7 +75,7 @@ public class BluetoothModule{
 
     //Makes this device discoverable for 300 seconds (5 minutes).
     public void ensureDiscoverable() {
-        Log.d(TAG, "ensureDiscoverable()");
+        Logger.debug(this, "ensureDiscoverable()");
 
         if (mBluetoothAdapter.getScanMode() !=
                 BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
@@ -88,7 +89,7 @@ public class BluetoothModule{
     }
 
     public void newConnection() {
-        Log.d(TAG, "newConnection()");
+        Logger.debug(this, "newConnection()");
 
         if (Build.VERSION.SDK_INT >= 23) {
             int permissionCheck = mActivity.checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
@@ -104,7 +105,7 @@ public class BluetoothModule{
 
     // Establish connection with other device
     private void connectDevice(Intent data) {
-        Log.d(TAG, "connectDevice()");
+        Logger.debug(this, "connectDevice()");
 
         // Get the device MAC address
 
@@ -121,7 +122,7 @@ public class BluetoothModule{
     }
 
     public void sendPosition(Position pos) {
-        Log.d(TAG, "sendPosition()");
+        Logger.debug(this, "sendPosition()");
 
         byte[] buffer = new byte[16];
         ByteBuffer.wrap(buffer,0,8).putDouble(pos.getX());
@@ -140,14 +141,14 @@ public class BluetoothModule{
             case REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
-                    Log.i(TAG, "enabled bluetooth");
+                    Logger.debug(this, "enabled bluetooth");
                     // Bluetooth is now enabled, so initialize BluetoothService
                     mBluetoothService = new BluetoothService(mHandler);
                     mBluetoothService.start();
                     App.instance().startSending();
                 } else {
                     // User did not enable Bluetooth or an error occurred
-                    Log.e(TAG, "bluetooth not enabled");
+                    Logger.error(this, "bluetooth not enabled");
                     Toast.makeText(mActivity, R.string.bt_not_enabled_leaving,
                             Toast.LENGTH_SHORT).show();
                     mActivity.finish();
@@ -170,32 +171,32 @@ public class BluetoothModule{
         public void handleMessage(Message msg) {
             T a = mClassReference.get();
             if ( a == null ){
-                Log.e(TAG, "Can't get reference to handler");
+                Logger.error(this, "Can't get reference to handler");
             }
             else {
                 switch (msg.what) {
                     case BluetoothService.MESSAGE_CONNECTING:
-                        Log.d(TAG, "message: connecting");
+                        Logger.debug(this, "message: connecting");
                         a.connecting((String) msg.obj);
                         break;
                     case BluetoothService.MESSAGE_CONNECTED:
-                        Log.d(TAG, "message: connected");
+                        Logger.debug(this, "message: connected");
                         a.connected((String) msg.obj);
                         break;
                     case BluetoothService.MESSAGE_CONNECTION_FAILED:
-                        Log.d(TAG, "message: connection failed");
+                        Logger.debug(this, "message: connection failed");
                         a.connection_failed((String) msg.obj);
                         break;
                     case BluetoothService.MESSAGE_CONNECTION_LOST:
-                        Log.d(TAG, "message: connection lost");
+                        Logger.debug(this, "message: connection lost");
                         a.connection_lost((String) msg.obj);
                         break;
                     case BluetoothService.MESSAGE_WRITE:
-                        Log.d(TAG, "message: write");
+                        Logger.debug(this, "message: write");
                         a.position_sent((String) msg.obj);
                         break;
                     case BluetoothService.MESSAGE_READ:
-                        Log.d(TAG, "message: read");
+                        Logger.debug(this, "message: read");
 
                         Bundle b = (Bundle) msg.obj;
                         String device_name = b.getString(BluetoothService.KEY_DEVICE_NAME);

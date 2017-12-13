@@ -1,16 +1,9 @@
 package com.mushrooming.base;
 
-import android.app.Activity;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-
-import com.example.antonl.mushrooming.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 /**
  * Created by barto on 21.11.2017.
@@ -23,22 +16,37 @@ public class Debug {
         ERROR
     }
 
-    public class LogPair{
+    public class Log {
         public LogType type;
         public String msg;
+        public int amount;
 
-        public LogPair(LogType type, String msg) {
+        public Log(LogType type, String msg) {
             this.type = type;
             this.msg = msg;
+            amount = 1;
         }
 
         @Override
         public String toString() {
-            return type.toString() + ": " + msg;
+            String num = "";
+            if(amount > 1){
+                num = amount + "x ";
+            }
+            return num + type.toString() + ": " + msg;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof Log){
+                Log logObj = (Log)obj;
+                return type.equals(logObj.type) && msg.equals(logObj.msg);
+            }
+            return false;
         }
     }
 
-    private ArrayList<LogPair> _logs;
+    private ArrayList<Log> _logs;
     private ArrayAdapter<String> _logAdapter = null;
     HashMap<LogType, Boolean> _isTypeVisible;
     public Debug() {
@@ -59,7 +67,15 @@ public class Debug {
     }
 
     public void addLog(LogType type, String msg){
-        _logs.add(new LogPair(type, msg));
+        Log newLog = new Log(type, msg);
+
+        int idx = _logs.indexOf(newLog);
+        if(idx != -1){
+            newLog.amount = _logs.get(idx).amount + 1;
+            _logs.remove(idx);
+        }
+
+        _logs.add(newLog);
         fillAdapter();
     }
 
@@ -75,11 +91,10 @@ public class Debug {
         }
 
         _logAdapter.clear();
-        for(LogPair p : _logs){
-            if(_isTypeVisible.get(p.type) == true) {
-                _logAdapter.add(p.toString());
+        for(Log l : _logs){
+            if(_isTypeVisible.get(l.type) == true) {
+                _logAdapter.add(l.toString());
             }
         }
     }
-
 }

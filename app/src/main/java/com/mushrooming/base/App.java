@@ -43,7 +43,6 @@ public class App {
     public BluetoothModule getBluetooth() { return _bluetooth; }
     public Debug getDebug() { return _debug; }
 
-    private static  int START_DELAY = 100;
     private static int UPDATE_MY_POSITION_TIME = User.MAX_INACTIVITY_TIME / 4;
     private static int CHECK_DISCONNECTION_PROBLLEM_TIME = 2000;
 
@@ -101,7 +100,6 @@ public class App {
     }
 
     private void updateMyPosition(){
-        Logger.warning(this, "sending my position");
         // GPS: get position
         _bluetooth.sendPosition(new Position(42,666));
     }

@@ -13,6 +13,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import com.mushrooming.base.App;
+import com.mushrooming.base.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +61,7 @@ public class BluetoothService {
 
     // Constructor. Prepares a new Bluetooth session.
     public BluetoothService(Handler handler) {
-        Log.d(TAG, "CREATE BluetoothService");
+        Logger.debug(this, "CREATE BluetoothService");
 
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mHandler = handler;
@@ -86,7 +87,7 @@ public class BluetoothService {
      * session in listening (server) mode.
      */
     synchronized void start() {
-        Log.d(TAG, "START BluetoothService");
+        Logger.debug(this, "START BluetoothService");
 
         // Cancel Thread attempting connection
         if (mConnectThread != null) {
@@ -108,7 +109,7 @@ public class BluetoothService {
 
     // Stop all threads
     synchronized void stop() {
-        Log.d(TAG, "STOP BluetoothService");
+        Logger.debug(this, "STOP BluetoothService");
 
         // Stop accepting new connections
         if (mAcceptThread != null) {
@@ -130,7 +131,7 @@ public class BluetoothService {
 
     // Send message to all connected devices
     void writeAll(byte[] buffer) {
-        Log.d(TAG, "writeAll()");
+        //Logger.debug(this, "writeAll()");
 
         for( ConnectedThread connection : mConnections )
             connection.write( buffer );
@@ -198,7 +199,7 @@ public class BluetoothService {
         private BluetoothServerSocket mmServerSocket = null;
 
         AcceptThread() {
-            Log.d(TAG, "CREATE AcceptThread");
+            Logger.debug(this, "CREATE AcceptThread");
             // Create a new listening server socket
             try {
                 mmServerSocket = mAdapter.listenUsingRfcommWithServiceRecord(SOCKET_NAME, MY_UUID);
@@ -208,7 +209,7 @@ public class BluetoothService {
         }
 
         public void run() {
-            Log.d(TAG, "BEGIN AcceptThread");
+            Logger.debug(this, "BEGIN AcceptThread");
             setName("AcceptThread");
 
             if( mmServerSocket != null ){
@@ -232,11 +233,11 @@ public class BluetoothService {
             }
             else Log.e(TAG, "Server Socket is null");
 
-            Log.d(TAG, "END AcceptThread");
+            Logger.debug(this, "END AcceptThread");
         }
 
         void cancel() {
-            Log.d(TAG, "CANCEL AcceptThread");
+            Logger.debug(this, "CANCEL AcceptThread");
 
             interrupt();
             try {
@@ -258,7 +259,7 @@ public class BluetoothService {
         private final BluetoothDevice mmDevice;
 
         ConnectThread(BluetoothDevice device) {
-            Log.d(TAG, "CREATE ConnectThread");
+            Logger.debug(this, "CREATE ConnectThread");
             mmDevice = device;
 
             UUID OTHER_UUID = UUID.fromString(baseUUID +
@@ -274,7 +275,7 @@ public class BluetoothService {
         }
 
         public void run() {
-            Log.d(TAG, "BEGIN ConnectThread");
+            Logger.debug(this, "BEGIN ConnectThread");
             setName("ConnectThread - " + mmDevice);
 
             if( mmSocket == null ){
@@ -306,11 +307,11 @@ public class BluetoothService {
             // Start the connected thread
             connected(mmSocket, mmDevice);
 
-            Log.d(TAG, "END ConnectThread");
+            Logger.debug(this, "END ConnectThread");
         }
 
         void cancel() {
-            Log.d(TAG, "CANCEL ConnectThread");
+            Logger.debug(this, "CANCEL ConnectThread");
 
             try {
                 mmSocket.close();
@@ -331,7 +332,7 @@ public class BluetoothService {
         private OutputStream mmOutStream = null;
 
         ConnectedThread(BluetoothSocket socket, BluetoothDevice device) {
-            Log.d(TAG, "CREATE ConnectedThread");
+            Logger.debug(this, "CREATE ConnectedThread");
 
             mmSocket = socket;
             mmDevice = device;
@@ -346,13 +347,13 @@ public class BluetoothService {
         }
 
         public void run() {
-            Log.d(TAG, "BEGIN mConnectedThread");
+            Logger.debug(this, "BEGIN mConnectedThread");
             setName("ConnectedThread - " + mmDevice);
             byte[] buffer = new byte[1024];
             int bytes;
 
             if( mmInStream == null ){
-                Log.e(TAG, "Input Stream is null");
+                Logger.error(this,  "Input Stream is null");
 
                 connectionLost(mmDevice, this);
                 return;
@@ -369,18 +370,18 @@ public class BluetoothService {
                     b.putString(KEY_DEVICE_NAME, mmDevice.getName());
                     b.putByteArray(KEY_BUFFER, buffer);
 
-                    Log.d(TAG, "read from " + mmDevice);
+                    Logger.debug(this, "read from " + mmDevice);
 
                     mHandler.obtainMessage(MESSAGE_READ, bytes, -1, b)
                             .sendToTarget();
                 } catch (IOException e) {
-                    Log.e(TAG, "disconnected", e);
+                    Logger.error(this,  "disconnected", e);
                     connectionLost(mmDevice, this);
                     break;
                 }
             }
 
-            Log.d(TAG, "END mConnectedThread");
+            Logger.debug(this, "END mConnectedThread");
         }
 
         // Write to the connected OutStream.
@@ -388,13 +389,13 @@ public class BluetoothService {
             try {
                 mmOutStream.write(buffer);
 
-                Log.d(TAG, "write to " + mmDevice);
+                Logger.debug(this, "write to " + mmDevice);
 
                 // Inform the UI Activity that the message was sent
                 mHandler.obtainMessage(MESSAGE_WRITE, -1, -1, mmDevice.getName())
                         .sendToTarget();
             } catch (IOException e) {
-                Log.e(TAG, "write() failed", e);
+                Logger.errorWithException(this, e, "write() failed");
             }
         }
 
@@ -402,7 +403,7 @@ public class BluetoothService {
             try {
                 mmSocket.close();
             } catch (IOException e) {
-                Log.e(TAG, "close() failed", e);
+                Logger.errorWithException(this, e, "close() failed");
             }
         }
     }
