@@ -9,6 +9,7 @@ import android.widget.ListView;
 import com.example.antonl.mushrooming.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -16,29 +17,68 @@ import java.util.Random;
  */
 
 public class Debug {
-    private ArrayList<String> _logs;
-    private ArrayAdapter<String> _logArrayAdapter = null;
-
-    public Debug() {
-        _logs = new ArrayList<>();
+    public enum LogType {
+        INFO,
+        WARNING,
+        ERROR
     }
 
-    public ArrayList<String> getLogs(){
-        return _logs;
+    public class LogPair{
+        public LogType type;
+        public String msg;
+
+        public LogPair(LogType type, String msg) {
+            this.type = type;
+            this.msg = msg;
+        }
+
+        @Override
+        public String toString() {
+            return type.toString() + ": " + msg;
+        }
+    }
+
+    private ArrayList<LogPair> _logs;
+    private ArrayAdapter<String> _logAdapter = null;
+    HashMap<LogType, Boolean> _isTypeVisible;
+    public Debug() {
+        _logs = new ArrayList<>();
+
+        _isTypeVisible = new HashMap<>();
+        _isTypeVisible.put(LogType.INFO, true);
+        _isTypeVisible.put(LogType.WARNING, true);
+        _isTypeVisible.put(LogType.ERROR, true);
     }
 
     public void attachAdapter(ArrayAdapter<String> adapter){
-        _logArrayAdapter = adapter;
-        _logArrayAdapter.addAll(_logs);
+        _logAdapter = adapter;
+        fillAdapter();
     }
     public void detachAdapter(){
-        _logArrayAdapter = null;
+        _logAdapter = null;
     }
 
-    public void write(String s){
-        _logs.add(s);
-        if(_logArrayAdapter != null){
-            _logArrayAdapter.add(s);
+    public void addLog(LogType type, String msg){
+        _logs.add(new LogPair(type, msg));
+        fillAdapter();
+    }
+
+
+    public void setVisible(LogType type, boolean isVisible){
+        _isTypeVisible.put(type, isVisible);
+        fillAdapter();
+    }
+
+    private void fillAdapter(){
+        if(_logAdapter == null){
+            return;
+        }
+
+        _logAdapter.clear();
+        for(LogPair p : _logs){
+            if(_isTypeVisible.get(p.type) == true) {
+                _logAdapter.add(p.toString());
+            }
         }
     }
 

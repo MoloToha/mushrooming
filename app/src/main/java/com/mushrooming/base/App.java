@@ -101,17 +101,17 @@ public class App {
     }
 
     private void updateMyPosition(){
-        _debug.write("sending my position");
+        Logger.warning(this, "sending my position");
         // GPS: get position
         _bluetooth.sendPosition(new Position(42,666));
     }
 
     private void checkDisconnectionProblem() {
-        Log.d(TAG, "checkDisconnectionProblem");
+        Logger.error(this, "checkDisconnectionProblem");
         if (_algorithms.checkIfAssemblyNeeded(_team)) {
             //MapPosition assemblyPos = _assemblyManager.chooseAssemblyPlace(_team);
 
-            _debug.write("checkDisconnectionProblem() : assembly needed");
+            Logger.error(this, "checkDisconnectionProblem() : assembly needed");
             // assembly may also be ordered when graph is still consistent, depending on used manager
 
             // here order an assembly - show that user should go there
