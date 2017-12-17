@@ -49,12 +49,12 @@ public class BluetoothService {
     private ArrayList<ConnectedThread> mConnections = new ArrayList<>();
 
     // Constants representing handler message types
-    static final int MESSAGE_CONNECTING = 0;
-    static final int MESSAGE_CONNECTED = 1;
-    static final int MESSAGE_CONNECTION_FAILED = 2;
-    static final int MESSAGE_CONNECTION_LOST = 3;
-    static final int MESSAGE_WRITE = 4;
-    static final int MESSAGE_READ = 5;
+    static final int HANDLER_CONNECTING = 0;
+    static final int HANDLER_CONNECTED = 1;
+    static final int HANDLER_CONNECTION_FAILED = 2;
+    static final int HANDLER_CONNECTION_LOST = 3;
+    static final int HANDLER_WRITE = 4;
+    static final int HANDLER_READ = 5;
 
     static final String KEY_DEVICE_NAME = "device_name";
     static final String KEY_BUFFER = "buffer";
@@ -146,7 +146,7 @@ public class BluetoothService {
         mConnectThread.start();
 
         // Sending message to handler
-        mHandler.obtainMessage(MESSAGE_CONNECTING, -1,-1,device.getName()).sendToTarget();
+        mHandler.obtainMessage(HANDLER_CONNECTING, -1,-1,device.getName()).sendToTarget();
     }
 
     // Start the ConnectedThread to begin managing a Bluetooth connection
@@ -154,7 +154,7 @@ public class BluetoothService {
         Log.i(TAG, "connected to: " + device);
 
         // Sending message to handler
-        mHandler.obtainMessage(MESSAGE_CONNECTED, -1,-1,device.getName())
+        mHandler.obtainMessage(HANDLER_CONNECTED, -1,-1,device.getName())
                 .sendToTarget();
 
         // Remove connect thread
@@ -175,7 +175,7 @@ public class BluetoothService {
         Log.i(TAG, "failed connecting to " + device);
 
         // Sending message to handler
-        mHandler.obtainMessage(MESSAGE_CONNECTION_FAILED, -1,-1,device.getName())
+        mHandler.obtainMessage(HANDLER_CONNECTION_FAILED, -1,-1,device.getName())
                 .sendToTarget();
     }
 
@@ -186,7 +186,7 @@ public class BluetoothService {
         mConnections.remove(connection);
 
         // Sending message to handler
-        mHandler.obtainMessage(MESSAGE_CONNECTION_LOST, -1,-1,device.getName())
+        mHandler.obtainMessage(HANDLER_CONNECTION_LOST, -1,-1,device.getName())
                 .sendToTarget();
     }
 
@@ -372,7 +372,7 @@ public class BluetoothService {
 
                     Logger.debug(this, "read from " + mmDevice);
 
-                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, b)
+                    mHandler.obtainMessage(HANDLER_READ, bytes, -1, b)
                             .sendToTarget();
                 } catch (IOException e) {
                     Logger.error(this,  "disconnected", e);
@@ -392,7 +392,7 @@ public class BluetoothService {
                 Logger.debug(this, "write to " + mmDevice);
 
                 // Inform the UI Activity that the message was sent
-                mHandler.obtainMessage(MESSAGE_WRITE, -1, -1, mmDevice.getName())
+                mHandler.obtainMessage(HANDLER_WRITE, -1, -1, mmDevice.getName())
                         .sendToTarget();
             } catch (IOException e) {
                 Logger.errorWithException(this, e, "write() failed");

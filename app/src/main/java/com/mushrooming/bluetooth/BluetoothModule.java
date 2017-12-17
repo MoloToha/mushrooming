@@ -20,6 +20,7 @@ import com.mushrooming.base.Logger;
 import com.mushrooming.base.Position;
 
 import java.lang.ref.WeakReference;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 
 public class BluetoothModule{
@@ -30,6 +31,9 @@ public class BluetoothModule{
     // Intent request codes
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_CONNECT_DEVICE = 2;
+
+    // Constants representing bluetooth message types
+    private static final int MESSAGE_POSITION = 1;
 
     // Member object for the bluetooth services
     private BluetoothService mBluetoothService = null;
@@ -158,50 +162,64 @@ public class BluetoothModule{
 
         private final WeakReference<T> mClassReference;
 
-        MyHandler( T a ){
-            mClassReference = new WeakReference<>(a);
+        MyHandler( T handler ) {
+            mClassReference = new WeakReference<>(handler);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            T a = mClassReference.get();
-            if ( a == null ){
+            T handler = mClassReference.get();
+            if ( handler == null ){
                 Logger.error(this, "Can't get reference to handler");
             }
             else {
                 switch (msg.what) {
-                    case BluetoothService.MESSAGE_CONNECTING:
-                        Logger.debug(this, "message: connecting");
-                        a.connecting((String) msg.obj);
+                    case BluetoothService.HANDLER_CONNECTING:
+                        //Logger.debug(this, "message: connecting");
+                        handler.connecting((String) msg.obj);
                         break;
-                    case BluetoothService.MESSAGE_CONNECTED:
-                        Logger.debug(this, "message: connected");
-                        a.connected((String) msg.obj);
+                    case BluetoothService.HANDLER_CONNECTED:
+                        //Logger.debug(this, "message: connected");
+                        handler.connected((String) msg.obj);
                         break;
-                    case BluetoothService.MESSAGE_CONNECTION_FAILED:
-                        Logger.debug(this, "message: connection failed");
-                        a.connection_failed((String) msg.obj);
+                    case BluetoothService.HANDLER_CONNECTION_FAILED:
+                        //Logger.debug(this, "message: connection failed");
+                        handler.connection_failed((String) msg.obj);
                         break;
-                    case BluetoothService.MESSAGE_CONNECTION_LOST:
-                        Logger.debug(this, "message: connection lost");
-                        a.connection_lost((String) msg.obj);
+                    case BluetoothService.HANDLER_CONNECTION_LOST:
+                        //Logger.debug(this, "message: connection lost");
+                        handler.connection_lost((String) msg.obj);
                         break;
-                    case BluetoothService.MESSAGE_WRITE:
-                        Logger.debug(this, "message: write");
-                        a.position_sent((String) msg.obj);
+                    case BluetoothService.HANDLER_WRITE:
+                        //Logger.debug(this, "message: write");
+                        handler.position_sent((String) msg.obj);
                         break;
-                    case BluetoothService.MESSAGE_READ:
-                        Logger.debug(this, "message: read");
+                    case BluetoothService.HANDLER_READ:
+                        //Logger.debug(this, "message: read");
 
                         Bundle b = (Bundle) msg.obj;
                         String deviceName = b.getString(BluetoothService.KEY_DEVICE_NAME);
                         ByteBuffer buffer = ByteBuffer.wrap(b.getByteArray(BluetoothService.KEY_BUFFER));
+
+                        handleBluetoothMessage(handler, deviceName, buffer);
+                }
+            }
+        }
+
+        private void handleBluetoothMessage(T handler, String deviceName, ByteBuffer buffer) {
+            try{
+                int messageType = buffer.getInt();
+                switch (messageType){
+                    case BluetoothModule.MESSAGE_POSITION:
                         double x = buffer.getDouble();
                         double y = buffer.getDouble();
 
-                        a.position_received(deviceName, x, y);
+                        handler.position_received(deviceName, x, y);
                         break;
                 }
+
+            } catch (BufferUnderflowException e) {
+                Logger.errorWithException(this, e, "incorrect format of bluetooth message!");
             }
         }
     }
