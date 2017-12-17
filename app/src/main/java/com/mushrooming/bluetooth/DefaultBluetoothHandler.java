@@ -28,19 +28,19 @@ public class DefaultBluetoothHandler implements BluetoothEventHandler {
         Logger.debug(this, _applicationContext.getString(R.string.connected, device));
     }
 
-    public void connection_failed(String device){
+    public void connectionFailed(String device){
         Logger.debug(this, _applicationContext.getString(R.string.connection_failed, device));
     }
 
-    public void connection_lost(String device){
+    public void connectionLost(String device){
         Logger.debug(this, _applicationContext.getString(R.string.connection_lost, device));
     }
 
-    public void position_sent(String device){
+    public void positionSent(String device){
         Logger.debug(this, _applicationContext.getString(R.string.position_sent, device));
     }
 
-    public void position_received(String device, double x, double y){
+    public void positionReceived(String device, double x, double y){
         Logger.debug(this, _applicationContext.getString(R.string.position_received, device, x, y));
 
         App.instance().getTeam().updateUser(device.hashCode(), new Position(x,y));

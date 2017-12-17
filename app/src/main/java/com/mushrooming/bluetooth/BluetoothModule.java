@@ -184,15 +184,15 @@ public class BluetoothModule{
                         break;
                     case BluetoothService.HANDLER_CONNECTION_FAILED:
                         //Logger.debug(this, "message: connection failed");
-                        handler.connection_failed((String) msg.obj);
+                        handler.connectionFailed((String) msg.obj);
                         break;
                     case BluetoothService.HANDLER_CONNECTION_LOST:
                         //Logger.debug(this, "message: connection lost");
-                        handler.connection_lost((String) msg.obj);
+                        handler.connectionLost((String) msg.obj);
                         break;
                     case BluetoothService.HANDLER_WRITE:
                         //Logger.debug(this, "message: write");
-                        handler.position_sent((String) msg.obj);
+                        handler.positionSent((String) msg.obj);
                         break;
                     case BluetoothService.HANDLER_READ:
                         //Logger.debug(this, "message: read");
@@ -214,7 +214,7 @@ public class BluetoothModule{
                         double x = buffer.getDouble();
                         double y = buffer.getDouble();
 
-                        handler.position_received(deviceName, x, y);
+                        handler.positionReceived(deviceName, x, y);
                         break;
                 }
 
