@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.antonl.mushrooming.R;
@@ -24,8 +23,6 @@ import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 
 public class BluetoothModule{
-
-    private static final String TAG = "BluetoothModule";
 
     // Local Bluetooth adapter
     private BluetoothAdapter mBluetoothAdapter = null;
@@ -124,10 +121,10 @@ public class BluetoothModule{
     public void sendPosition(Position pos) {
         Logger.debug(this, "sendPosition()");
 
-        byte[] buffer = new byte[16];
-        ByteBuffer.wrap(buffer,0,8).putDouble(pos.getX());
-        ByteBuffer.wrap(buffer,8,8).putDouble(pos.getY());
-        mBluetoothService.writeAll(buffer);
+        ByteBuffer buffer = ByteBuffer.allocate(16);
+        buffer.putDouble(pos.getX());
+        buffer.putDouble(pos.getY());
+        mBluetoothService.writeAll(buffer.array());
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -158,8 +155,6 @@ public class BluetoothModule{
 
     // The Handler that gets information back from the BluetoothService
     public static class MyHandler<T extends BluetoothEventHandler> extends Handler {
-
-        private String TAG = "BluetoothHandler";
 
         private final WeakReference<T> mClassReference;
 
@@ -199,12 +194,12 @@ public class BluetoothModule{
                         Logger.debug(this, "message: read");
 
                         Bundle b = (Bundle) msg.obj;
-                        String device_name = b.getString(BluetoothService.KEY_DEVICE_NAME);
-                        byte[] buffer = b.getByteArray(BluetoothService.KEY_BUFFER);
-                        double x = ByteBuffer.wrap(buffer, 0, 8).getDouble();
-                        double y = ByteBuffer.wrap(buffer, 8, 8).getDouble();
+                        String deviceName = b.getString(BluetoothService.KEY_DEVICE_NAME);
+                        ByteBuffer buffer = ByteBuffer.wrap(b.getByteArray(BluetoothService.KEY_BUFFER));
+                        double x = buffer.getDouble();
+                        double y = buffer.getDouble();
 
-                        a.position_received(device_name, x, y);
+                        a.position_received(deviceName, x, y);
                         break;
                 }
             }
