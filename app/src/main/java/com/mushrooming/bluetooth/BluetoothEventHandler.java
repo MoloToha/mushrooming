@@ -1,6 +1,8 @@
 package com.mushrooming.bluetooth;
 
 
+import java.util.ArrayList;
+
 public interface BluetoothEventHandler {
     void connecting(String device);
     void connected(String device);
@@ -8,4 +10,5 @@ public interface BluetoothEventHandler {
     void connectionLost(String device);
     void positionSent(String device);
     void positionReceived(String device, double x, double y);
+    void connectionsReceived(String device, ArrayList<String> connections);
 }

@@ -27,5 +27,6 @@
     <string name="connection_lost">lost connection with %1$s</string>
     <string name="position_sent">position sent to %1$s</string>
     <string name="position_received">%1$s sent position: %2$f %3$f</string>
+    <string name="connections_received">%1$s sent connections</string>
 
 </resources>

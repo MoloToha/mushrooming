@@ -22,6 +22,7 @@ import com.mushrooming.base.Position;
 import java.lang.ref.WeakReference;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 public class BluetoothModule{
 
@@ -33,7 +34,8 @@ public class BluetoothModule{
     private static final int REQUEST_CONNECT_DEVICE = 2;
 
     // Constants representing bluetooth message types
-    private static final int MESSAGE_POSITION = 1;
+    private static final int MESSAGE_POSITION = 1; // x:double, y:double
+    private static final int MESSAGE_CONNECTED_DEVICES = 2; // N:int, Dev1:char(18) ... DevN:char(18)
 
     // Member object for the bluetooth services
     private BluetoothService mBluetoothService = null;
@@ -216,6 +218,17 @@ public class BluetoothModule{
 
                         handler.positionReceived(deviceName, x, y);
                         break;
+                    case BluetoothModule.MESSAGE_CONNECTED_DEVICES:
+                        int nrDevices = buffer.getInt();
+                        ArrayList<String> devices = new ArrayList<>();
+                        for( int i = 0; i < nrDevices; i++ ){
+                            StringBuilder device = new StringBuilder(18);
+                            for( int j = 0; j < 18; j++ )
+                                device.append(buffer.getChar());
+                            devices.add(device.toString());
+                        }
+
+                        handler.connectionsReceived(deviceName, devices);
                 }
 
             } catch (BufferUnderflowException e) {
