@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -27,7 +26,7 @@ import java.util.UUID;
  * incoming connections, a thread for connecting with a device, and a
  * thread for performing data transmissions when connected.
  */
-public class BluetoothService {
+class BluetoothService {
 
     // Debugging
     private static final String TAG = "BluetoothService";
@@ -60,7 +59,7 @@ public class BluetoothService {
     static final String KEY_BUFFER = "buffer";
 
     // Constructor. Prepares a new Bluetooth session.
-    public BluetoothService(Handler handler) {
+    BluetoothService(Handler handler) {
         Logger.debug(this, "CREATE BluetoothService");
 
         mAdapter = BluetoothAdapter.getDefaultAdapter();
