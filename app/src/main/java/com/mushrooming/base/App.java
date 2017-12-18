@@ -66,6 +66,7 @@ public class App {
             @Override
             public void run() {
                 updateMyPosition();
+                _bluetooth.sendConnections();
 
                 _updateHandler.postDelayed(this, UPDATE_MY_POSITION_TIME);
             }
@@ -89,6 +90,8 @@ public class App {
     }
 
     public void startSending(){
+        Logger.debug(this, "startSending()");
+
         _updateHandler.postDelayed(_updateRunnable, UPDATE_MY_POSITION_TIME);
         _disconnectionHandler.postDelayed(_disconnectionRunnable, CHECK_DISCONNECTION_PROBLLEM_TIME);
     }
@@ -105,7 +108,7 @@ public class App {
     }
 
     private void checkDisconnectionProblem() {
-        Logger.error(this, "checkDisconnectionProblem");
+        Logger.debug(this, "checkDisconnectionProblem()");
         if (_algorithms.checkIfAssemblyNeeded(_team)) {
             //MapPosition assemblyPos = _assemblyManager.chooseAssemblyPlace(_team);
 

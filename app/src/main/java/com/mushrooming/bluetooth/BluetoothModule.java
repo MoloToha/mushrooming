@@ -19,6 +19,7 @@ import com.mushrooming.base.App;
 import com.mushrooming.base.Logger;
 import com.mushrooming.base.Position;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
@@ -35,7 +36,7 @@ public class BluetoothModule{
 
     // Constants representing bluetooth message types
     private static final int MESSAGE_POSITION = 1; // x:double, y:double
-    private static final int MESSAGE_CONNECTED_DEVICES = 2; // N:int, Dev1:char(18) ... DevN:char(18)
+    private static final int MESSAGE_CONNECTED_DEVICES = 2; // N:int, Dev1:byte(17) ... DevN:byte(17)
 
     // Member object for the bluetooth services
     private BluetoothService mBluetoothService = null;
@@ -127,9 +128,25 @@ public class BluetoothModule{
     public void sendPosition(Position pos) {
         Logger.debug(this, "sendPosition()");
 
-        ByteBuffer buffer = ByteBuffer.allocate(16);
+        ByteBuffer buffer = ByteBuffer.allocate(20);
+        buffer.putInt(BluetoothModule.MESSAGE_POSITION);
         buffer.putDouble(pos.getX());
         buffer.putDouble(pos.getY());
+        mBluetoothService.writeAll(buffer.array());
+    }
+
+    public void sendConnections() {
+        Logger.debug(this, "sendConnections()");
+
+        ArrayList<String> connections = mBluetoothService.getConnections();
+        ByteBuffer buffer = ByteBuffer.allocate(8 + 17 * connections.size());
+
+        buffer.putInt(BluetoothModule.MESSAGE_CONNECTED_DEVICES);
+        buffer.putInt(connections.size());
+
+        for( String connection : connections )
+            buffer.put(connection.getBytes());
+
         mBluetoothService.writeAll(buffer.array());
     }
 
@@ -177,27 +194,18 @@ public class BluetoothModule{
             else {
                 switch (msg.what) {
                     case BluetoothService.HANDLER_CONNECTING:
-                        //Logger.debug(this, "message: connecting");
                         handler.connecting((String) msg.obj);
                         break;
                     case BluetoothService.HANDLER_CONNECTED:
-                        //Logger.debug(this, "message: connected");
                         handler.connected((String) msg.obj);
                         break;
                     case BluetoothService.HANDLER_CONNECTION_FAILED:
-                        //Logger.debug(this, "message: connection failed");
                         handler.connectionFailed((String) msg.obj);
                         break;
                     case BluetoothService.HANDLER_CONNECTION_LOST:
-                        //Logger.debug(this, "message: connection lost");
                         handler.connectionLost((String) msg.obj);
                         break;
-                    case BluetoothService.HANDLER_WRITE:
-                        //Logger.debug(this, "message: write");
-                        handler.positionSent((String) msg.obj);
-                        break;
                     case BluetoothService.HANDLER_READ:
-                        //Logger.debug(this, "message: read");
 
                         Bundle b = (Bundle) msg.obj;
                         String deviceName = b.getString(BluetoothService.KEY_DEVICE_NAME);
@@ -222,10 +230,11 @@ public class BluetoothModule{
                         int nrDevices = buffer.getInt();
                         ArrayList<String> devices = new ArrayList<>();
                         for( int i = 0; i < nrDevices; i++ ){
-                            StringBuilder device = new StringBuilder(18);
-                            for( int j = 0; j < 18; j++ )
-                                device.append(buffer.getChar());
-                            devices.add(device.toString());
+                            byte[] address = new byte[17];
+                            buffer.get(address, 0, 17);
+
+                            String device = new String(address, "UTF-8");
+                            devices.add(device);
                         }
 
                         handler.connectionsReceived(deviceName, devices);
@@ -233,6 +242,9 @@ public class BluetoothModule{
 
             } catch (BufferUnderflowException e) {
                 Logger.errorWithException(this, e, "incorrect format of bluetooth message!");
+            } catch (UnsupportedEncodingException e) {
+                // This shouldn't really happen, but it's checked exception, so it needs te be handled
+                Logger.errorWithException(this, e, "UTF-8 encoding is not supported (WHAT?)");
             }
         }
     }

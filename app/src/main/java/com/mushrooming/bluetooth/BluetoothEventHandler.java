@@ -8,7 +8,6 @@ public interface BluetoothEventHandler {
     void connected(String device);
     void connectionFailed(String device);
     void connectionLost(String device);
-    void positionSent(String device);
     void positionReceived(String device, double x, double y);
     void connectionsReceived(String device, ArrayList<String> connections);
 }

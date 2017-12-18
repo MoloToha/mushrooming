@@ -30,15 +30,11 @@ public class DefaultBluetoothHandler implements BluetoothEventHandler {
     }
 
     public void connectionFailed(String device){
-        Logger.debug(this, _applicationContext.getString(R.string.connection_failed, device));
+        Logger.error(this, _applicationContext.getString(R.string.connection_failed, device));
     }
 
     public void connectionLost(String device){
-        Logger.debug(this, _applicationContext.getString(R.string.connection_lost, device));
-    }
-
-    public void positionSent(String device){
-        Logger.debug(this, _applicationContext.getString(R.string.position_sent, device));
+        Logger.warning(this, _applicationContext.getString(R.string.connection_lost, device));
     }
 
     public void positionReceived(String device, double x, double y){
@@ -49,5 +45,9 @@ public class DefaultBluetoothHandler implements BluetoothEventHandler {
 
     public void connectionsReceived(String device, ArrayList<String> connections){
         Logger.debug(this, _applicationContext.getString(R.string.connections_received, device));
+
+        for( String connection : connections ){
+            Logger.debug(this, connection);
+        }
     }
 }

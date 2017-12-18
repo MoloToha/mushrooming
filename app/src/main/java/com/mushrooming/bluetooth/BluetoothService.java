@@ -52,8 +52,7 @@ class BluetoothService {
     static final int HANDLER_CONNECTED = 1;
     static final int HANDLER_CONNECTION_FAILED = 2;
     static final int HANDLER_CONNECTION_LOST = 3;
-    static final int HANDLER_WRITE = 4;
-    static final int HANDLER_READ = 5;
+    static final int HANDLER_READ = 4;
 
     static final String KEY_DEVICE_NAME = "device_name";
     static final String KEY_BUFFER = "buffer";
@@ -78,7 +77,7 @@ class BluetoothService {
 
         MY_UUID = UUID.fromString(baseUUID + macAddress.replace(":",""));
 
-        Log.i(TAG, "My uuid: " + MY_UUID);
+        Logger.debug(TAG, "My uuid: " + MY_UUID);
     }
 
     /*
@@ -126,6 +125,14 @@ class BluetoothService {
         for( ConnectedThread connection : mConnections )
             connection.cancel();
         mConnections.clear();
+    }
+
+    // Returns addresses of connected devices
+    ArrayList<String> getConnections() {
+        ArrayList<String> devices = new ArrayList<>();
+        for( ConnectedThread connection : mConnections )
+            devices.add( connection.getDevice().getAddress() );
+        return devices;
     }
 
     // Send message to all connected devices
@@ -345,6 +352,8 @@ class BluetoothService {
             }
         }
 
+        public BluetoothDevice getDevice() { return mmDevice; }
+
         public void run() {
             Logger.debug(this, "BEGIN mConnectedThread");
             setName("ConnectedThread - " + mmDevice);
@@ -387,12 +396,7 @@ class BluetoothService {
         void write(byte[] buffer) {
             try {
                 mmOutStream.write(buffer);
-
                 Logger.debug(this, "write to " + mmDevice);
-
-                // Inform the UI Activity that the message was sent
-                mHandler.obtainMessage(HANDLER_WRITE, -1, -1, mmDevice.getName())
-                        .sendToTarget();
             } catch (IOException e) {
                 Logger.errorWithException(this, e, "write() failed");
             }
