@@ -108,16 +108,8 @@ public class BluetoothModule{
     }
 
     // Establish connection with other device
-    private void connectDevice(Intent data) {
+    private void connectDevice(String address) {
         Logger.debug(this, "connectDevice()");
-
-        // Get the device MAC address
-
-        String address = null;
-        Bundle extras = data.getExtras();
-        if( extras != null ) {
-            address = extras.getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-        }
 
         // Get the BluetoothDevice object
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
@@ -155,7 +147,12 @@ public class BluetoothModule{
             case REQUEST_CONNECT_DEVICE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
-                    connectDevice(data);
+                    // Get the device MAC address
+                    Bundle extras = data.getExtras();
+                    if( extras != null ) {
+                        String address = extras.getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                        connectDevice(address);
+                    }
                 }
                 break;
             case REQUEST_ENABLE_BT:
