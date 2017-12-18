@@ -30,15 +30,15 @@ class BluetoothService {
     // Name for the SDP record when creating server socket
     private static final String SOCKET_NAME = "MushroomingBluetoothSocket";
 
-    // Unique UUID for this application
+    // Base UUID for this application
     private static final String baseUUID = "5742fc62-a737-484c-b76b-";
-
     // Unique UUID for my device
     private final UUID MY_UUID;
 
     // Member fields
     private final BluetoothAdapter mAdapter;
     private final Handler mHandler;
+    private String mMacAddress;
     private AcceptThread mAcceptThread;
     private ConnectThread mConnectThread;
     private ArrayList<ConnectedThread> mConnections = new ArrayList<>();
@@ -54,24 +54,25 @@ class BluetoothService {
     static final String KEY_BUFFER = "buffer";
 
     // Constructor. Prepares a new Bluetooth session.
+    @SuppressLint("HardwareIds")
     BluetoothService(Handler handler) {
         Logger.debug(this, "CREATE BluetoothService");
 
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mHandler = handler;
 
-        @SuppressLint("HardwareIds") String macAddress = mAdapter.getAddress();
-        if( macAddress.equals("02:00:00:00:00:00") ){
+        mMacAddress = mAdapter.getAddress();
+        if( mMacAddress.equals("02:00:00:00:00:00") ){
             ContentResolver mContentResolver = App.instance().getApplicationContext().getContentResolver();
-            macAddress = Settings.Secure.getString(mContentResolver, "bluetooth_address");
+            mMacAddress = Settings.Secure.getString(mContentResolver, "bluetooth_address");
 
-            if( macAddress == null ){
+            if( mMacAddress == null ){
                 Logger.error(this, "can't get mac address of bluetooth adapter");
-                macAddress = "02:00:00:00:00:00";
+                mMacAddress = "02:00:00:00:00:00";
             }
         }
 
-        MY_UUID = UUID.fromString(baseUUID + macAddress.replace(":",""));
+        MY_UUID = UUID.fromString(baseUUID + mMacAddress.replace(":",""));
 
         Logger.debug(this, "My uuid: " + MY_UUID);
     }
@@ -148,7 +149,7 @@ class BluetoothService {
         mConnectThread.start();
 
         // Sending message to handler
-        mHandler.obtainMessage(HANDLER_CONNECTING, -1,-1,device.getName()).sendToTarget();
+        mHandler.obtainMessage(HANDLER_CONNECTING, -1,-1,device.getAddress()).sendToTarget();
     }
 
     // Start the ConnectedThread to begin managing a Bluetooth connection
@@ -156,7 +157,7 @@ class BluetoothService {
         Logger.debug(this, "connected()");
 
         // Sending message to handler
-        mHandler.obtainMessage(HANDLER_CONNECTED, -1,-1,device.getName())
+        mHandler.obtainMessage(HANDLER_CONNECTED, -1,-1,device.getAddress())
                 .sendToTarget();
 
         // Remove connect thread
@@ -177,7 +178,7 @@ class BluetoothService {
         Logger.debug(this, "connectionFailed()");
 
         // Sending message to handler
-        mHandler.obtainMessage(HANDLER_CONNECTION_FAILED, -1,-1,device.getName())
+        mHandler.obtainMessage(HANDLER_CONNECTION_FAILED, -1,-1,device.getAddress())
                 .sendToTarget();
     }
 
@@ -188,7 +189,7 @@ class BluetoothService {
         mConnections.remove(connection);
 
         // Sending message to handler
-        mHandler.obtainMessage(HANDLER_CONNECTION_LOST, -1,-1,device.getName())
+        mHandler.obtainMessage(HANDLER_CONNECTION_LOST, -1,-1,device.getAddress())
                 .sendToTarget();
     }
 
@@ -372,7 +373,7 @@ class BluetoothService {
 
                     // Send the obtained bytes to the UI Activity
                     Bundle b = new Bundle();
-                    b.putString(KEY_DEVICE_NAME, mmDevice.getName());
+                    b.putString(KEY_DEVICE_NAME, mmDevice.getAddress());
                     b.putByteArray(KEY_BUFFER, buffer);
 
                     Logger.debug(this, "read from " + mmDevice);
