@@ -48,6 +48,7 @@ public class DefaultBluetoothHandler implements BluetoothEventHandler {
 
         for( String connection : connections ){
             Logger.debug(this, connection);
+            App.instance().getBluetooth().connectDevice(connection);
         }
     }
 }

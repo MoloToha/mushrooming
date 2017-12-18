@@ -144,6 +144,11 @@ class BluetoothService {
     synchronized void connect(BluetoothDevice device) {
         Logger.debug(this, "connect()");
 
+        if( device.getAddress().equals(mMacAddress) ){
+            Logger.debug(this,"connect() - trying to connect with own device. skipping");
+            return;
+        }
+
         // Start the thread to connect with the given device
         mConnectThread = new ConnectThread(device);
         mConnectThread.start();

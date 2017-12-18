@@ -108,11 +108,22 @@ public class BluetoothModule{
     }
 
     // Establish connection with other device
-    private void connectDevice(String address) {
+    public void connectDevice(String address) {
         Logger.debug(this, "connectDevice()");
+
+        if( !BluetoothAdapter.checkBluetoothAddress(address) ){
+            Logger.error(this, "connectDevice() - invalid mac address");
+            return;
+        }
 
         // Get the BluetoothDevice object
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+
+        if( device == null ){
+            Logger.error(this, "connectDevice() - device is null");
+            return;
+        }
+
         // Attempt to connect to the device
         mBluetoothService.connect(device);
     }
