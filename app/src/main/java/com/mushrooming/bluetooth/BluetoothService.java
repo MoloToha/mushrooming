@@ -149,6 +149,11 @@ class BluetoothService {
             return;
         }
 
+        if( getConnections().contains(device.getAddress()) ){
+            Logger.debug(this, "connect() - devices is already connected. skipping");
+            return;
+        }
+
         // Start the thread to connect with the given device
         mConnectThread = new ConnectThread(device);
         mConnectThread.start();
@@ -160,6 +165,18 @@ class BluetoothService {
     // Start the ConnectedThread to begin managing a Bluetooth connection
     private synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
         Logger.debug(this, "connected()");
+
+        // Close socket if there is already another for the same connection
+        if( getConnections().contains(device.getAddress()) ){
+            Logger.warning(this, "connected() - duplicated socket! Trying to close one");
+
+            try {
+                socket.close();
+            } catch (IOException e) {
+                Logger.errorWithException(this, e, "connected() - close() of socket failed");
+            }
+            return;
+        }
 
         // Sending message to handler
         mHandler.obtainMessage(HANDLER_CONNECTED, -1,-1,device.getAddress())
