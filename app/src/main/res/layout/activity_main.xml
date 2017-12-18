@@ -29,6 +29,12 @@
         android:text="@string/send_position" />
 
     <Button
+        android:id="@+id/send_connections_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/send_connections" />
+
+    <Button
         android:id="@+id/open_debug"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

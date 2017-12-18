@@ -66,7 +66,7 @@ public class App {
             @Override
             public void run() {
                 updateMyPosition();
-                _bluetooth.sendConnections();
+                //_bluetooth.sendConnections();
 
                 _updateHandler.postDelayed(this, UPDATE_MY_POSITION_TIME);
             }
