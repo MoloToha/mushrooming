@@ -9,7 +9,6 @@ import android.content.ContentResolver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
 
 import com.mushrooming.base.App;
 import com.mushrooming.base.Logger;
@@ -27,9 +26,6 @@ import java.util.UUID;
  * thread for performing data transmissions when connected.
  */
 class BluetoothService {
-
-    // Debugging
-    private static final String TAG = "BluetoothService";
 
     // Name for the SDP record when creating server socket
     private static final String SOCKET_NAME = "MushroomingBluetoothSocket";
@@ -70,14 +66,14 @@ class BluetoothService {
             macAddress = Settings.Secure.getString(mContentResolver, "bluetooth_address");
 
             if( macAddress == null ){
-                Log.e(TAG, "can't get mac address of bluetooth adapter");
+                Logger.error(this, "can't get mac address of bluetooth adapter");
                 macAddress = "02:00:00:00:00:00";
             }
         }
 
         MY_UUID = UUID.fromString(baseUUID + macAddress.replace(":",""));
 
-        Logger.debug(TAG, "My uuid: " + MY_UUID);
+        Logger.debug(this, "My uuid: " + MY_UUID);
     }
 
     /*
@@ -145,7 +141,7 @@ class BluetoothService {
 
     // Start the ConnectThread to initiate a connection to a remote device.
     synchronized void connect(BluetoothDevice device) {
-        Log.i(TAG, "connect to: " + device);
+        Logger.debug(this, "connect()");
 
         // Start the thread to connect with the given device
         mConnectThread = new ConnectThread(device);
@@ -157,7 +153,7 @@ class BluetoothService {
 
     // Start the ConnectedThread to begin managing a Bluetooth connection
     private synchronized void connected(BluetoothSocket socket, BluetoothDevice device) {
-        Log.i(TAG, "connected to: " + device);
+        Logger.debug(this, "connected()");
 
         // Sending message to handler
         mHandler.obtainMessage(HANDLER_CONNECTED, -1,-1,device.getName())
@@ -178,7 +174,7 @@ class BluetoothService {
 
     // Indicate that the connection attempt failed and notify the UI Activity.
     private void connectionFailed(BluetoothDevice device) {
-        Log.i(TAG, "failed connecting to " + device);
+        Logger.debug(this, "connectionFailed()");
 
         // Sending message to handler
         mHandler.obtainMessage(HANDLER_CONNECTION_FAILED, -1,-1,device.getName())
@@ -187,7 +183,7 @@ class BluetoothService {
 
     // Indicate that the connection was lost and notify the UI Activity.
     private void connectionLost(BluetoothDevice device, ConnectedThread connection) {
-        Log.i(TAG, "lost connection with " + device);
+        Logger.debug(this, "connectionLost()");
 
         mConnections.remove(connection);
 
@@ -210,7 +206,7 @@ class BluetoothService {
             try {
                 mmServerSocket = mAdapter.listenUsingRfcommWithServiceRecord(SOCKET_NAME, MY_UUID);
             } catch (IOException e) {
-                Log.e(TAG, "listen() failed", e);
+                Logger.errorWithException(this, e, "listen() failed");
             }
         }
 
@@ -228,7 +224,7 @@ class BluetoothService {
                         // successful connection or an exception
                         socket = mmServerSocket.accept();
                     } catch (IOException e) {
-                        Log.e(TAG, "accept() failed", e);
+                        Logger.errorWithException(this, e, "accept() failed");
                     }
 
                     // If a connection was accepted
@@ -237,7 +233,7 @@ class BluetoothService {
                     }
                 }
             }
-            else Log.e(TAG, "Server Socket is null");
+            else Logger.error(this, "Server Socket is null");
 
             Logger.debug(this, "END AcceptThread");
         }
@@ -249,7 +245,7 @@ class BluetoothService {
             try {
                 mmServerSocket.close();
             } catch (IOException e) {
-                Log.e(TAG, "close() of server socket failed", e);
+                Logger.errorWithException(this, e, "close() of server socket failed");
             }
         }
     }
@@ -276,7 +272,7 @@ class BluetoothService {
             try {
                 mmSocket = device.createRfcommSocketToServiceRecord(OTHER_UUID);
             } catch (IOException e) {
-                Log.e(TAG, "ConnectThread: creating socket failed", e);
+                Logger.errorWithException(this, e, "ConnectThread: creating socket failed");
             }
         }
 
@@ -285,7 +281,7 @@ class BluetoothService {
             setName("ConnectThread - " + mmDevice);
 
             if( mmSocket == null ){
-                Log.e(TAG, "Connect Socket is null");
+                Logger.error(this, "Connect Socket is null");
 
                 connectionFailed(mmDevice);
                 return;
@@ -300,11 +296,12 @@ class BluetoothService {
                 // successful connection or an exception
                 mmSocket.connect();
             } catch (IOException e) {
+                Logger.errorWithException(this, e, "connect() failed");
                 // Close the socket
                 try {
                     mmSocket.close();
                 } catch (IOException e2) {
-                    Log.e(TAG, "unable to close() socket during connection failure", e2);
+                    Logger.errorWithException(this, e2, "close() failed during connection failure");
                 }
                 connectionFailed(mmDevice);
                 return;
@@ -322,7 +319,7 @@ class BluetoothService {
             try {
                 mmSocket.close();
             } catch (IOException e) {
-                Log.e(TAG, "close() of socket failed", e);
+                Logger.errorWithException(this, e, "close() of socket failed");
             }
         }
     }
@@ -348,7 +345,7 @@ class BluetoothService {
                 mmInStream = mmSocket.getInputStream();
                 mmOutStream = mmSocket.getOutputStream();
             } catch (IOException e) {
-                Log.e(TAG, "error creating stream", e);
+                Logger.errorWithException(this, e, "error creating stream");
             }
         }
 

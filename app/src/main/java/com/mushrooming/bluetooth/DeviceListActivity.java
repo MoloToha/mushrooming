@@ -18,9 +18,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.util.Log;
 
 import com.example.antonl.mushrooming.R;
+import com.mushrooming.base.Logger;
 
 /*
  * This Activity appears as a dialog. It lists any paired devices and
@@ -29,8 +29,6 @@ import com.example.antonl.mushrooming.R;
  * Activity in the result Intent.
  */
 public class DeviceListActivity extends AppCompatActivity {
-
-    private static final String TAG = "DeviceListActivity";
 
     // Return Intent extra
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
@@ -107,7 +105,7 @@ public class DeviceListActivity extends AppCompatActivity {
 
     // Start device discover with the BluetoothAdapter
     private void doDiscovery() {
-        Log.d(TAG, "doDiscovery()");
+        Logger.debug(this, "doDiscovery()");
 
         // Indicate scanning in the title
         setTitle(R.string.scanning);
@@ -163,7 +161,7 @@ public class DeviceListActivity extends AppCompatActivity {
                 // check if entry already exists
                 boolean exists = false;
                 for(int i = 0; i < _devicesArrayAdapter.getCount(); ++i ){
-                    if( _devicesArrayAdapter.getItem(i).equals(deviceEntry) ){
+                    if (_devicesArrayAdapter.getItem(i).equals(deviceEntry)) {
                         exists = true;
                         break;
                     }
