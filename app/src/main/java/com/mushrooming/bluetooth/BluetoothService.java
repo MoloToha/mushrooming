@@ -127,7 +127,7 @@ class BluetoothService {
     // Returns addresses of connected devices
     ArrayList<String> getConnections() {
         ArrayList<String> devices = new ArrayList<>();
-        for( ConnectedThread connection : mConnections )
+        for( ConnectedThread connection : _connections )
             devices.add( connection.getDevice().getAddress() );
         return devices;
     }
