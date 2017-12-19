@@ -35,56 +35,61 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
-        Button button = findViewById(R.id.open_team);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, TeamActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        button = findViewById(R.id.open_debug);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, DebugActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        button = findViewById(R.id.open_map);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MapActivity.class);
-                startActivity(intent);
-            }
-        });
-
         initializeButtons();
     }
 
 
     private void initializeButtons() {
-        Button mConnectButton = findViewById(R.id.connect_button);
-        Button mDiscoverableButton = findViewById(R.id.make_discoverable_button);
-        Button mSendPositionButton = findViewById(R.id.send_position_button);
+        Button connectButton = findViewById(R.id.connect_button);
+        Button discoverableButton = findViewById(R.id.make_discoverable_button);
+        Button sendPositionButton = findViewById(R.id.send_position_button);
+        Button sendConnectionsButton = findViewById(R.id.send_connections_button);
+        Button teamActivityButton = findViewById(R.id.open_team);
+        Button debugActivityButton = findViewById(R.id.open_debug);
+        Button mapActivityButton = findViewById(R.id.open_map);
+
 
         // Set listeners to buttons
-        mConnectButton.setOnClickListener(new View.OnClickListener() {
+        connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 App.instance().getBluetooth().newConnection();
             }
         });
-        mDiscoverableButton.setOnClickListener(new View.OnClickListener() {
+        discoverableButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 App.instance().getBluetooth().ensureDiscoverable();
             }
         });
-        mSendPositionButton.setOnClickListener(new View.OnClickListener() {
+        sendPositionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendRandomPosition();
+            }
+        });
+        sendConnectionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                App.instance().getBluetooth().sendConnections();
+            }
+        });
+        teamActivityButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, TeamActivity.class);
+                startActivity(intent);
+            }
+        });
+        debugActivityButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, DebugActivity.class);
+                startActivity(intent);
+            }
+        });
+        mapActivityButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MapActivity.class);
+                startActivity(intent);
             }
         });
     }

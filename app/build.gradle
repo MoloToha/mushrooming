@@ -16,10 +16,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        bluetoothtest {
-            signingConfig signingConfigs.debug
-            debuggable true
-        }
     }
     lintOptions {
         abortOnError false

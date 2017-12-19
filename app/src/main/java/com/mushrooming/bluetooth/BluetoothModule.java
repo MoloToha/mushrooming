@@ -21,12 +21,13 @@ import com.mushrooming.base.App;
 import com.mushrooming.base.Logger;
 import com.mushrooming.base.Position;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 public class BluetoothModule{
-
-    private static final String TAG = "BluetoothModule";
 
     // Local Bluetooth adapter
     private BluetoothAdapter _bluetoothAdapter = null;
@@ -34,6 +35,10 @@ public class BluetoothModule{
     // Intent request codes
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_CONNECT_DEVICE = 2;
+
+    // Constants representing bluetooth message types
+    private static final int MESSAGE_POSITION = 1; // x:double, y:double
+    private static final int MESSAGE_CONNECTED_DEVICES = 2; // N:int, Dev1:byte(17) ... DevN:byte(17)
 
     // Member object for the bluetooth services
     private BluetoothService _bluetoothService = null;
@@ -108,19 +113,22 @@ public class BluetoothModule{
     }
 
     // Establish connection with other device
-    private void connectDevice(Intent data) {
+    public void connectDevice(String address) {
         Logger.debug(this, "connectDevice()");
 
-        // Get the device MAC address
-
-        String address = null;
-        Bundle extras = data.getExtras();
-        if( extras != null ) {
-            address = extras.getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+        if( !BluetoothAdapter.checkBluetoothAddress(address) ){
+            Logger.error(this, "connectDevice() - invalid mac address");
+            return;
         }
 
         // Get the BluetoothDevice object
         BluetoothDevice device = _bluetoothAdapter.getRemoteDevice(address);
+
+        if( device == null ){
+            Logger.error(this, "connectDevice() - device is null");
+            return;
+        }
+
         // Attempt to connect to the device
         _bluetoothService.connect(device);
     }
@@ -128,10 +136,26 @@ public class BluetoothModule{
     public void sendPosition(Position pos) {
         Logger.debug(this, "sendPosition()");
 
-        byte[] buffer = new byte[16];
-        ByteBuffer.wrap(buffer,0,8).putDouble(pos.getX());
-        ByteBuffer.wrap(buffer,8,8).putDouble(pos.getY());
-        _bluetoothService.writeAll(buffer);
+        ByteBuffer buffer = ByteBuffer.allocate(20);
+        buffer.putInt(BluetoothModule.MESSAGE_POSITION);
+        buffer.putDouble(pos.getX());
+        buffer.putDouble(pos.getY());
+        _bluetoothService.writeAll(buffer.array());
+    }
+
+    public void sendConnections() {
+        Logger.debug(this, "sendConnections()");
+
+        ArrayList<String> connections = _bluetoothService.getConnections();
+        ByteBuffer buffer = ByteBuffer.allocate(8 + 17 * connections.size());
+
+        buffer.putInt(BluetoothModule.MESSAGE_CONNECTED_DEVICES);
+        buffer.putInt(connections.size());
+
+        for( String connection : connections )
+            buffer.put(connection.getBytes());
+
+        _bluetoothService.writeAll(buffer.array());
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -139,7 +163,12 @@ public class BluetoothModule{
             case REQUEST_CONNECT_DEVICE:
                 // When DeviceListActivity returns with a device to connect
                 if (resultCode == Activity.RESULT_OK) {
-                    connectDevice(data);
+                    // Get the device MAC address
+                    Bundle extras = data.getExtras();
+                    if( extras != null ) {
+                        String address = extras.getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                        connectDevice(address);
+                    }
                 }
                 break;
             case REQUEST_ENABLE_BT:
@@ -164,54 +193,72 @@ public class BluetoothModule{
     // The Handler that gets information back from the BluetoothService
     public static class MyHandler<T extends BluetoothEventHandler> extends Handler {
 
-        private String TAG = "BluetoothHandler";
-
         private final WeakReference<T> mClassReference;
 
-        MyHandler( T a ){
-            mClassReference = new WeakReference<>(a);
+        MyHandler( T handler ) {
+            mClassReference = new WeakReference<>(handler);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            T a = mClassReference.get();
-            if ( a == null ){
+            T handler = mClassReference.get();
+            if ( handler == null ){
                 Logger.error(this, "Can't get reference to handler");
             }
             else {
                 switch (msg.what) {
-                    case BluetoothService.MESSAGE_CONNECTING:
-                        Logger.debug(this, "message: connecting");
-                        a.connecting((String) msg.obj);
+                    case BluetoothService.HANDLER_CONNECTING:
+                        handler.connecting((String) msg.obj);
                         break;
-                    case BluetoothService.MESSAGE_CONNECTED:
-                        Logger.debug(this, "message: connected");
-                        a.connected((String) msg.obj);
+                    case BluetoothService.HANDLER_CONNECTED:
+                        handler.connected((String) msg.obj);
                         break;
-                    case BluetoothService.MESSAGE_CONNECTION_FAILED:
-                        Logger.debug(this, "message: connection failed");
-                        a.connection_failed((String) msg.obj);
+                    case BluetoothService.HANDLER_CONNECTION_FAILED:
+                        handler.connectionFailed((String) msg.obj);
                         break;
-                    case BluetoothService.MESSAGE_CONNECTION_LOST:
-                        Logger.debug(this, "message: connection lost");
-                        a.connection_lost((String) msg.obj);
+                    case BluetoothService.HANDLER_CONNECTION_LOST:
+                        handler.connectionLost((String) msg.obj);
                         break;
-                    case BluetoothService.MESSAGE_WRITE:
-                        Logger.debug(this, "message: write");
-                        a.position_sent((String) msg.obj);
-                        break;
-                    case BluetoothService.MESSAGE_READ:
-                        Logger.debug(this, "message: read");
+                    case BluetoothService.HANDLER_READ:
 
                         Bundle b = (Bundle) msg.obj;
-                        String device_name = b.getString(BluetoothService.KEY_DEVICE_NAME);
-                        byte[] buffer = b.getByteArray(BluetoothService.KEY_BUFFER);
-                        double x = ByteBuffer.wrap(buffer, 0, 8).getDouble();
-                        double y = ByteBuffer.wrap(buffer, 8, 8).getDouble();
+                        String deviceName = b.getString(BluetoothService.KEY_DEVICE_NAME);
+                        ByteBuffer buffer = ByteBuffer.wrap(b.getByteArray(BluetoothService.KEY_BUFFER));
 
-                        a.position_received(device_name, x, y);
-                        break;
+                        handleBluetoothMessage(handler, deviceName, buffer);
                 }
+            }
+        }
+
+        private void handleBluetoothMessage(T handler, String deviceName, ByteBuffer buffer) {
+            try{
+                int messageType = buffer.getInt();
+                switch (messageType){
+                    case BluetoothModule.MESSAGE_POSITION:
+                        double x = buffer.getDouble();
+                        double y = buffer.getDouble();
+
+                        handler.positionReceived(deviceName, x, y);
+                        break;
+                    case BluetoothModule.MESSAGE_CONNECTED_DEVICES:
+                        int nrDevices = buffer.getInt();
+                        ArrayList<String> devices = new ArrayList<>();
+                        for( int i = 0; i < nrDevices; i++ ){
+                            byte[] address = new byte[17];
+                            buffer.get(address, 0, 17);
+
+                            String device = new String(address, "UTF-8");
+                            devices.add(device);
+                        }
+
+                        handler.connectionsReceived(deviceName, devices);
+                }
+
+            } catch (BufferUnderflowException e) {
+                Logger.errorWithException(this, e, "incorrect format of bluetooth message!");
+            } catch (UnsupportedEncodingException e) {
+                // This shouldn't really happen, but it's checked exception, so it needs te be handled
+                Logger.errorWithException(this, e, "UTF-8 encoding is not supported (WHAT?)");
             }
         }
     }
