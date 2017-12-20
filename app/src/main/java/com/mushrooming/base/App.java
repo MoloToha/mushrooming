@@ -12,6 +12,9 @@ import com.mushrooming.algorithms.GraphManager;
 import com.mushrooming.bluetooth.BluetoothEventHandler;
 import com.mushrooming.bluetooth.BluetoothModule;
 import com.mushrooming.bluetooth.DefaultBluetoothHandler;
+import com.mushrooming.map.MapModule;
+
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
 
 import static android.content.ContentValues.TAG;
 
@@ -34,6 +37,7 @@ public class App {
     private Team _team = new Team();
 
     private AlgorithmModule _algorithms;
+    private MapModule _map;
 
     public Context getApplicationContext() {return _applicationContext;}
 
@@ -87,6 +91,14 @@ public class App {
         _bluetooth.start();
 
         _algorithms = new AlgorithmModule(DisconnectGraphManager.getOne(), DijkstraAssemblyManager.getOne());
+    }
+
+    public void set_map(MapModule _map) {
+        this._map = _map;
+    }
+
+    public void markPosition(Context ctx, ItemizedIconOverlay.OnItemGestureListener listen) {
+        this._map.markPosition(ctx, listen);
     }
 
     public void startSending(){

@@ -7,12 +7,12 @@
     <org.osmdroid.views.MapView
         android:id="@+id/map"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_height="464dp" />
 
-    <!-- <Button
-        android:id="@+id/return_button"
+    <Button
+        android:id="@+id/mark_position_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/return_to_main" />
-    -->
+        android:text="@string/mark_position" />
+
 </LinearLayout>
