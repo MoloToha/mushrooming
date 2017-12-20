@@ -20,6 +20,7 @@
     <string name="open_debug">Open Debug</string>
     <string name="open_map">Show OSM map</string>
     <string name="return_to_main">Return to main menu</string>
+    <string name="mark_position">Mark position</string>
     <string name="send_connections">Send connections</string>
 
     <string name="connecting">connecting with %1$s</string>
