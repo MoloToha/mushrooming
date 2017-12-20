@@ -34,7 +34,9 @@ public abstract class Logger {
 
     public static void error(Object o, String messageFormat, Object... formatArgs) {
         try {
-            Log.e(o.getClass().toString(), "\n" + String.format(messageFormat, formatArgs));
+            String msg = String.format(messageFormat, formatArgs);
+            App.instance().getDebug().addLog(Debug.LogType.ERROR, msg);
+            Log.e(o.getClass().toString(), "\n" + msg);
         } catch (Throwable e) {
             Log.e(o.getClass().toString()+";<<LOG_ERROR>>",
                     "\nerror trying to print formatted ERROR message: \n'" + messageFormat);
@@ -52,7 +54,9 @@ public abstract class Logger {
 
     public static void warning(Object o, String messageFormat, Object... formatArgs) {
         try {
-            Log.w(o.getClass().toString(), "\n" + String.format(messageFormat, formatArgs));
+            String msg = String.format(messageFormat, formatArgs);
+            App.instance().getDebug().addLog(Debug.LogType.WARNING, msg);
+            Log.w(o.getClass().toString(), "\n" + msg);
         } catch (Throwable e) {
             Log.w(o.getClass().toString()+";<<LOG_ERROR>>",
                     "\nerror trying to print formatted WARNING message: \n'" + messageFormat);
@@ -70,7 +74,9 @@ public abstract class Logger {
 
     public static void debug(Object o, String messageFormat, Object... formatArgs) {
         try {
-            Log.d(o.getClass().toString(), "\n" + String.format(messageFormat, formatArgs));
+            String msg = String.format(messageFormat, formatArgs);
+            App.instance().getDebug().addLog(Debug.LogType.INFO, msg);
+            Log.d(o.getClass().toString(), "\n" + msg);
         } catch (Throwable e) {
             Log.d(o.getClass().toString()+";<<LOG_ERROR>>",
                     "\nerror trying to print formatted DEBUG message: \n'" + messageFormat);

@@ -16,10 +16,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        bluetoothtest {
-            signingConfig signingConfigs.debug
-            debuggable true
-        }
+    }
+    lintOptions {
+        abortOnError false
     }
 }
 
@@ -30,5 +29,7 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'org.osmdroid:osmdroid-android:5.6.5@aar'
     testCompile 'junit:junit:4.12'
+    implementation 'com.google.android.gms:play-services-maps:11.6.2'
 }

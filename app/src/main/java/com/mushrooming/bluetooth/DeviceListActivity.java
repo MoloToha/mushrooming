@@ -18,9 +18,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.util.Log;
 
 import com.example.antonl.mushrooming.R;
+import com.mushrooming.base.Logger;
 
 /*
  * This Activity appears as a dialog. It lists any paired devices and
@@ -30,16 +30,14 @@ import com.example.antonl.mushrooming.R;
  */
 public class DeviceListActivity extends AppCompatActivity {
 
-    private static final String TAG = "DeviceListActivity";
-
     // Return Intent extra
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
 
     // Member fields
-    private BluetoothAdapter mBtAdapter;
+    private BluetoothAdapter _btAdapter;
 
     // Newly discovered devices
-    private ArrayAdapter<String> mDevicesArrayAdapter;
+    private ArrayAdapter<String> _devicesArrayAdapter;
 
     // Button for scanning new devices
     private Button scanButton;
@@ -70,11 +68,11 @@ public class DeviceListActivity extends AppCompatActivity {
         });
 
         // Initialize array adapter for discovered devices
-        mDevicesArrayAdapter = new ArrayAdapter<>(this, R.layout.device_name);
+        _devicesArrayAdapter = new ArrayAdapter<>(this, R.layout.device_name);
 
         // Find and set up the ListView for discovered devices
         ListView devicesListView = findViewById(R.id.new_devices);
-        devicesListView.setAdapter(mDevicesArrayAdapter);
+        devicesListView.setAdapter(_devicesArrayAdapter);
         devicesListView.setOnItemClickListener(mDeviceClickListener);
 
         // Register for broadcasts when a device is discovered
@@ -86,7 +84,7 @@ public class DeviceListActivity extends AppCompatActivity {
         this.registerReceiver(mReceiver, filter);
 
         // Get the local Bluetooth adapter
-        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+        _btAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Start discovering devices
         doDiscovery();
@@ -97,8 +95,8 @@ public class DeviceListActivity extends AppCompatActivity {
         super.onDestroy();
 
         // Make sure we're not doing discovery anymore
-        if (mBtAdapter != null) {
-            mBtAdapter.cancelDiscovery();
+        if (_btAdapter != null) {
+            _btAdapter.cancelDiscovery();
         }
 
         // Unregister broadcast listeners
@@ -107,7 +105,7 @@ public class DeviceListActivity extends AppCompatActivity {
 
     // Start device discover with the BluetoothAdapter
     private void doDiscovery() {
-        Log.d(TAG, "doDiscovery()");
+        Logger.debug(this, "doDiscovery()");
 
         // Indicate scanning in the title
         setTitle(R.string.scanning);
@@ -117,12 +115,12 @@ public class DeviceListActivity extends AppCompatActivity {
         findViewById(R.id.title_new_devices).setVisibility(View.VISIBLE);
 
         // If we're already discovering, stop it
-        if (mBtAdapter.isDiscovering()) {
-            mBtAdapter.cancelDiscovery();
+        if (_btAdapter.isDiscovering()) {
+            _btAdapter.cancelDiscovery();
         }
 
         // Request discover from BluetoothAdapter
-        mBtAdapter.startDiscovery();
+        _btAdapter.startDiscovery();
     }
 
 
@@ -131,7 +129,7 @@ public class DeviceListActivity extends AppCompatActivity {
             = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
             // Cancel discovery because it's costly and we're about to connect
-            mBtAdapter.cancelDiscovery();
+            _btAdapter.cancelDiscovery();
 
             // Get the device MAC address, which is the last 17 chars in the View
             String info = ((TextView) v).getText().toString();
@@ -162,8 +160,8 @@ public class DeviceListActivity extends AppCompatActivity {
 
                 // check if entry already exists
                 boolean exists = false;
-                for( int i = 0; i < mDevicesArrayAdapter.getCount(); ++i ){
-                    if( mDevicesArrayAdapter.getItem(i).equals(deviceEntry) ){
+                for(int i = 0; i < _devicesArrayAdapter.getCount(); ++i ){
+                    if (_devicesArrayAdapter.getItem(i).equals(deviceEntry)) {
                         exists = true;
                         break;
                     }
@@ -171,18 +169,19 @@ public class DeviceListActivity extends AppCompatActivity {
 
                 // If there is no such entry in array adapter, add it
                 if( !exists ) {
-                    mDevicesArrayAdapter.add(deviceEntry);
+                    _devicesArrayAdapter.add(deviceEntry);
                 }
 
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+            }
+            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 // When discovery is finished, change the Activity title
                 setTitle(R.string.select_device);
                 progress.setVisibility(View.GONE);
                 scanButton.setVisibility(View.VISIBLE);
 
-                if (mDevicesArrayAdapter.getCount() == 0) {
+                if (_devicesArrayAdapter.getCount() == 0) {
                     String noDevices = getResources().getText(R.string.none_found).toString();
-                    mDevicesArrayAdapter.add(noDevices);
+                    _devicesArrayAdapter.add(noDevices);
                 }
             }
         }

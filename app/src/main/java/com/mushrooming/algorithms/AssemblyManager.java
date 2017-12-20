@@ -7,5 +7,5 @@ import com.mushrooming.base.Team;
  */
 
 public interface AssemblyManager {
-    MapPosition chooseAssemblyPlace (Team team);
+    MapPosition chooseAssemblyPlace (Team team, AvMap terrainOKmap);
 }
