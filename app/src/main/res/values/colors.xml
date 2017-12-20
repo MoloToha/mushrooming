@@ -7,4 +7,10 @@
     <!-- Device List -->
     <color name="colorDialogBackground">#000000</color>
     <color name="colorDialogTextBackground">#111111</color>
+    <color name="ColorPrimary">#3F51B5</color>
+    <color name="list_divider">#d9d9d9</color>
+    <color name="list_row_start_color">#ffffff</color>
+    <color name="list_row_end_color">#ffffff</color>
+    <color name="list_row_hover_start_color">#ebeef0</color>
+    <color name="list_row_hover_end_color">#ebeef0</color>
 </resources>

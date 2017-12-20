@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_create_team"
+        android:title="@string/create_team"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/action_join_team"
+        android:title="@string/join_team"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/action_open_team"
+        android:title="@string/open_team"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/action_settings"
+        android:title="@string/settings"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/action_debug"
+        android:title="@string/debug"
+        app:showAsAction="never"/>
+</menu>

@@ -29,4 +29,8 @@
     <string name="position_received">%1$s sent position: %2$f %3$f</string>
     <string name="connections_received">%1$s sent connections</string>
 
+    <string name="create_team">Create Team</string>
+    <string name="join_team">Join Team</string>
+    <string name="settings">Settings</string>
+    <string name="debug">Debug</string>
 </resources>
