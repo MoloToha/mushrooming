@@ -72,10 +72,30 @@ public abstract class Logger {
         }
     }
 
-    public static void debug(Object o, String messageFormat, Object... formatArgs) {
+    public static void info(Object o, String messageFormat, Object... formatArgs) {
         try {
             String msg = String.format(messageFormat, formatArgs);
             App.instance().getDebug().addLog(Debug.LogType.INFO, msg);
+            Log.i(o.getClass().toString(), "\n" + msg);
+        } catch (Throwable e) {
+            Log.i(o.getClass().toString()+";<<LOG_ERROR>>",
+                    "\nerror trying to print formatted INFO message: \n'" + messageFormat);
+        }
+    }
+
+    public static void infoWithException(Object o, Throwable exc, String messageFormat, Object... formatArgs) {
+        try {
+            Log.i(o.getClass().toString(), "\n" + String.format(messageFormat, formatArgs), exc);
+        } catch (Throwable e) {
+            Log.i(o.getClass().toString()+";<<LOG_ERROR>>",
+                    "\nerror trying to print formatted INFO message: \n'" + messageFormat);
+        }
+    }
+
+    public static void debug(Object o, String messageFormat, Object... formatArgs) {
+        try {
+            String msg = String.format(messageFormat, formatArgs);
+            App.instance().getDebug().addLog(Debug.LogType.Debug, msg);
             Log.d(o.getClass().toString(), "\n" + msg);
         } catch (Throwable e) {
             Log.d(o.getClass().toString()+";<<LOG_ERROR>>",

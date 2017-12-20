@@ -23,7 +23,8 @@ public class DebugActivity extends AppCompatActivity {
         ListView logView = findViewById(R.id.in);
         logView.setAdapter(_logArrayAdapter);
 
-        App.instance().getDebug().attachAdapter(_logArrayAdapter);
+        Debug debug = App.instance().getDebug();
+        debug.attachAdapter(_logArrayAdapter);
 
         CheckBox box = findViewById(R.id.errorCheckBox);
         box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -32,6 +33,7 @@ public class DebugActivity extends AppCompatActivity {
                 App.instance().getDebug().setVisible(Debug.LogType.ERROR, isChecked);
             }
         });
+        box.setChecked(debug.getVisible(Debug.LogType.ERROR));
 
         box = findViewById(R.id.warningCheckBox);
         box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -40,6 +42,7 @@ public class DebugActivity extends AppCompatActivity {
                 App.instance().getDebug().setVisible(Debug.LogType.WARNING, isChecked);
             }
         });
+        box.setChecked(debug.getVisible(Debug.LogType.WARNING));
 
         box = findViewById(R.id.infoCheckBox);
         box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -48,6 +51,16 @@ public class DebugActivity extends AppCompatActivity {
                 App.instance().getDebug().setVisible(Debug.LogType.INFO, isChecked);
             }
         });
+        box.setChecked(debug.getVisible(Debug.LogType.INFO));
+
+        box = findViewById(R.id.debugCheckBox);
+        box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                App.instance().getDebug().setVisible(Debug.LogType.Debug, isChecked);
+            }
+        });
+        box.setChecked(debug.getVisible(Debug.LogType.Debug));
     }
 
     @Override

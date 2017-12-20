@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 public class Debug {
     public enum LogType {
+        Debug,
         INFO,
         WARNING,
         ERROR
@@ -53,6 +54,7 @@ public class Debug {
         _logs = new ArrayList<>();
 
         _isTypeVisible = new HashMap<>();
+        _isTypeVisible.put(LogType.Debug, true);
         _isTypeVisible.put(LogType.INFO, true);
         _isTypeVisible.put(LogType.WARNING, true);
         _isTypeVisible.put(LogType.ERROR, true);
@@ -83,6 +85,10 @@ public class Debug {
     public void setVisible(LogType type, boolean isVisible){
         _isTypeVisible.put(type, isVisible);
         fillAdapter();
+    }
+
+    public boolean getVisible(LogType type){
+        return _isTypeVisible.get(type);
     }
 
     private void fillAdapter(){
