@@ -39,6 +39,19 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "MainActivity";
     private static final int REQUEST_FOR_OSMDROID = 10;
 
+    // overlay
+    private final ItemizedIconOverlay.OnItemGestureListener listen = new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+        @Override
+        public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+            // some function from example invoked on tap, think what to do here
+            return true;
+        }
+        @Override
+        public boolean onItemLongPress(final int index, final OverlayItem item) {
+            return false;
+        }
+    };
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -81,23 +94,11 @@ public class MainActivity extends AppCompatActivity
         GeoPoint startPoint = new GeoPoint(51.110825, 17.053549);
         mapController.setCenter(startPoint);
 
-// fragment from example (changed a bit) https://github.com/osmdroid/osmdroid/wiki/Markers,-Lines-and-Polygons
+        // fragment from example (changed a bit) https://github.com/osmdroid/osmdroid/wiki/Markers,-Lines-and-Polygons
         //your items
         ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
         // on beginning no position is marked
 
-        // overlay
-        final ItemizedIconOverlay.OnItemGestureListener listen = new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-            @Override
-            public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                // some function from example invoked on tap, think what to do here
-                return true;
-            }
-            @Override
-            public boolean onItemLongPress(final int index, final OverlayItem item) {
-                return false;
-            }
-        };
 
         ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(ctx, items,
                 listen);
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity
         // but it works like it is written now
         App.instance().set_map(new MapModule(map, items, mOverlay));
 
-        Button markPosition = findViewById(R.id.mark_position_button);
+        /*Button markPosition = findViewById(R.id.mark_position_button);
         markPosition.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -118,7 +119,7 @@ public class MainActivity extends AppCompatActivity
                         App.instance().markPosition(getApplicationContext(), listen);
                     }
                 }
-        );
+        );*/
     }
 
     @Override
@@ -137,6 +138,9 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.menu_connect_device) {
             App.instance().getBluetooth().newConnection();
+        }
+        else if (id == R.id.menu_mark_postion){
+            App.instance().markPosition(getApplicationContext(), listen);
         }
         else if (id == R.id.menu_make_discoverable) {
             App.instance().getBluetooth().ensureDiscoverable();

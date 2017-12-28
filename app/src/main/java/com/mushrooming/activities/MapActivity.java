@@ -98,7 +98,7 @@ public class MapActivity extends AppCompatActivity {
         // but it works like it is written now
         App.instance().set_map(new MapModule(map, items, mOverlay));
 
-        Button markPosition = findViewById(R.id.mark_position_button);
+        /*Button markPosition = findViewById(R.id.mark_position_button);
         markPosition.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -106,7 +106,7 @@ public class MapActivity extends AppCompatActivity {
                         App.instance().markPosition(getApplicationContext(), listen);
                     }
                 }
-        );
+        );*/
     }
 
     public void onResume() {
