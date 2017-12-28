@@ -9,6 +9,9 @@
         android:id="@+id/menu_connect_device"
         android:title="Connect a device" />
     <item
+        android:id="@+id/menu_mark_postion"
+        android:title="Mark position" />
+    <item
         android:id="@+id/menu_make_discoverable"
         android:title="Make discoverable" />
     <item
