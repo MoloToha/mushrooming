@@ -36,7 +36,6 @@
             android:theme="@style/DeviceListTheme" />
         <activity android:name="com.mushrooming.activities.UserActivity" />
         <activity android:name="com.mushrooming.activities.TeamActivity" />
-        <activity android:name="com.mushrooming.activities.MapActivity" />
         <activity android:name="com.mushrooming.activities.DebugActivity" />
     </application>
 
