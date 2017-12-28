@@ -63,12 +63,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         App.instance().init(this);
+        setContentView(R.layout.activity_main);
 
-        //setContentView(R.layout.activity_main);
 
-        //initializeButtons();
-
-        //----------------------------
         // need to request "dangerous permissions" at runtime since android 6.0
         requestPermissionsForOsmdroid();
 
@@ -78,7 +75,7 @@ public class MainActivity extends AppCompatActivity
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID); //ctx.getPackageName()
 
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-        setContentView(R.layout.activity_main);
+
 
         MapView map = (MapView) findViewById(R.id.map);
         map.setTileSource(TileSourceFactory.MAPNIK);
@@ -109,15 +106,6 @@ public class MainActivity extends AppCompatActivity
         // but it works like it is written now
         App.instance().set_map(new MapModule(map, items, mOverlay));
 
-        /*Button markPosition = findViewById(R.id.mark_position_button);
-        markPosition.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        App.instance().markPosition(getApplicationContext(), listen);
-                    }
-                }
-        );*/
     }
 
     @Override
