@@ -26,6 +26,7 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -37,6 +38,7 @@
         <activity android:name="com.mushrooming.activities.UserActivity" />
         <activity android:name="com.mushrooming.activities.TeamActivity" />
         <activity android:name="com.mushrooming.activities.DebugActivity" />
+        <activity android:name="com.mushrooming.activities.SettingsActivity"></activity>
     </application>
 
 </manifest>

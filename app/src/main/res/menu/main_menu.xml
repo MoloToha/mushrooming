@@ -21,6 +21,9 @@
         android:id="@+id/menu_send_connections"
         android:title="Send connections" />
     <item
+        android:id="@+id/menu_open_settings"
+        android:title="Settings" />
+    <item
         android:id="@+id/menu_open_debug"
         android:title="Open debug" />
 </menu>
