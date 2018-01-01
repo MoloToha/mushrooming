@@ -44,7 +44,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
-        android:id="@+id/in"
+        android:id="@+id/logView"
         android:layout_width="331dp"
         android:layout_height="425dp"
         android:layout_marginBottom="16dp"

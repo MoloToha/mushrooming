@@ -95,7 +95,7 @@ public abstract class Logger {
     public static void debug(Object o, String messageFormat, Object... formatArgs) {
         try {
             String msg = String.format(messageFormat, formatArgs);
-            App.instance().getDebug().addLog(Debug.LogType.Debug, msg);
+            App.instance().getDebug().addLog(Debug.LogType.DEBUG, msg);
             Log.d(o.getClass().toString(), "\n" + msg);
         } catch (Throwable e) {
             Log.d(o.getClass().toString()+";<<LOG_ERROR>>",

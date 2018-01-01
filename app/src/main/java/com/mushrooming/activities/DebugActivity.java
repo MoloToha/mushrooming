@@ -1,11 +1,15 @@
 package com.mushrooming.activities;
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.antonl.mushrooming.R;
 import com.mushrooming.base.App;
@@ -19,12 +23,32 @@ public class DebugActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debug);
 
-        _logArrayAdapter = new ArrayAdapter<>(this, R.layout.message);
-        ListView logView = findViewById(R.id.in);
+        _logArrayAdapter = new ArrayAdapter<String>(
+                this, R.layout.message){
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+
+                TextView textView = (TextView) view.findViewById(R.id.message_text);
+
+                String message = _logArrayAdapter.getItem(position);
+                textView.setTextColor(getColorForMessage(message));
+
+                return view;
+            }
+        };
+
+        ListView logView = findViewById(R.id.logView);
         logView.setAdapter(_logArrayAdapter);
 
+        App.instance().getDebug().attachAdapter(_logArrayAdapter);
+
+        setBoxListeners();
+    }
+
+    private void setBoxListeners(){
         Debug debug = App.instance().getDebug();
-        debug.attachAdapter(_logArrayAdapter);
 
         CheckBox box = findViewById(R.id.errorCheckBox);
         box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -57,10 +81,23 @@ public class DebugActivity extends AppCompatActivity {
         box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                App.instance().getDebug().setVisible(Debug.LogType.Debug, isChecked);
+                App.instance().getDebug().setVisible(Debug.LogType.DEBUG, isChecked);
             }
         });
-        box.setChecked(debug.getVisible(Debug.LogType.Debug));
+        box.setChecked(debug.getVisible(Debug.LogType.DEBUG));
+    }
+
+    private int getColorForMessage(String message){
+        if(message.contains(Debug.LogType.INFO.toString())){
+            return Color.BLACK;
+        }
+        if(message.contains(Debug.LogType.WARNING.toString())){
+            return Color.YELLOW;
+        }
+        if(message.contains(Debug.LogType.ERROR.toString())){
+            return Color.RED;
+        }
+        return Color.GRAY;
     }
 
     @Override
