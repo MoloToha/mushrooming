@@ -32,7 +32,8 @@ public class App {
     private Context _applicationContext;
     private BluetoothModule _bluetooth;
     private LocationService _locationService;
-    private Team _team = new Team();
+    private  User _myUser;
+    private Team _team;
 
     private AlgorithmModule _algorithms;
     private MapModule _map;
@@ -92,8 +93,17 @@ public class App {
         _locationService = new LocationService();
 
         _algorithms = new AlgorithmModule(DisconnectGraphManager.getOne(), DijkstraAssemblyManager.getOne());
+
+        initDefaultTeam();
     }
 
+    private void initDefaultTeam(){
+        _team = new Team();
+
+        int myUserId = _bluetooth.getMyUserId();
+        _myUser = new User(myUserId);
+        _team.addUser(_myUser);
+    }
     public void set_map(MapModule _map) {
         this._map = _map;
     }
@@ -117,8 +127,11 @@ public class App {
     }
 
     private void updateMyPosition(){
-        // GPS: get position
-        _bluetooth.sendPosition(_locationService.getLastPosition());
+        Position myPos = _locationService.getLastPosition();
+        if(myPos != null) {
+            _bluetooth.sendPosition(myPos);
+            _myUser.update(myPos);
+        }
     }
 
     private void checkDisconnectionProblem() {

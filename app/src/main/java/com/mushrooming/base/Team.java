@@ -16,13 +16,13 @@ public class Team {
     }
 
     public void updateUser(int id, Position pos) {
-        User u = findUser(id);
+        User u = getUser(id);
         if(u == null){
-            _users.add(new User(id, pos));
+            u = new User(id);
+            _users.add(u);
         }
-        else {
-            u.update(pos);
-        }
+
+        u.update(pos);
     }
 
     public ArrayList<User> getUsers() {
@@ -30,7 +30,7 @@ public class Team {
     }
 
     public boolean removeUser(int id) {
-        User u = findUser(id);
+        User u = getUser(id);
         if(u != null){
             return _users.remove(u);
         }
@@ -41,7 +41,7 @@ public class Team {
         return _users.add(u);
     }
 
-    private User findUser(int id) {
+    public User getUser(int id) {
         for(User u : _users) {
             if(u.getId() == id) {
                 return u;

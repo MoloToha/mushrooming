@@ -79,9 +79,7 @@ public class TeamActivity extends AppCompatActivity {
         for (int i = 0; i < userCount; ++i) {
             //Position mockup
             Position pos = new Position(generator.nextDouble() * 10, generator.nextDouble() * 10);
-            User u = new User(i, pos);
-
-            team.addUser(u);
+            team.updateUser(i,pos);
         }
 
         _team = team;

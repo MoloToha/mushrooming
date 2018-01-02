@@ -8,19 +8,27 @@ import com.mushrooming.algorithms.MapPosition;
 
 public class User {
     private int _id; // uniqe id for every user
+    private String _name = "DefaultName";
     private Position _GPSpos;
     private MapPosition _MAPpos; // position on THIS device's map, may be different on other devices
     private long _lastUpdate = 0;
 
-    public User(int id, Position pos) {
+    public User(int id) {
         this._id = id;
-        update(pos);
     }
 
     public void update(Position pos) {
         _lastUpdate = System.currentTimeMillis();
         setGpsPosition(pos);
         setMapPosition(new MapPosition(pos));
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public void setName(String name) {
+        this._name = name;
     }
 
     public int getId(){
