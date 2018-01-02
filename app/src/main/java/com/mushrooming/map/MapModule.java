@@ -31,7 +31,7 @@ public class MapModule {
 
     public MapModule(Context context, MapView map) {
 
-        //MapView map = (MapView) context.findViewById(R.id.map); //it not work here...
+        //MapView map = (MapView) context.findViewById(R.id.map); //it does not work here...
         map.setTileSource(TileSourceFactory.MAPNIK);
         map.setBuiltInZoomControls(true);
         map.setMultiTouchControls(true);
@@ -49,7 +49,7 @@ public class MapModule {
     }
 
     // currently switches between marking two different hardcoded positions
-    public void markPosition(Context ctx/*, ItemizedIconOverlay.OnItemGestureListener listen*/) {
+    public void markPosition(Context ctx) {
         //  if mv.getOverlays().contains(marker) {  mv.getOverlays().remove(marker); }
         mv.getOverlays().clear();
         if (whichPos == 1) {
