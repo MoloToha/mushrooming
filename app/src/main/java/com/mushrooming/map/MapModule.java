@@ -1,13 +1,18 @@
 package com.mushrooming.map;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 
+import com.example.antonl.mushrooming.R;
 import com.mushrooming.base.Logger;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
@@ -19,42 +24,59 @@ import java.util.ArrayList;
 public class MapModule {
 
     private MapView mv;
-    private ArrayList<OverlayItem> items;
+    //private ArrayList<OverlayItem> items;
     private int whichPos;
-    private ItemizedOverlayWithFocus<OverlayItem> myiowf;
+    //private ItemizedOverlayWithFocus<OverlayItem> myiowf;
+    //private Marker marker;
+    //Drawable ic;
+    private Context appctx;
 
-    public MapModule(MapView map, ArrayList<OverlayItem> its, ItemizedOverlayWithFocus<OverlayItem> iowf) {
+    public MapModule(MapView map, /*Marker mark,*/ Context context/*ArrayList<OverlayItem> its, ItemizedOverlayWithFocus<OverlayItem> iowf*/) {
         mv = map;
-        items = its;
+        //items = its;
         whichPos = 0;
-        myiowf = iowf;
+        //myiowf = iowf;
+
+        //marker = mark;
+        //ic = icon;
+        appctx = context;
     }
 
     // currently switches between marking two different hardcoded positions
-    public void markPosition(Context ctx, ItemizedIconOverlay.OnItemGestureListener listen) {
-        mv.getOverlays().remove(myiowf);
-        items.clear();
+    public void markPosition(Context ctx/*, ItemizedIconOverlay.OnItemGestureListener listen*/) {
+        //  if mv.getOverlays().contains(marker) {  mv.getOverlays().remove(marker); }
+        mv.getOverlays().clear();
         if (whichPos == 1) {
-            items.add(new OverlayItem("point t1", "descr", new GeoPoint(51.110825d, 17.053549d)));
+            Marker marker = new Marker(mv);
+            Drawable ic1 = appctx.getResources().getDrawable(R.drawable.common_full_open_on_phone); //common_full_open_on_phone white, MULTIPLY will be OK
+            // maybe use person or our own icon (with person icon there is problem adjusting color - how to change it composing with eg. plain blue)
+            // MAYBE create our own white person icon and then adjust color with MULTIPLY mode
 
+            ic1.mutate(); // so that not all that icons will be changed
+            // careful, color IS NOT hexadecimal color value because so
+            ic1.setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY); //SRC_IN, SRC_ATOP, OVERLAY, ...
+            marker.setPosition(new GeoPoint(51.110825d, 17.053549d));
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            marker.setIcon(ic1);
+            marker.setTitle("Point 1");
+            mv.getOverlays().add(marker);
         } else {
-            items.add(new OverlayItem("point t2", "descr", new GeoPoint(51.111025d, 17.053749d)));
+            Marker marker = new Marker(mv);
+            Drawable ic1 = appctx.getResources().getDrawable(R.drawable.common_full_open_on_phone);
+            // maybe use person or our own icon (with person icon there is problem adjusting color - how to change it composing with eg. plain blue)
+            // MAYBE create our own white person icon and then adjust color with MULTIPLY mode
 
+            ic1.mutate(); // so that not all that icons will be changed
+            // careful, color IS NOT hexadecimal color value because so
+            ic1.setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY); //SRC_IN, OVERLAY, ...
+            marker.setPosition(new GeoPoint(51.111025d, 17.053749d));
+            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            marker.setIcon(ic1);
+            marker.setTitle("Point 2");
+            mv.getOverlays().add(marker);
         }
         Logger.debug(this, "marking position with whichPos = %d", whichPos);
         whichPos = (whichPos+1)%2;
-
-        // listen can be final and created once, but new mOverlay probably has to be created
-        // check if just changing items list is enough, but it is probably not
-        ItemizedOverlayWithFocus<OverlayItem> mOverlay =
-                new ItemizedOverlayWithFocus<OverlayItem>(ctx, items, listen);
-
-        mOverlay.setFocusItemsOnTap(true);
-
-        // new ItemizedOverlayWithFocus<OverlayItem> object has to be created
-        mv.getOverlays().add(mOverlay);
-
-        myiowf = mOverlay;  // for removing this position mark in next marking
 
         mv.invalidate(); //to make it refresh overlays with marked positions
     }

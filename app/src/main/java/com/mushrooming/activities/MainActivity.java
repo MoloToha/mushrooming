@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity
 
         // fragment from example (changed a bit) https://github.com/osmdroid/osmdroid/wiki/Markers,-Lines-and-Polygons
         //your items
-        ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
+        /*ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
         // on beginning no position is marked
 
 
@@ -100,12 +100,13 @@ public class MainActivity extends AppCompatActivity
         mOverlay.setFocusItemsOnTap(true);
 
         map.getOverlays().add(mOverlay); //mMapView
+        */
 //
 
         // maybe create new mapViews like in example? https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library
         // but it works like it is written now
-        App.instance().set_map(new MapModule(map, items, mOverlay));
-
+        //App.instance().set_map(new MapModule(map, items, mOverlay));
+        App.instance().set_map(new MapModule(map, this));
     }
 
     @Override
@@ -126,7 +127,7 @@ public class MainActivity extends AppCompatActivity
             App.instance().getBluetooth().newConnection();
         }
         else if (id == R.id.menu_mark_postion){
-            App.instance().markPosition(getApplicationContext(), listen);
+            App.instance().markPosition(getApplicationContext());
         }
         else if (id == R.id.menu_make_discoverable) {
             App.instance().getBluetooth().ensureDiscoverable();

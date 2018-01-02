@@ -108,8 +108,8 @@ public class App {
         this._map = _map;
     }
 
-    public void markPosition(Context ctx, ItemizedIconOverlay.OnItemGestureListener listen) {
-        this._map.markPosition(ctx, listen);
+    public void markPosition(Context ctx) {
+        this._map.markPosition(ctx);
     }
 
     public void startSending(){
