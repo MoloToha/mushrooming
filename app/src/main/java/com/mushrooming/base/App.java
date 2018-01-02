@@ -45,6 +45,9 @@ public class App {
     public Team getTeam(){
         return _team;
     }
+    public User getMyUser(){
+        return _myUser;
+    }
     public BluetoothModule getBluetooth() { return _bluetooth; }
     public LocationService getLocationService() { return _locationService; }
     public Debug getDebug() { return _debug; }

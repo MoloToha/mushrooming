@@ -5,8 +5,13 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 
+
 import com.example.antonl.mushrooming.R;
+
+import com.mushrooming.base.App;
+
 import com.mushrooming.base.Logger;
+import com.mushrooming.base.Position;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -50,6 +55,10 @@ public class MapModule {
 
     // currently switches between marking two different hardcoded positions
     public void markPosition(Context ctx) {
+
+        Position myPos = App.instance().getMyUser().getGpsPosition();
+        GeoPoint geoPoint = new GeoPoint(myPos.getX(), myPos.getY());
+
         //  if mv.getOverlays().contains(marker) {  mv.getOverlays().remove(marker); }
         mv.getOverlays().clear();
         if (whichPos == 1) {
@@ -61,10 +70,10 @@ public class MapModule {
             ic1.mutate(); // so that not all that icons will be changed
             // careful, color IS NOT hexadecimal color value because so
             ic1.setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY); //SRC_IN, SRC_ATOP, OVERLAY, ...
-            marker.setPosition(new GeoPoint(51.110825d, 17.053549d));
+            marker.setPosition(geoPoint);
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
             marker.setIcon(ic1);
-            marker.setTitle("Point 1");
+            marker.setTitle("My position");
             mv.getOverlays().add(marker);
         } else {
             Marker marker = new Marker(mv);
@@ -75,13 +84,13 @@ public class MapModule {
             ic1.mutate(); // so that not all that icons will be changed
             // careful, color IS NOT hexadecimal color value because so
             ic1.setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY); //SRC_IN, OVERLAY, ...
-            marker.setPosition(new GeoPoint(51.111025d, 17.053749d));
+            marker.setPosition(geoPoint);
             marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
             marker.setIcon(ic1);
-            marker.setTitle("Point 2");
+            marker.setTitle("My position");
             mv.getOverlays().add(marker);
         }
-        Logger.debug(this, "marking position with whichPos = %d", whichPos);
+        Logger.debug(this, "marking position: " + myPos);
         whichPos = (whichPos+1)%2;
 
         mv.invalidate(); //to make it refresh overlays with marked positions
