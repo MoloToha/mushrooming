@@ -92,6 +92,7 @@ public class MapModule {
         }
         Logger.debug(this, "marking position: " + myPos);
         whichPos = (whichPos+1)%2;
+        mv.getController().setCenter(geoPoint);
 
         mv.invalidate(); //to make it refresh overlays with marked positions
     }
