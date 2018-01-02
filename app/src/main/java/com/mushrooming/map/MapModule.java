@@ -8,6 +8,8 @@ import android.graphics.drawable.Drawable;
 import com.example.antonl.mushrooming.R;
 import com.mushrooming.base.Logger;
 
+import org.osmdroid.api.IMapController;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
@@ -24,21 +26,25 @@ import java.util.ArrayList;
 public class MapModule {
 
     private MapView mv;
-    //private ArrayList<OverlayItem> items;
     private int whichPos;
-    //private ItemizedOverlayWithFocus<OverlayItem> myiowf;
-    //private Marker marker;
-    //Drawable ic;
     private Context appctx;
 
-    public MapModule(MapView map, /*Marker mark,*/ Context context/*ArrayList<OverlayItem> its, ItemizedOverlayWithFocus<OverlayItem> iowf*/) {
-        mv = map;
-        //items = its;
-        whichPos = 0;
-        //myiowf = iowf;
+    public MapModule(Context context, MapView map) {
 
-        //marker = mark;
-        //ic = icon;
+        //MapView map = (MapView) context.findViewById(R.id.map); //it not work here...
+        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setBuiltInZoomControls(true);
+        map.setMultiTouchControls(true);
+        //map.setMaxZoomLevel(22); // tiles blurry with that zoom, and to see nearby tiles you sometimes need to zoom out and in
+        map.setTilesScaledToDpi(true); // but this works great
+
+        IMapController mapController = map.getController();
+        mapController.setZoom(18); // biggest zoom available on Mapnik
+        GeoPoint startPoint = new GeoPoint(51.110825, 17.053549);
+        mapController.setCenter(startPoint);
+
+        mv = map;
+        whichPos = 0;
         appctx = context;
     }
 

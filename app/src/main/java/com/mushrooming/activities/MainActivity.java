@@ -62,8 +62,7 @@ public class MainActivity extends AppCompatActivity
             this.finish();
         }
 
-        App.instance().init(this);
-        setContentView(R.layout.activity_main);
+
 
 
         // need to request "dangerous permissions" at runtime since android 6.0
@@ -71,42 +70,10 @@ public class MainActivity extends AppCompatActivity
 
         Context ctx = getApplicationContext();
 
-        // needed because of OSM ban rules or sth
-        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID); //ctx.getPackageName()
+        configClientForOSM(ctx);
+        setContentView(R.layout.activity_main); // has to be before App.instance().init because latter uses 'map' from layout
+        App.instance().init(this);
 
-        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-
-
-        MapView map = (MapView) findViewById(R.id.map);
-        map.setTileSource(TileSourceFactory.MAPNIK);
-        map.setBuiltInZoomControls(true);
-        map.setMultiTouchControls(true);
-        //map.setMaxZoomLevel(22); // tiles blurry with that zoom, and to see nearby tiles you sometimes need to zoom out and in
-        map.setTilesScaledToDpi(true); // but this works great
-
-        IMapController mapController = map.getController();
-        mapController.setZoom(18); // biggest zoom available on Mapnik
-        GeoPoint startPoint = new GeoPoint(51.110825, 17.053549);
-        mapController.setCenter(startPoint);
-
-        // fragment from example (changed a bit) https://github.com/osmdroid/osmdroid/wiki/Markers,-Lines-and-Polygons
-        //your items
-        /*ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
-        // on beginning no position is marked
-
-
-        ItemizedOverlayWithFocus<OverlayItem> mOverlay = new ItemizedOverlayWithFocus<OverlayItem>(ctx, items,
-                listen);
-        mOverlay.setFocusItemsOnTap(true);
-
-        map.getOverlays().add(mOverlay); //mMapView
-        */
-//
-
-        // maybe create new mapViews like in example? https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library
-        // but it works like it is written now
-        //App.instance().set_map(new MapModule(map, items, mOverlay));
-        App.instance().set_map(new MapModule(map, this));
     }
 
     @Override
@@ -194,6 +161,13 @@ public class MainActivity extends AppCompatActivity
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
             }, REQUEST_FOR_OSMDROID);
         }
+    }
+
+    private void configClientForOSM(Context ctx) {
+        // needed because of OSM ban rules or sth
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID); //ctx.getPackageName()
+
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
     }
 
 }

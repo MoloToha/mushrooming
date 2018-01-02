@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 
+import com.example.antonl.mushrooming.R;
 import com.mushrooming.algorithms.AlgorithmModule;
 import com.mushrooming.algorithms.DijkstraAssemblyManager;
 import com.mushrooming.algorithms.DisconnectGraphManager;
@@ -12,6 +13,7 @@ import com.mushrooming.bluetooth.BluetoothModule;
 import com.mushrooming.bluetooth.DefaultBluetoothHandler;
 import com.mushrooming.location.LocationService;
 import com.mushrooming.map.MapModule;
+import org.osmdroid.views.MapView;
 
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
 
@@ -94,6 +96,8 @@ public class App {
 
         _algorithms = new AlgorithmModule(DisconnectGraphManager.getOne(), DijkstraAssemblyManager.getOne());
 
+        _map = new MapModule(mainActivity, (MapView) mainActivity.findViewById(R.id.map));
+
         initDefaultTeam();
     }
 
@@ -103,9 +107,6 @@ public class App {
         int myUserId = _bluetooth.getMyUserId();
         _myUser = new User(myUserId);
         _team.addUser(_myUser);
-    }
-    public void set_map(MapModule _map) {
-        this._map = _map;
     }
 
     public void markPosition(Context ctx) {
