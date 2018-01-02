@@ -12,6 +12,7 @@ import com.mushrooming.algorithms.GraphManager;
 import com.mushrooming.bluetooth.BluetoothEventHandler;
 import com.mushrooming.bluetooth.BluetoothModule;
 import com.mushrooming.bluetooth.DefaultBluetoothHandler;
+import com.mushrooming.location.LocationService;
 
 import static android.content.ContentValues.TAG;
 
@@ -31,6 +32,7 @@ public class App {
     private Debug _debug;
     private Context _applicationContext;
     private BluetoothModule _bluetooth;
+    private LocationService _locationService;
     private Team _team = new Team();
 
     private AlgorithmModule _algorithms;
@@ -41,6 +43,7 @@ public class App {
         return _team;
     }
     public BluetoothModule getBluetooth() { return _bluetooth; }
+    public LocationService getLocationService() { return _locationService; }
     public Debug getDebug() { return _debug; }
 
     private static  int START_DELAY = 100;
@@ -79,6 +82,8 @@ public class App {
         _bluetooth = new BluetoothModule(mainActivity, new DefaultBluetoothHandler());
         _bluetooth.start();
 
+        _locationService = new LocationService();
+
         _algorithms = new AlgorithmModule(DisconnectGraphManager.getOne(), DijkstraAssemblyManager.getOne());
     }
 
@@ -91,6 +96,7 @@ public class App {
         _updateHandler.removeCallbacks(_updateRunnable);
         _disconnectionHandler.removeCallbacks(_disconnectionRunnable);
         _bluetooth.stop();
+        _locationService.stop();
     }
 
     private void updateMyPosition(){
