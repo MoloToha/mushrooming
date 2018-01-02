@@ -60,6 +60,7 @@ public class TeamActivity extends AppCompatActivity {
             }
         });
 
+        reloadUserList();
     }
 
     @Override
@@ -91,7 +92,7 @@ public class TeamActivity extends AppCompatActivity {
         String textUserData;
 
         for (User user: _team.getUsers()) {
-            textUserData = "ID: " + user.getId();
+            textUserData = "Name: " + user.getName() + ", ID: " + user.getId();
                     //+ " xPos: " + user.getPosition().getX() + " yPos: " + user.getPosition().getY();
 
             ans.add(textUserData);

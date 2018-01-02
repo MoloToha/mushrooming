@@ -2,7 +2,9 @@ package com.mushrooming.map;
 
 import android.content.Context;
 
+import com.mushrooming.base.App;
 import com.mushrooming.base.Logger;
+import com.mushrooming.base.Position;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -34,16 +36,20 @@ public class MapModule {
     public void markPosition(Context ctx, ItemizedIconOverlay.OnItemGestureListener listen) {
         mv.getOverlays().remove(myiowf);
         items.clear();
-        if (whichPos == 1) {
+
+        Position myPos = App.instance().getMyUser().getGpsPosition();
+        GeoPoint geoPoint = new GeoPoint(myPos.getX(), myPos.getY());
+        items.add(new OverlayItem("MyPos", "name", geoPoint));
+        /*if (whichPos == 1) {
             items.add(new OverlayItem("point t1", "descr", new GeoPoint(51.110825d, 17.053549d)));
 
         } else {
             items.add(new OverlayItem("point t2", "descr", new GeoPoint(51.111025d, 17.053749d)));
 
         }
-        Logger.debug(this, "marking position with whichPos = %d", whichPos);
+        Logger.debug(this, "marking position: " + myPos);*/
         whichPos = (whichPos+1)%2;
-
+        mv.getController().setCenter(geoPoint);
         // listen can be final and created once, but new mOverlay probably has to be created
         // check if just changing items list is enough, but it is probably not
         ItemizedOverlayWithFocus<OverlayItem> mOverlay =
