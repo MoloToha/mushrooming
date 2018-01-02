@@ -3,20 +3,17 @@ package com.mushrooming.base;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
-import android.util.Log;
 
 import com.mushrooming.algorithms.AlgorithmModule;
 import com.mushrooming.algorithms.DijkstraAssemblyManager;
 import com.mushrooming.algorithms.DisconnectGraphManager;
-import com.mushrooming.algorithms.GraphManager;
 import com.mushrooming.bluetooth.BluetoothEventHandler;
 import com.mushrooming.bluetooth.BluetoothModule;
 import com.mushrooming.bluetooth.DefaultBluetoothHandler;
+import com.mushrooming.location.LocationService;
 import com.mushrooming.map.MapModule;
 
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by barto on 08.11.2017.
@@ -34,6 +31,7 @@ public class App {
     private Debug _debug;
     private Context _applicationContext;
     private BluetoothModule _bluetooth;
+    private LocationService _locationService;
     private Team _team = new Team();
 
     private AlgorithmModule _algorithms;
@@ -45,6 +43,7 @@ public class App {
         return _team;
     }
     public BluetoothModule getBluetooth() { return _bluetooth; }
+    public LocationService getLocationService() { return _locationService; }
     public Debug getDebug() { return _debug; }
 
     private static int UPDATE_MY_POSITION_TIME = User.MAX_INACTIVITY_TIME / 4;
@@ -90,6 +89,8 @@ public class App {
         _bluetooth = new BluetoothModule(mainActivity, _bluetoothHandler);
         _bluetooth.start();
 
+        _locationService = new LocationService();
+
         _algorithms = new AlgorithmModule(DisconnectGraphManager.getOne(), DijkstraAssemblyManager.getOne());
     }
 
@@ -112,11 +113,12 @@ public class App {
         _updateHandler.removeCallbacks(_updateRunnable);
         _disconnectionHandler.removeCallbacks(_disconnectionRunnable);
         _bluetooth.stop();
+        _locationService.stop();
     }
 
     private void updateMyPosition(){
         // GPS: get position
-        _bluetooth.sendPosition(new Position(42,666));
+        _bluetooth.sendPosition(_locationService.getLastPosition());
     }
 
     private void checkDisconnectionProblem() {

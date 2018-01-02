@@ -30,5 +30,7 @@ public class Position {
         _y = y;
     }
 
-
+    public String toString() {
+        return "Position(" + Double.valueOf(_x).toString() + ", " + Double.valueOf(_y).toString() + ")";
+    }
 }
