@@ -94,7 +94,7 @@ public class MapModule {
         marker.setPosition(geoPoint);
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         marker.setIcon(ic1);
-        marker.setTitle("My position");
+        marker.setTitle(markerDescr);
         mv.getOverlays().add(marker);
 
         Logger.debug(this, "marking position: " + myPos);
