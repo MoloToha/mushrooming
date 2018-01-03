@@ -16,6 +16,10 @@ public class User {
     public User(int id) {
         this._id = id;
     }
+    public User(int id, Position pos) {
+        this(id);
+        update(pos);
+    }
 
     public void update(Position pos) {
         _lastUpdate = System.currentTimeMillis();
@@ -39,8 +43,8 @@ public class User {
         return _GPSpos;
     }
 
-    private void setGpsPosition(Position _pos) {
-        this._GPSpos = _pos;
+    private void setGpsPosition(Position pos) {
+        this._GPSpos = pos;
     }
 
     public MapPosition getMapPosition() {
