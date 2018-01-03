@@ -30,4 +30,9 @@
     <string name="position_received">%1$s sent position: %2$f %3$f</string>
     <string name="connections_received">%1$s sent connections</string>
 
+    <!-- SharedPref Keys -->
+    <string name="data_location">com.mushrooming.data</string>
+    <string name="my_name">MyName</string>
+    <string name="default_name">MyName</string>
+
 </resources>

@@ -2,6 +2,7 @@ package com.mushrooming.base;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 
 import com.example.antonl.mushrooming.R;
@@ -101,14 +102,17 @@ public class App {
 
         _map = new MapModule(mainActivity, (MapView) mainActivity.findViewById(R.id.map));
 
-        initDefaultTeam();
+        initDefaultTeam(mainActivity);
     }
 
-    private void initDefaultTeam(){
+    private void initDefaultTeam(Activity mainActivity){
         _team = new Team();
 
         int myUserId = _bluetooth.getMyUserId();
+        String myName = DataManager.getMyName(mainActivity);
         _myUser = new User(myUserId);
+        _myUser.setName(myName);
+
         _team.addUser(_myUser);
     }
 
