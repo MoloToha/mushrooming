@@ -56,40 +56,47 @@ public class MapModule {
     // currently switches between marking two different hardcoded positions
     public void markPosition(Context ctx) {
 
-        Position myPos = App.instance().getMyUser().getGpsPosition();
-        GeoPoint geoPoint = new GeoPoint(myPos.getX(), myPos.getY());
-
         //  if mv.getOverlays().contains(marker) {  mv.getOverlays().remove(marker); }
         mv.getOverlays().clear();
-        if (whichPos == 1) {
-            Marker marker = new Marker(mv);
-            Drawable ic1 = appctx.getResources().getDrawable(R.drawable.common_full_open_on_phone); //common_full_open_on_phone white, MULTIPLY will be OK
+
+        Position myPos = App.instance().getMyUser().getGpsPosition();
+        GeoPoint geoPoint;
+        Marker marker = new Marker(mv);
+        Drawable ic1;
+        String markerDescr;
+        if (myPos == null) {
+            geoPoint = new GeoPoint(51.110825, 17.053549);
+            ic1 = appctx.getResources().getDrawable(R.drawable.ic_menu_offline); //common_full_open_on_phone white, MULTIPLY will be OK
             // maybe use person or our own icon (with person icon there is problem adjusting color - how to change it composing with eg. plain blue)
             // MAYBE create our own white person icon and then adjust color with MULTIPLY mode
+            markerDescr = "Default position, couldn't locate";
+            Logger.warning(this, "couldn't locate for marking position");
 
-            ic1.mutate(); // so that not all that icons will be changed
+        } else {
+            geoPoint = new GeoPoint(myPos.getX(), myPos.getY());
+            ic1 = appctx.getResources().getDrawable(R.drawable.common_full_open_on_phone); //common_full_open_on_phone white, MULTIPLY will be OK
+            // maybe use person or our own icon (with person icon there is problem adjusting color - how to change it composing with eg. plain blue)
+            // MAYBE create our own white person icon and then adjust color with MULTIPLY mode
+            markerDescr = "My last seen position";
+        }
+
+        ic1.mutate(); // so that not all that icons will be changed
+
+        if (whichPos == 1) {
             // careful, color IS NOT hexadecimal color value because so
             ic1.setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY); //SRC_IN, SRC_ATOP, OVERLAY, ...
-            marker.setPosition(geoPoint);
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            marker.setIcon(ic1);
-            marker.setTitle("My position");
-            mv.getOverlays().add(marker);
-        } else {
-            Marker marker = new Marker(mv);
-            Drawable ic1 = appctx.getResources().getDrawable(R.drawable.common_full_open_on_phone);
-            // maybe use person or our own icon (with person icon there is problem adjusting color - how to change it composing with eg. plain blue)
-            // MAYBE create our own white person icon and then adjust color with MULTIPLY mode
 
-            ic1.mutate(); // so that not all that icons will be changed
+        } else {
             // careful, color IS NOT hexadecimal color value because so
             ic1.setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY); //SRC_IN, OVERLAY, ...
-            marker.setPosition(geoPoint);
-            marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            marker.setIcon(ic1);
-            marker.setTitle("My position");
-            mv.getOverlays().add(marker);
+
         }
+        marker.setPosition(geoPoint);
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        marker.setIcon(ic1);
+        marker.setTitle("My position");
+        mv.getOverlays().add(marker);
+
         Logger.debug(this, "marking position: " + myPos);
         whichPos = (whichPos+1)%2;
         mv.getController().setCenter(geoPoint);
