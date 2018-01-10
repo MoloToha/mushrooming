@@ -33,9 +33,8 @@ public class MapModule {
 
     private MapView mv;
     private int whichPos;
-    private Context appctx;
 
-    public MapModule(Context context, MapView map) {
+    public MapModule(MapView map) {
 
         //MapView map = (MapView) context.findViewById(R.id.map); //it does not work here...
         map.setTileSource(TileSourceFactory.MAPNIK);
@@ -51,7 +50,6 @@ public class MapModule {
 
         mv = map;
         whichPos = 0;
-        appctx = context;
     }
 
     public void clearAllMarkers () {
@@ -77,9 +75,9 @@ public class MapModule {
 
         Drawable icon;
         if (sure) {
-            icon = appctx.getResources().getDrawable(R.drawable.location_mark);
+            icon = App.instance().getApplicationContext().getResources().getDrawable(R.drawable.location_mark);
         } else {
-            icon = appctx.getResources().getDrawable(R.drawable.question_mark);
+            icon = App.instance().getApplicationContext().getResources().getDrawable(R.drawable.question_mark);
         }
 
         // assuming icons don't have shadows etc and can colour every non-transparent pixel with full colour
@@ -128,7 +126,7 @@ public class MapModule {
         PorterDuff.Mode mode;
         if (myPos == null) {
             geoPoint = new GeoPoint(51.110825, 17.053549);
-            ic1 = appctx.getResources().getDrawable(R.drawable.question_mark); //common_full_open_on_phone white, MULTIPLY will be OK
+            ic1 = App.instance().getApplicationContext().getResources().getDrawable(R.drawable.question_mark); //common_full_open_on_phone white, MULTIPLY will be OK
             // maybe use person or our own icon (with person icon there is problem adjusting color - how to change it composing with eg. plain blue)
             // MAYBE create our own white person icon and then adjust color with MULTIPLY mode
             markerDescr = "Default position, couldn't locate";
@@ -136,7 +134,7 @@ public class MapModule {
             mode = PorterDuff.Mode.SRC_IN;
         } else {
             geoPoint = new GeoPoint(myPos.getX(), myPos.getY());
-            ic1 = appctx.getResources().getDrawable(R.drawable.location_mark); //common_full_open_on_phone white, MULTIPLY will be OK
+            ic1 = App.instance().getApplicationContext().getResources().getDrawable(R.drawable.location_mark); //common_full_open_on_phone white, MULTIPLY will be OK
             // maybe use person or our own icon (with person icon there is problem adjusting color - how to change it composing with eg. plain blue)
             // MAYBE create our own white person icon and then adjust color with MULTIPLY mode
             markerDescr = "My last seen position";
