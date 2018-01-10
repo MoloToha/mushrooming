@@ -95,12 +95,15 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.menu_mark_postion){
             App.instance().testMarkPosition();
+
         }
         else if (id == R.id.menu_make_discoverable) {
             App.instance().getBluetooth().ensureDiscoverable();
         }
         else if (id == R.id.menu_send_rand_pos) {
-            sendRandomPosition();
+            //sendRandomPosition();
+            App.instance().updateMapPositions();
+            App.instance().focusMyPosition();
         }
         else if (id == R.id.menu_send_connections) {
             App.instance().getBluetooth().sendConnections();
