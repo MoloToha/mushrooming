@@ -66,7 +66,7 @@ public class MapModule {
         String markerDescr;
         if (myPos == null) {
             geoPoint = new GeoPoint(51.110825, 17.053549);
-            ic1 = appctx.getResources().getDrawable(R.drawable.ic_menu_offline); //common_full_open_on_phone white, MULTIPLY will be OK
+            ic1 = appctx.getResources().getDrawable(R.drawable.ic_action_name); //common_full_open_on_phone white, MULTIPLY will be OK
             // maybe use person or our own icon (with person icon there is problem adjusting color - how to change it composing with eg. plain blue)
             // MAYBE create our own white person icon and then adjust color with MULTIPLY mode
             markerDescr = "Default position, couldn't locate";
@@ -74,7 +74,7 @@ public class MapModule {
 
         } else {
             geoPoint = new GeoPoint(myPos.getX(), myPos.getY());
-            ic1 = appctx.getResources().getDrawable(R.drawable.common_full_open_on_phone); //common_full_open_on_phone white, MULTIPLY will be OK
+            ic1 = appctx.getResources().getDrawable(R.drawable.ic_action_name); //common_full_open_on_phone white, MULTIPLY will be OK
             // maybe use person or our own icon (with person icon there is problem adjusting color - how to change it composing with eg. plain blue)
             // MAYBE create our own white person icon and then adjust color with MULTIPLY mode
             markerDescr = "My last seen position";
@@ -84,11 +84,11 @@ public class MapModule {
 
         if (whichPos == 1) {
             // careful, color IS NOT hexadecimal color value because so
-            ic1.setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY); //SRC_IN, SRC_ATOP, OVERLAY, ...
+            ic1.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN); //SRC_IN, SRC_ATOP, OVERLAY, MULTIPLY ...
 
         } else {
             // careful, color IS NOT hexadecimal color value because so
-            ic1.setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY); //SRC_IN, OVERLAY, ...
+            ic1.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_IN); //SRC_IN, OVERLAY, ...
 
         }
         marker.setPosition(geoPoint);
