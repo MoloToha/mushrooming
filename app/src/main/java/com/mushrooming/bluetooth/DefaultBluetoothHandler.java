@@ -51,4 +51,9 @@ public class DefaultBluetoothHandler implements BluetoothEventHandler {
             App.instance().getBluetooth().connectDevice(connection);
         }
     }
+
+    public void nameReceived(String device, String name) {
+        Logger.debug(this, _applicationContext.getString(R.string.name_received, device, name));
+
+    }
 }

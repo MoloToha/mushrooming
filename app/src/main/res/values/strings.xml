@@ -23,12 +23,14 @@
     <string name="mark_position">Mark position</string>
     <string name="send_connections">Send connections</string>
 
+    <!-- Handler -->
     <string name="connecting">connecting with %1$s</string>
     <string name="connected">connected to %1$s</string>
     <string name="connection_failed">failed connecting to %1$s</string>
     <string name="connection_lost">lost connection with %1$s</string>
     <string name="position_received">%1$s sent position: %2$f %3$f</string>
     <string name="connections_received">%1$s sent connections</string>
+    <string name="name_received">%1$s sent name: %2$s</string>
 
     <!-- SharedPref Keys -->
     <string name="data_location">com.mushrooming.data</string>

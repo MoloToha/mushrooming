@@ -167,12 +167,12 @@ public class BluetoothModule{
         Logger.debug(this, "sendName()");
 
         String name = App.instance().getMyUser().getName();
-        byte[] nameb = name.getBytes(Charset.forName("UTF-8"));
+        byte[] name_b = name.getBytes(Charset.forName("UTF-8"));
 
-        ByteBuffer buffer = ByteBuffer.allocate(8 + nameb.length);
+        ByteBuffer buffer = ByteBuffer.allocate(8 + name_b.length);
         buffer.putInt(BluetoothModule.MESSAGE_NAME);
-        buffer.putInt(nameb.length);
-        buffer.put(nameb);
+        buffer.putInt(name_b.length);
+        buffer.put(name_b);
 
         _bluetoothService.writeAll(buffer.array());
     }
@@ -241,15 +241,15 @@ public class BluetoothModule{
                     case BluetoothService.HANDLER_READ:
 
                         Bundle b = (Bundle) msg.obj;
-                        String deviceName = b.getString(BluetoothService.KEY_DEVICE_NAME);
+                        String device = b.getString(BluetoothService.KEY_DEVICE_NAME);
                         ByteBuffer buffer = ByteBuffer.wrap(b.getByteArray(BluetoothService.KEY_BUFFER));
 
-                        handleBluetoothMessage(handler, deviceName, buffer);
+                        handleBluetoothMessage(handler, device, buffer);
                 }
             }
         }
 
-        private void handleBluetoothMessage(T handler, String deviceName, ByteBuffer buffer) {
+        private void handleBluetoothMessage(T handler, String device, ByteBuffer buffer) {
             try{
                 int messageType = buffer.getInt();
                 switch (messageType){
@@ -257,20 +257,29 @@ public class BluetoothModule{
                         double x = buffer.getDouble();
                         double y = buffer.getDouble();
 
-                        handler.positionReceived(deviceName, x, y);
+                        handler.positionReceived(device, x, y);
                         break;
                     case BluetoothModule.MESSAGE_CONNECTED_DEVICES:
                         int nrDevices = buffer.getInt();
                         ArrayList<String> devices = new ArrayList<>();
                         for( int i = 0; i < nrDevices; i++ ){
-                            byte[] address = new byte[17];
-                            buffer.get(address, 0, 17);
+                            byte[] address_b = new byte[17];
+                            buffer.get(address_b, 0, 17);
 
-                            String device = new String(address, "UTF-8");
-                            devices.add(device);
+                            String address = new String(address_b, "UTF-8");
+                            devices.add(address);
                         }
 
-                        handler.connectionsReceived(deviceName, devices);
+                        handler.connectionsReceived(device, devices);
+                        break;
+                    case BluetoothModule.MESSAGE_NAME:
+                        int name_length = buffer.getInt();
+                        byte[] name_b = new byte[name_length];
+
+                        buffer.get(name_b, 0, name_length);
+                        String name = new String(name_b, "UTF-8");
+
+                        handler.nameReceived(device, name);
                 }
 
             } catch (BufferUnderflowException e) {
