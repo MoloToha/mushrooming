@@ -11,7 +11,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,20 +21,13 @@ import com.example.antonl.mushrooming.R;
 import com.mushrooming.base.App;
 import com.mushrooming.base.Logger;
 import com.mushrooming.base.Position;
-import com.mushrooming.map.MapModule;
 
-import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
-import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.OverlayItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
@@ -43,10 +35,10 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "MainActivity";
     private static final int REQUEST_FOR_OSMDROID = 10;
 
-    private ListView mDrawerList;
-    private DrawerLayout mDrawerLayout;
-    private ArrayAdapter<String> mAdapter;
-    private ActionBarDrawerToggle mDrawerToggle;
+    private ListView _drawerList;
+    private DrawerLayout _drawerLayout;
+    private ArrayAdapter<String> _optionsArrayAdapter;
+    private ActionBarDrawerToggle _drawerToggle;
 
     // overlay
     private final ItemizedIconOverlay.OnItemGestureListener listen = new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
@@ -74,8 +66,6 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-
-
         // need to request "dangerous permissions" at runtime since android 6.0
         requestPermissionsForOsmdroid();
 
@@ -85,14 +75,14 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main); // has to be before App.instance().init because latter uses 'map' from layout
 
         //drawer
-        mDrawerList = (ListView)findViewById(R.id.navList);
+        _drawerList = (ListView)findViewById(R.id.navList);
 
         addDrawerItems();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        _drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
 
         setupDrawer();
 
@@ -103,10 +93,10 @@ public class MainActivity extends AppCompatActivity
     private void addDrawerItems() {
         final String[] menuItems = { "Open team", "Connect a device", "Mark position", "Make discoverable",
                 "Send random position", "Send connections", "Settings", "Open debug" };
-        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, menuItems);
-        mDrawerList.setAdapter(mAdapter);
+        _optionsArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, menuItems);
+        _drawerList.setAdapter(_optionsArrayAdapter);
 
-        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        _drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (menuItems[position] == "Open team") {
@@ -145,7 +135,7 @@ public class MainActivity extends AppCompatActivity
 
 
     private void setupDrawer() {
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+        _drawerToggle = new ActionBarDrawerToggle(this, _drawerLayout,
                 R.string.drawer_open, R.string.drawer_close) {
 
             public void onDrawerOpened(View drawerView) {
@@ -160,8 +150,8 @@ public class MainActivity extends AppCompatActivity
             }
         };
 
-        mDrawerToggle.setDrawerIndicatorEnabled(true);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        _drawerToggle.setDrawerIndicatorEnabled(true);
+        _drawerLayout.setDrawerListener(_drawerToggle);
     }
 
 
@@ -173,7 +163,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         // Activate the navigation drawer toggle
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
+        if (_drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
@@ -183,13 +173,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
+        _drawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(android.content.res.Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+        _drawerToggle.onConfigurationChanged(newConfig);
     }
 
 
