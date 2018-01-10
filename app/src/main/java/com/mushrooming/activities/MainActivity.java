@@ -8,9 +8,12 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.example.antonl.mushrooming.BuildConfig;
@@ -18,24 +21,24 @@ import com.example.antonl.mushrooming.R;
 import com.mushrooming.base.App;
 import com.mushrooming.base.Logger;
 import com.mushrooming.base.Position;
-import com.mushrooming.map.MapModule;
 
-import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
-import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
 import org.osmdroid.views.overlay.OverlayItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
 {
     private static final String TAG = "MainActivity";
     private static final int REQUEST_FOR_OSMDROID = 10;
+
+    private ListView _drawerList;
+    private DrawerLayout _drawerLayout;
+    private ArrayAdapter<String> _optionsArrayAdapter;
+    private ActionBarDrawerToggle _drawerToggle;
 
     // overlay
     private final ItemizedIconOverlay.OnItemGestureListener listen = new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
@@ -63,8 +66,6 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-
-
         // need to request "dangerous permissions" at runtime since android 6.0
         requestPermissionsForOsmdroid();
 
@@ -72,53 +73,114 @@ public class MainActivity extends AppCompatActivity
 
         configClientForOSM(ctx);
         setContentView(R.layout.activity_main); // has to be before App.instance().init because latter uses 'map' from layout
+
+        //drawer
+        _drawerList = (ListView)findViewById(R.id.navList);
+
+        addDrawerItems();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        _drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+
+        setupDrawer();
+
         App.instance().init(this);
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return super.onCreateOptionsMenu(menu);
+    private void addDrawerItems() {
+        final String[] menuItems = { "Open team", "Connect a device", "Mark position", "Make discoverable",
+                "Send random position", "Send connections", "Settings", "Open debug" };
+        _optionsArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, menuItems);
+        _drawerList.setAdapter(_optionsArrayAdapter);
+
+        _drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (menuItems[position] == "Open team") {
+                    Intent intent = new Intent(MainActivity.this, TeamActivity.class);
+                    startActivity(intent);
+                }
+                else if (menuItems[position] == "Connect a device") {
+                    App.instance().getBluetooth().newConnection();
+                }
+                else if (menuItems[position] == "Mark position"){
+                    App.instance().testMarkPosition();
+
+                }
+                else if (menuItems[position] == "Make discoverable") {
+                    App.instance().getBluetooth().ensureDiscoverable();
+                }
+                else if (menuItems[position] ==  "Send random position") {
+                    //sendRandomPosition();
+                    App.instance().updateMapPositions();
+                    App.instance().focusMyPosition();
+                }
+                else if (menuItems[position] == "Send connections") {
+                    App.instance().getBluetooth().sendConnections();
+                }
+                else if (menuItems[position] == "Settings") {
+                    Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                    startActivity(intent);
+                }
+                else if (menuItems[position] == "Open debug") {
+                    Intent intent = new Intent(MainActivity.this, DebugActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
     }
+
+
+    private void setupDrawer() {
+        _drawerToggle = new ActionBarDrawerToggle(this, _drawerLayout,
+                R.string.drawer_open, R.string.drawer_close) {
+
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                //  getSupportActionBar().setTitle(mActivityTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()}catch  (Exception e)
+            }
+        };
+
+        _drawerToggle.setDrawerIndicatorEnabled(true);
+        _drawerLayout.setDrawerListener(_drawerToggle);
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.menu_open_team) {
-            Intent intent = new Intent(MainActivity.this, TeamActivity.class);
-            startActivity(intent);
+        // Activate the navigation drawer toggle
+        if (_drawerToggle.onOptionsItemSelected(item)) {
+            return true;
         }
-        else if (id == R.id.menu_connect_device) {
-            App.instance().getBluetooth().newConnection();
-        }
-        else if (id == R.id.menu_mark_postion){
-            App.instance().testMarkPosition();
 
-        }
-        else if (id == R.id.menu_make_discoverable) {
-            App.instance().getBluetooth().ensureDiscoverable();
-        }
-        else if (id == R.id.menu_send_rand_pos) {
-            //sendRandomPosition();
-            App.instance().updateMapPositions();
-            App.instance().focusMyPosition();
-        }
-        else if (id == R.id.menu_send_connections) {
-            App.instance().getBluetooth().sendConnections();
-        }
-        else if (id == R.id.menu_open_settings) {
-            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(intent);
-        }
-        else if (id == R.id.menu_open_debug) {
-            Intent intent = new Intent(MainActivity.this, DebugActivity.class);
-            startActivity(intent);
-        }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        _drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(android.content.res.Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        _drawerToggle.onConfigurationChanged(newConfig);
+    }
 
 
     private void sendRandomPosition() {
