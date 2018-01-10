@@ -3,6 +3,7 @@ package com.mushrooming.map;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.Drawable;
 
 
@@ -64,31 +65,33 @@ public class MapModule {
         Marker marker = new Marker(mv);
         Drawable ic1;
         String markerDescr;
+        PorterDuff.Mode mode;
         if (myPos == null) {
             geoPoint = new GeoPoint(51.110825, 17.053549);
-            ic1 = appctx.getResources().getDrawable(R.drawable.ic_action_name); //common_full_open_on_phone white, MULTIPLY will be OK
+            ic1 = appctx.getResources().getDrawable(R.drawable.question_mark); //common_full_open_on_phone white, MULTIPLY will be OK
             // maybe use person or our own icon (with person icon there is problem adjusting color - how to change it composing with eg. plain blue)
             // MAYBE create our own white person icon and then adjust color with MULTIPLY mode
             markerDescr = "Default position, couldn't locate";
             Logger.warning(this, "couldn't locate for marking position");
-
+            mode = PorterDuff.Mode.SRC_IN;
         } else {
             geoPoint = new GeoPoint(myPos.getX(), myPos.getY());
-            ic1 = appctx.getResources().getDrawable(R.drawable.ic_action_name); //common_full_open_on_phone white, MULTIPLY will be OK
+            ic1 = appctx.getResources().getDrawable(R.drawable.location_mark); //common_full_open_on_phone white, MULTIPLY will be OK
             // maybe use person or our own icon (with person icon there is problem adjusting color - how to change it composing with eg. plain blue)
             // MAYBE create our own white person icon and then adjust color with MULTIPLY mode
             markerDescr = "My last seen position";
+            mode = PorterDuff.Mode.SRC_IN;
         }
 
         ic1.mutate(); // so that not all that icons will be changed
 
         if (whichPos == 1) {
             // careful, color IS NOT hexadecimal color value because so
-            ic1.setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_IN); //SRC_IN, SRC_ATOP, OVERLAY, MULTIPLY ...
+            ic1.setColorFilter(Color.BLUE, mode); //SRC_IN, SRC_ATOP, OVERLAY, MULTIPLY ...
 
         } else {
             // careful, color IS NOT hexadecimal color value because so
-            ic1.setColorFilter(Color.GREEN, PorterDuff.Mode.SRC_IN); //SRC_IN, OVERLAY, ...
+            ic1.setColorFilter(Color.GREEN, mode); //SRC_IN, OVERLAY, ...
 
         }
         marker.setPosition(geoPoint);
