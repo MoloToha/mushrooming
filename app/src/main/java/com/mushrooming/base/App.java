@@ -116,8 +116,8 @@ public class App {
         _team.addUser(_myUser);
     }
 
-    public void markPosition(Context ctx) {
-        this._map.markPosition(ctx);
+    public void testMarkPosition() {
+        this._map.testMarkPosition();
     }
 
     public void startSending(){

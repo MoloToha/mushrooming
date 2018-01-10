@@ -54,11 +54,76 @@ public class MapModule {
         appctx = context;
     }
 
+    public void clearAllMarkers () {
+        mv.getOverlays().clear();
+    }
+
+    public void clearOneMarker(Marker marker) {
+
+        if (mv.getOverlays().contains(marker)) {
+            mv.getOverlays().remove(marker);
+        }
+    }
+
+    // marker is returned so that one can later invoke clearOneMarker with it
+    public Marker markPositionGetMarker(Boolean sure, GeoPoint pos, String userName, int color) {
+
+        GeoPoint markPos = pos;
+        if (pos == null) {
+            Logger.warning(this, "Given NULL position to mark!");
+            return null;
+        }
+
+        Drawable icon;
+        if (sure) {
+            icon = appctx.getResources().getDrawable(R.drawable.location_mark);
+        } else {
+            icon = appctx.getResources().getDrawable(R.drawable.question_mark);
+        }
+
+        // assuming icons don't have shadows etc and can colour every non-transparent pixel with full colour
+        icon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+
+        Marker marker = new Marker(mv);
+
+        String markerDescr = "user '" + userName + "'";
+
+        marker.setPosition(markPos);
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        marker.setIcon(icon);
+        marker.setTitle(markerDescr);
+        mv.getOverlays().add(marker);
+
+        Logger.debug(this, "marking position: " + markPos + "; sure: " + sure);
+
+        mv.invalidate();
+
+        return marker;
+    }
+
+    // when we don't care about returned marker (to delete just this one marker)
+    public void markPosition(Boolean sure, GeoPoint pos, String userName, int color) {
+        // ignore returned value
+        Marker marker = markPositionGetMarker(sure, pos, userName, color);
+    }
+
+    public void centerMap(GeoPoint pos) {
+        mv.getController().setCenter(pos);
+    }
+
     // currently switches between marking two different hardcoded positions
-    public void markPosition(Context ctx) {
+    public void testMarkPosition() {
 
         //  if mv.getOverlays().contains(marker) {  mv.getOverlays().remove(marker); }
         mv.getOverlays().clear();
+
+        GeoPoint point1;
+        point1 = new GeoPoint(51.110925, 17.053549);
+        markPosition(true, point1, "RED_USER", Color.RED);
+
+        GeoPoint point2;
+        point2 = new GeoPoint(51.110625, 17.053749);
+        markPosition(false, point2, "BLACK_USER", Color.BLACK);
 
         Position myPos = App.instance().getMyUser().getGpsPosition();
         GeoPoint geoPoint;
@@ -103,6 +168,9 @@ public class MapModule {
         Logger.debug(this, "marking position: " + myPos);
         whichPos = (whichPos+1)%2;
         mv.getController().setCenter(geoPoint);
+
+
+        mv.getController().setCenter(point2);
 
         mv.invalidate(); //to make it refresh overlays with marked positions
     }

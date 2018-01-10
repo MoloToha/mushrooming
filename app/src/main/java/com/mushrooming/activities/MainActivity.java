@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity
             App.instance().getBluetooth().newConnection();
         }
         else if (id == R.id.menu_mark_postion){
-            App.instance().markPosition(getApplicationContext());
+            App.instance().testMarkPosition();
         }
         else if (id == R.id.menu_make_discoverable) {
             App.instance().getBluetooth().ensureDiscoverable();
