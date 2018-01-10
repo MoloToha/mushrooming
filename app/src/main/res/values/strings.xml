@@ -2,6 +2,10 @@
 
     <string name="app_name">Mushrooming</string>
 
+    <!-- Drawer -->
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
     <!-- BluetoothModule -->
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
 
