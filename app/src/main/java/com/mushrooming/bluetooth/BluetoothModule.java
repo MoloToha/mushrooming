@@ -193,7 +193,7 @@ public class BluetoothModule{
             case REQUEST_ENABLE_BT:
                 // When the request to enable Bluetooth returns
                 if (resultCode == Activity.RESULT_OK) {
-                    Logger.debug(this, "enabled bluetooth");
+                    Logger.info(this, "enabled bluetooth");
                     // Bluetooth is now enabled, so initialize BluetoothService
                     _bluetoothService = new BluetoothService(_handler);
                     _bluetoothService.start();
