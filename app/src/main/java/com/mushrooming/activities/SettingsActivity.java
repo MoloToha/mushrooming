@@ -35,5 +35,6 @@ public class SettingsActivity extends AppCompatActivity {
         String name = _input.getText().toString();
         DataManager.setMyName(this, name);
         App.instance().getMyUser().setName(name);
+        App.instance().getBluetooth().sendName();
     }
 }
