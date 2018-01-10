@@ -103,7 +103,7 @@ public class App {
 
         _algorithms = new AlgorithmModule(DisconnectGraphManager.getOne(), DijkstraAssemblyManager.getOne());
 
-        _map = new MapModule(mainActivity, (MapView) mainActivity.findViewById(R.id.map));
+        _map = new MapModule((MapView) mainActivity.findViewById(R.id.map));
 
         initDefaultTeam(mainActivity);
     }
