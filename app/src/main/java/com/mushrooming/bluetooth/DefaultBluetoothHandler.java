@@ -7,6 +7,7 @@ import com.mushrooming.base.App;
 import com.mushrooming.base.Logger;
 import com.mushrooming.base.Position;
 import com.mushrooming.base.Debug;
+import com.mushrooming.base.User;
 
 import java.util.ArrayList;
 
@@ -27,6 +28,8 @@ public class DefaultBluetoothHandler implements BluetoothEventHandler {
 
     public void connected(String device){
         Logger.debug(this, _applicationContext.getString(R.string.connected, device));
+
+        App.instance().getTeam().addUser(new User(device.hashCode()));
     }
 
     public void connectionFailed(String device){
