@@ -25,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 public class BluetoothModule{
@@ -39,6 +40,7 @@ public class BluetoothModule{
     // Constants representing bluetooth message types
     private static final int MESSAGE_POSITION = 1; // x:double, y:double
     private static final int MESSAGE_CONNECTED_DEVICES = 2; // N:int, Dev1:byte(17) ... DevN:byte(17)
+    private static final int MESSAGE_NAME = 3; // N:int, name:byte(N)
 
     // Member object for the bluetooth services
     private BluetoothService _bluetoothService = null;
@@ -157,6 +159,20 @@ public class BluetoothModule{
 
         for( String connection : connections )
             buffer.put(connection.getBytes());
+
+        _bluetoothService.writeAll(buffer.array());
+    }
+
+    public void sendName() {
+        Logger.debug(this, "sendName()");
+
+        String name = App.instance().getMyUser().getName();
+        byte[] nameb = name.getBytes(Charset.forName("UTF-8"));
+
+        ByteBuffer buffer = ByteBuffer.allocate(8 + nameb.length);
+        buffer.putInt(BluetoothModule.MESSAGE_NAME);
+        buffer.putInt(nameb.length);
+        buffer.put(nameb);
 
         _bluetoothService.writeAll(buffer.array());
     }
