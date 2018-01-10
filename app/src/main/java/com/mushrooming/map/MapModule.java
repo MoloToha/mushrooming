@@ -80,6 +80,8 @@ public class MapModule {
             icon = App.instance().getApplicationContext().getResources().getDrawable(R.drawable.question_mark);
         }
 
+        icon.mutate(); // probably not needed, but to be sure
+
         // assuming icons don't have shadows etc and can colour every non-transparent pixel with full colour
         icon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
 
