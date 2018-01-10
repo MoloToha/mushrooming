@@ -66,7 +66,8 @@ public class MapModule {
     }
 
     // marker is returned so that one can later invoke clearOneMarker with it
-    public Marker markPositionGetMarker(Boolean sure, GeoPoint pos, String userName, int color) {
+    // one can ignore it
+    public Marker markPosition(Boolean sure, GeoPoint pos, String userName, int color) {
 
         GeoPoint markPos = pos;
         if (pos == null) {
@@ -99,12 +100,6 @@ public class MapModule {
         mv.invalidate();
 
         return marker;
-    }
-
-    // when we don't care about returned marker (to delete just this one marker)
-    public void markPosition(Boolean sure, GeoPoint pos, String userName, int color) {
-        // ignore returned value
-        Marker marker = markPositionGetMarker(sure, pos, userName, color);
     }
 
     public void centerMap(GeoPoint pos) {
