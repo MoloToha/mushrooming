@@ -43,8 +43,8 @@ public class DijkstraAssemblyManagerTest {
 
         Team team = new Team();
 
-        team.updateUser(1, new Position(0,0));
-        team.updateUser(2, new Position(0,0));
+        team.updateUserPosition(1, new Position(0,0));
+        team.updateUserPosition(2, new Position(0,0));
 
         MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 
@@ -70,8 +70,8 @@ public class DijkstraAssemblyManagerTest {
 
         Team team = new Team();
 
-        team.updateUser(1, new Position(2,2));
-        team.updateUser(2, new Position(2,-2));
+        team.updateUserPosition(1, new Position(2,2));
+        team.updateUserPosition(2, new Position(2,-2));
 
         MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 
@@ -97,8 +97,8 @@ public class DijkstraAssemblyManagerTest {
 
         Team team = new Team();
 
-        team.updateUser(1, new Position(-2,0));
-        team.updateUser(2, new Position(2,0));
+        team.updateUserPosition(1, new Position(-2,0));
+        team.updateUserPosition(2, new Position(2,0));
 
         MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 
@@ -123,8 +123,8 @@ public class DijkstraAssemblyManagerTest {
 
         Team team = new Team();
 
-        team.updateUser(1, new Position(-2,0));
-        team.updateUser(2, new Position(1,-2));
+        team.updateUserPosition(1, new Position(-2,0));
+        team.updateUserPosition(2, new Position(1,-2));
 
         MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 
@@ -150,10 +150,10 @@ public class DijkstraAssemblyManagerTest {
 
         Team team = new Team();
 
-        team.updateUser(1, new Position(-2,2));
+        team.updateUserPosition(1, new Position(-2,2));
         //team.updateUser(2, new Position(-1,2));
-        team.updateUser(3, new Position(0,2));
-        team.updateUser(4, new Position(2,-1));
+        team.updateUserPosition(3, new Position(0,2));
+        team.updateUserPosition(4, new Position(2,-1));
 
         MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 

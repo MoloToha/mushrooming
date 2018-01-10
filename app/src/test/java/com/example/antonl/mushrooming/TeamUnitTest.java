@@ -22,8 +22,8 @@ public class TeamUnitTest {
     public void simpleTeamManaging() throws Exception {
         Team team = new Team();
 
-        team.updateUser(1, new Position(0,0));
-        team.updateUser(2, new Position(0,0));
+        team.updateUserPosition(1, new Position(0,0));
+        team.updateUserPosition(2, new Position(0,0));
 
         assertEquals(2, team.getUsers().size());
 
@@ -36,13 +36,13 @@ public class TeamUnitTest {
     @Test
     public void teamManaging() throws Exception {
         Team team = new Team();
-        team.addUser(new User(42, new Position(4, 2)));
-        team.addUser(new User(44, new Position(4, 4)));
+        team.updateUserPosition(42, new Position(4, 2));
+        team.updateUserPosition(44, new Position(4, 4));
         for (User u : team.getUsers()) {
             assertTrue(u.getGpsPosition().getX() == 4);
         }
 
-        team.updateUser(42, new Position(2, 2));
+        team.updateUserPosition(42, new Position(2, 2));
 
         int count = 0;
         for (User u : team.getUsers()) {
@@ -53,7 +53,7 @@ public class TeamUnitTest {
 
         assertEquals(1, count);
 
-        team.updateUser(44, new Position(3,3));
+        team.updateUserPosition(44, new Position(3,3));
 
         for (User u : team.getUsers()) {
             assertFalse(u.getGpsPosition().getX() == 4);

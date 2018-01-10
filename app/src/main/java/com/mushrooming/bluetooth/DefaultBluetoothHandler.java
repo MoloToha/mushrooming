@@ -29,7 +29,7 @@ public class DefaultBluetoothHandler implements BluetoothEventHandler {
     public void connected(String device){
         Logger.debug(this, _applicationContext.getString(R.string.connected, device));
 
-        App.instance().getTeam().addUser(new User(device.hashCode()));
+        App.instance().getTeam().createUser(device.hashCode());
     }
 
     public void connectionFailed(String device){
@@ -43,7 +43,7 @@ public class DefaultBluetoothHandler implements BluetoothEventHandler {
     public void positionReceived(String device, double x, double y){
         Logger.debug(this, _applicationContext.getString(R.string.position_received, device, x, y));
 
-        App.instance().getTeam().updateUser(device.hashCode(), new Position(x,y));
+        App.instance().getTeam().updateUserPosition(device.hashCode(), new Position(x,y));
     }
 
     public void connectionsReceived(String device, ArrayList<String> connections){
@@ -58,6 +58,6 @@ public class DefaultBluetoothHandler implements BluetoothEventHandler {
     public void nameReceived(String device, String name) {
         Logger.debug(this, _applicationContext.getString(R.string.name_received, device, name));
 
-        App.instance().getTeam().getUser(device.hashCode()).setName(name);
+        App.instance().getTeam().updateUserName(device.hashCode(), name);
     }
 }

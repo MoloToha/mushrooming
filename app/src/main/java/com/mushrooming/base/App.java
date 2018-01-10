@@ -110,10 +110,10 @@ public class App {
 
         int myUserId = _bluetooth.getMyUserId();
         String myName = DataManager.getMyName(mainActivity);
-        _myUser = new User(myUserId);
-        _myUser.setName(myName);
 
-        _team.addUser(_myUser);
+        _team.createUser(myUserId);
+        _myUser = _team.getUser(myUserId);
+        _team.updateUserName(myUserId, myName);
     }
 
     public void markPosition(Context ctx) {

@@ -15,14 +15,23 @@ public class Team {
         _users = new ArrayList<User>();
     }
 
-    public void updateUser(int id, Position pos) {
+    public void updateUserPosition(int id, Position pos) {
         User u = getUser(id);
         if(u == null){
-            u = new User(id);
-            _users.add(u);
+            createUser(id);
+            u = getUser(id);
         }
 
         u.update(pos);
+    }
+
+    public void updateUserName(int id, String name) {
+        User u = getUser(id);
+        if(u == null){
+            createUser(id);
+        }
+
+        u.setName(name);
     }
 
     public ArrayList<User> getUsers() {
@@ -37,8 +46,13 @@ public class Team {
         return false;
     }
 
-    public boolean addUser(User u) {
-        return _users.add(u);
+    public boolean createUser(int id) {
+        if(getUser(id) == null)
+        {
+            _users.add(new User(id));
+            return true;
+        }
+        return false;
     }
 
     public User getUser(int id) {
