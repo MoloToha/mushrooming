@@ -105,9 +105,6 @@ public class MainActivity extends AppCompatActivity
         else if (id == R.id.menu_send_connections) {
             App.instance().getBluetooth().sendConnections();
         }
-        else if (id == R.id.menu_send_name) {
-            App.instance().getBluetooth().sendName();
-        }
         else if (id == R.id.menu_open_settings) {
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);
