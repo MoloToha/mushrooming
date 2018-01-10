@@ -14,6 +14,8 @@ import com.mushrooming.bluetooth.BluetoothModule;
 import com.mushrooming.bluetooth.DefaultBluetoothHandler;
 import com.mushrooming.location.LocationService;
 import com.mushrooming.map.MapModule;
+
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
@@ -76,6 +78,7 @@ public class App {
             @Override
             public void run() {
                 updateMyPosition();
+                //updateMapPositions();
                 //_bluetooth.sendConnections();
 
                 _updateHandler.postDelayed(this, UPDATE_MY_POSITION_TIME);
@@ -140,6 +143,24 @@ public class App {
             _bluetooth.sendPosition(myPos);
             _myUser.update(myPos);
         }
+    }
+
+    public void updateMapPositions()
+    {
+        _map.clearAllMarkers();
+        for(User user : _team.getUsers())
+        {
+            Position userPos = user.getGpsPosition();
+            GeoPoint geoPos = new GeoPoint(userPos.getX(), userPos.getY());
+            _map.markPosition(true, geoPos, user.getName(), user.getColor());
+        }
+    }
+
+    public void focusMyPosition()
+    {
+        Position userPos = _myUser.getGpsPosition();
+        GeoPoint geoPos = new GeoPoint(userPos.getX(), userPos.getY());
+        _map.centerMap(geoPos);
     }
 
     private void checkDisconnectionProblem() {

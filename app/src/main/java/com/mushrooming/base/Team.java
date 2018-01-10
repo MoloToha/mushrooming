@@ -1,5 +1,7 @@
 package com.mushrooming.base;
 
+import android.graphics.Color;
+
 import java.util.ArrayList;
 
 /**
@@ -9,6 +11,8 @@ import java.util.ArrayList;
 public class Team {
 
     private ArrayList<User> _users;
+    private int _colorIdx = 0;
+    private static int[] COLORS = {Color.BLACK, Color.RED, Color.BLUE, Color.YELLOW};
     // managers to be changed by team chef in some menu
 
     public Team() {
@@ -20,6 +24,8 @@ public class Team {
         if(u == null){
             createUser(id);
             u = getUser(id);
+            u.setColor(COLORS[_colorIdx]);
+            _colorIdx = (_colorIdx + 1)%4;
         }
 
         u.update(pos);
