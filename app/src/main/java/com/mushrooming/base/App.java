@@ -79,7 +79,7 @@ public class App {
             @Override
             public void run() {
                 updateMyPosition();
-                //updateMapPositions();
+                updateMapPositions();
                 //_bluetooth.sendConnections();
 
                 _updateHandler.postDelayed(this, UPDATE_MY_POSITION_TIME);
@@ -148,12 +148,13 @@ public class App {
 
     public void updateMapPositions()
     {
+        Logger.debug(this, "updateMapPositions()");
         _map.clearAllMarkers();
         for(User user : _team.getUsers())
         {
             Position userPos = user.getGpsPosition();
             GeoPoint geoPos = new GeoPoint(userPos.getX(), userPos.getY());
-            _map.markPosition(true, geoPos, user.getName(), user.getColor()/*Color.RED*/);
+            _map.markPosition(true, geoPos, user.getName(), user.getColor());
         }
     }
 

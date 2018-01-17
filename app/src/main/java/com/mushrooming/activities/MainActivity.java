@@ -99,33 +99,33 @@ public class MainActivity extends AppCompatActivity
         _drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (menuItems[position] == "Open team") {
+                if (menuItems[position].equals("Open team")) {
                     Intent intent = new Intent(MainActivity.this, TeamActivity.class);
                     startActivity(intent);
                 }
-                else if (menuItems[position] == "Connect a device") {
+                else if (menuItems[position].equals("Connect a device")) {
                     App.instance().getBluetooth().newConnection();
                 }
-                else if (menuItems[position] == "Mark position"){
+                else if (menuItems[position].equals("Mark position")){
                     App.instance().testMarkPosition();
 
                 }
-                else if (menuItems[position] == "Make discoverable") {
+                else if (menuItems[position].equals("Make discoverable")) {
                     App.instance().getBluetooth().ensureDiscoverable();
                 }
-                else if (menuItems[position] ==  "Send random position") {
-                    //sendRandomPosition();
-                    App.instance().updateMapPositions();
+                else if (menuItems[position].equals("Send random position")) {
+                    sendRandomPosition();
+                    //App.instance().updateMapPositions();
                     App.instance().focusMyPosition();
                 }
-                else if (menuItems[position] == "Send connections") {
+                else if (menuItems[position].equals("Send connections")) {
                     App.instance().getBluetooth().sendConnections();
                 }
-                else if (menuItems[position] == "Settings") {
+                else if (menuItems[position].equals("Settings")) {
                     Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                     startActivity(intent);
                 }
-                else if (menuItems[position] == "Open debug") {
+                else if (menuItems[position].equals("Open debug")) {
                     Intent intent = new Intent(MainActivity.this, DebugActivity.class);
                     startActivity(intent);
                 }
