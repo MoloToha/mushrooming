@@ -55,7 +55,10 @@ public class Team {
     public boolean createUser(int id) {
         if(getUser(id) == null)
         {
-            _users.add(new User(id));
+            User newUser = new User(id);
+            _users.add(newUser);
+            newUser.setColor(COLORS[_colorIdx]);
+            _colorIdx = (_colorIdx + 1)%4;
             return true;
         }
         return false;

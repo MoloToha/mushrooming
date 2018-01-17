@@ -3,6 +3,7 @@ package com.mushrooming.base;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Handler;
 
 import com.example.antonl.mushrooming.R;
@@ -152,7 +153,7 @@ public class App {
         {
             Position userPos = user.getGpsPosition();
             GeoPoint geoPos = new GeoPoint(userPos.getX(), userPos.getY());
-            _map.markPosition(true, geoPos, user.getName(), user.getColor());
+            _map.markPosition(true, geoPos, user.getName(), user.getColor()/*Color.RED*/);
         }
     }
 
