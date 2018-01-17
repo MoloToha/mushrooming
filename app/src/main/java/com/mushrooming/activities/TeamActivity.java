@@ -28,7 +28,7 @@ public class TeamActivity extends AppCompatActivity {
         setContentView(R.layout.activity_team);
 
         _team = App.instance().getTeam();
-        userListView = (ListView) findViewById(R.id.list_users);
+        userListView = findViewById(R.id.list_users);
 
         userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -44,7 +44,7 @@ public class TeamActivity extends AppCompatActivity {
             }
         });
 
-        Button button = (Button) findViewById(R.id.button_reloadList);
+        Button button = findViewById(R.id.button_reloadList);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,11 +52,11 @@ public class TeamActivity extends AppCompatActivity {
             }
         });
 
-        button = (Button) findViewById(R.id.button_addUser);
+        button = findViewById(R.id.button_addUser);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createTeamExample(10);
+                App.instance().getBluetooth().newConnection();
             }
         });
 
@@ -73,19 +73,19 @@ public class TeamActivity extends AppCompatActivity {
         userListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, textBasedUserList));
     }
 
-    public void createTeamExample(int userCount) {
-        Random generator = new Random();
-        Team team = new Team();
-
-        for (int i = 0; i < userCount; ++i) {
-            //Position mockup
-            Position pos = new Position(generator.nextDouble() * 10, generator.nextDouble() * 10);
-            team.updateUserPosition(i,pos);
-        }
-
-        _team = team;
-        reloadUserList();
-    }
+//    public void createTeamExample(int userCount) {
+//        Random generator = new Random();
+//        Team team = new Team();
+//
+//        for (int i = 0; i < userCount; ++i) {
+//            //Position mockup
+//            Position pos = new Position(generator.nextDouble() * 10, generator.nextDouble() * 10);
+//            team.updateUserPosition(i,pos);
+//        }
+//
+//        _team = team;
+//        reloadUserList();
+//    }
 
     public ArrayList<String> updateTextBasedUserList() {
         ArrayList<String> ans = new ArrayList<String>();
