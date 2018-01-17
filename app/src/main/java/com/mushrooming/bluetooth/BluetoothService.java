@@ -56,7 +56,7 @@ class BluetoothService {
     // Constructor. Prepares a new Bluetooth session.
     @SuppressLint("HardwareIds")
     BluetoothService(Handler handler) {
-        Logger.info(this, "CREATE BluetoothService");
+        Logger.debug(this, "CREATE BluetoothService");
 
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         _handler = handler;
@@ -74,7 +74,7 @@ class BluetoothService {
 
         MY_UUID = UUID.fromString(baseUUID + mMacAddress.replace(":",""));
 
-        Logger.info(this, "My uuid: " + MY_UUID);
+        Logger.debug(this, "My uuid: " + MY_UUID);
     }
 
     /*
