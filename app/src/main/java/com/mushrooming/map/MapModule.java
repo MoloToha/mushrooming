@@ -54,12 +54,14 @@ public class MapModule {
 
     public void clearAllMarkers () {
         mv.getOverlays().clear();
+        mv.invalidate();
     }
 
     public void clearOneMarker(Marker marker) {
 
         if (mv.getOverlays().contains(marker)) {
             mv.getOverlays().remove(marker);
+            mv.invalidate();
         }
     }
 
@@ -104,6 +106,7 @@ public class MapModule {
 
     public void centerMap(GeoPoint pos) {
         mv.getController().setCenter(pos);
+        mv.invalidate();
     }
 
     // currently switches between marking two different hardcoded positions

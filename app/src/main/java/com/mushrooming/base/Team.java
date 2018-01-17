@@ -24,8 +24,6 @@ public class Team {
         if(u == null){
             createUser(id);
             u = getUser(id);
-            u.setColor(COLORS[_colorIdx]);
-            _colorIdx = (_colorIdx + 1)%4;
         }
 
         u.update(pos);
