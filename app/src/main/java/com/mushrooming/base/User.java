@@ -7,6 +7,12 @@ import com.mushrooming.algorithms.MapPosition;
  */
 
 public class User {
+    public enum ConnectionStatus{
+        TimeDependent, // connection depends on last update time
+        ForceConnected, // marked as connected
+        ForceDisconnected // marked as disconnected
+    }
+
     private int _id; // uniqe id for every user
     private String _name = "DefaultName";
     private Position _GPSpos;
@@ -14,6 +20,7 @@ public class User {
 
     private int _color;
     private long _lastUpdate = 0;
+    private ConnectionStatus _status = ConnectionStatus.TimeDependent;
 
     public User(int id) {
         this._id = id;
@@ -67,9 +74,23 @@ public class User {
         this._MAPpos = _MAPpos;
     }
 
+    public void setConnectionStatus(ConnectionStatus status)
+    {
+        _status = status;
+    }
+
     public static final int MAX_INACTIVITY_TIME = 10000;
     public boolean isConnected() {
-        return System.currentTimeMillis() - _lastUpdate < MAX_INACTIVITY_TIME;
+        switch(_status)
+        {
+            case TimeDependent:
+                return System.currentTimeMillis() - _lastUpdate < MAX_INACTIVITY_TIME;
+            case ForceConnected:
+                return true;
+            case ForceDisconnected:
+                return false;
+        }
+        return false;
     }
 
     @Override

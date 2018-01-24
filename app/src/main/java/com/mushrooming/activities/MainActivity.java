@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity
 
     private void addDrawerItems() {
         final String[] menuItems = { "Open team", "Connect a device", "Mark position", "Make discoverable",
-                "Send random position", "Send connections", "Settings", "Open debug" };
+                "Send random position", "Send connections", "Update position", "Focus on me", "Settings", "Open debug" };
         _optionsArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, menuItems);
         _drawerList.setAdapter(_optionsArrayAdapter);
 
@@ -115,11 +115,15 @@ public class MainActivity extends AppCompatActivity
                 }
                 else if (menuItems[position].equals("Send random position")) {
                     sendRandomPosition();
-                    //App.instance().updateMapPositions();
-                    App.instance().focusMyPosition();
                 }
                 else if (menuItems[position].equals("Send connections")) {
                     App.instance().getBluetooth().sendConnections();
+                }
+                else if (menuItems[position].equals("Update position")) {
+                    App.instance().updateMapPositions();
+                }
+                else if (menuItems[position].equals("Focus on me")) {
+                    App.instance().focusMyPosition();
                 }
                 else if (menuItems[position].equals("Settings")) {
                     Intent intent = new Intent(MainActivity.this, SettingsActivity.class);

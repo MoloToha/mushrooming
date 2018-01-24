@@ -117,6 +117,7 @@ public class App {
 
         _team.createUser(myUserId);
         _myUser = _team.getUser(myUserId);
+        _myUser.setConnectionStatus(User.ConnectionStatus.ForceConnected);
         _team.updateUserName(myUserId, myName);
     }
 
