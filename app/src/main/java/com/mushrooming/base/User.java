@@ -2,10 +2,6 @@ package com.mushrooming.base;
 
 import com.mushrooming.algorithms.MapPosition;
 
-/**
- * Created by barto on 24.10.2017.
- */
-
 public class User {
     public enum ConnectionStatus{
         TimeDependent, // connection depends on last update time
@@ -13,7 +9,7 @@ public class User {
         ForceDisconnected // marked as disconnected
     }
 
-    private int _id; // uniqe id for every user
+    private String _address; // address MAC of another user's device
     private String _name = "DefaultName";
     private Position _GPSpos;
     //private MapPosition _MAPpos; // position on THIS device's map, may be different on other devices
@@ -22,13 +18,13 @@ public class User {
     private long _lastUpdate = 0;
     private ConnectionStatus _status = ConnectionStatus.TimeDependent;
 
-    public User(int id) {
-        this._id = id;
+    public User(String address) {
+        this._address = address;
         _GPSpos = new Position(0,0);
         //_MAPpos = new MapPosition(0,0);
     }
-    public User(int id, Position pos) {
-        this(id);
+    public User(String address, Position pos) {
+        this(address);
         update(pos);
     }
 
@@ -54,8 +50,8 @@ public class User {
         this._color = color;
     }
 
-    public int getId(){
-        return _id;
+    public String getAddress(){
+        return _address;
     }
 
     public Position getGpsPosition() {
@@ -96,7 +92,7 @@ public class User {
     @Override
     public boolean equals(Object obj){
         if(obj instanceof User){
-            return getId() == ((User)obj).getId();
+            return getAddress().equals(((User)obj).getAddress());
         }
         // exception?
         return false;

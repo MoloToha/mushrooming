@@ -36,7 +36,7 @@ public class TeamActivity extends AppCompatActivity {
                 User itemClicked = _team.getUsers().get(position);
 
                 Intent intent = new Intent(TeamActivity.this, UserActivity.class);
-                intent.putExtra("ID", itemClicked.getId());
+                intent.putExtra("Address", itemClicked.getAddress());
                 intent.putExtra("PosX", itemClicked.getGpsPosition().getX());
                 intent.putExtra("PosY", itemClicked.getGpsPosition().getY());
 
@@ -92,7 +92,7 @@ public class TeamActivity extends AppCompatActivity {
         String textUserData;
 
         for (User user: _team.getUsers()) {
-            textUserData = "Name: " + user.getName() + ", ID: " + user.getId();
+            textUserData = "Name: " + user.getName() + ", Address: " + user.getAddress();
                     //+ " xPos: " + user.getPosition().getX() + " yPos: " + user.getPosition().getY();
 
             ans.add(textUserData);

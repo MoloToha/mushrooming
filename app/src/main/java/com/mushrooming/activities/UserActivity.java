@@ -15,15 +15,15 @@ public class UserActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
 
-        int _userId = bundle.getInt("ID");
-        double _xPos = bundle.getDouble("PosX");
-        double _yPos = bundle.getDouble("PosY");
+        String address = bundle.getString("Address");
+        double xPos = bundle.getDouble("PosX");
+        double yPos = bundle.getDouble("PosY");
 
         TextView userText = (TextView) findViewById(R.id.userTextData);
-        userText.setText(getFormattedUserText(_userId, _xPos, _yPos));
+        userText.setText(getFormattedUserText(address, xPos, yPos));
     }
 
-    private String getFormattedUserText(int id, double xPos, double yPos) {
-        return "User ID: " + id + "\nPosition X: " + String.format("%.3f", xPos)+ "\nPosition Y: " + String.format("%.3f", yPos);
+    private String getFormattedUserText(String address, double xPos, double yPos) {
+        return "Address: " + address + "\nPosition X: " + String.format("%.3f", xPos)+ "\nPosition Y: " + String.format("%.3f", yPos);
     }
 }

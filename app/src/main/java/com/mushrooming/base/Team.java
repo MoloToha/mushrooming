@@ -16,23 +16,24 @@ public class Team {
     // managers to be changed by team chef in some menu
 
     public Team() {
-        _users = new ArrayList<User>();
+        _users = new ArrayList<>();
     }
 
-    public void updateUserPosition(int id, Position pos) {
-        User u = getUser(id);
+    public void updateUserPosition(String address, Position pos) {
+        User u = getUser(address);
         if(u == null){
-            createUser(id);
-            u = getUser(id);
+            createUser(address);
+            u = getUser(address);
         }
 
         u.update(pos);
     }
 
-    public void updateUserName(int id, String name) {
-        User u = getUser(id);
+    public void updateUserName(String address, String name) {
+        User u = getUser(address);
         if(u == null){
-            createUser(id);
+            createUser(address);
+            u = getUser(address);
         }
 
         u.setName(name);
@@ -42,18 +43,18 @@ public class Team {
         return _users;
     }
 
-    public boolean removeUser(int id) {
-        User u = getUser(id);
+    public boolean removeUser(String address) {
+        User u = getUser(address);
         if(u != null){
             return _users.remove(u);
         }
         return false;
     }
 
-    public boolean createUser(int id) {
-        if(getUser(id) == null)
+    public boolean createUser(String address) {
+        if(getUser(address) == null)
         {
-            User newUser = new User(id);
+            User newUser = new User(address);
             _users.add(newUser);
             newUser.setColor(COLORS[_colorIdx]);
             _colorIdx = (_colorIdx + 1)%4;
@@ -62,11 +63,10 @@ public class Team {
         return false;
     }
 
-    public User getUser(int id) {
+    public User getUser(String address) {
         for(User u : _users) {
-            if(u.getId() == id) {
+            if(u.getAddress().equals(address))
                 return u;
-            }
         }
         return null;
     }

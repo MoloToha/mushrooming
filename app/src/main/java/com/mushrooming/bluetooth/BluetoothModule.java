@@ -114,8 +114,8 @@ public class BluetoothModule{
         _activity.startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
     }
 
-    public int getMyUserId(){
-        return _bluetoothAdapter.getName().hashCode();
+    public String getMyAddress(){
+        return "00:00:00:00:00:00";
     }
     // Establish connection with other device
     public void connectDevice(String address) {

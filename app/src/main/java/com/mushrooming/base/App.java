@@ -112,13 +112,13 @@ public class App {
     private void initDefaultTeam(Activity mainActivity){
         _team = new Team();
 
-        int myUserId = _bluetooth.getMyUserId();
+        String myAddress = _bluetooth.getMyAddress();
         String myName = DataManager.getMyName(mainActivity);
 
-        _team.createUser(myUserId);
-        _myUser = _team.getUser(myUserId);
+        _team.createUser(myAddress);
+        _myUser = _team.getUser(myAddress);
         _myUser.setConnectionStatus(User.ConnectionStatus.ForceConnected);
-        _team.updateUserName(myUserId, myName);
+        _team.updateUserName(myAddress, myName);
     }
 
     public void testMarkPosition() {
