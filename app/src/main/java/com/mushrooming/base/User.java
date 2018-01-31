@@ -79,11 +79,6 @@ public class User {
         _status = status;
     }
 
-    public void setConnectionStatus(ConnectionStatus status)
-    {
-        _status = status;
-    }
-
     public static final int MAX_INACTIVITY_TIME = 10000;
     public boolean isConnected() {
         switch(_status)
