@@ -34,7 +34,7 @@ public class AvMap {
     // update this on every mark?
     // OF CENTER BECAUSE WHEN UPDATING CURRENT POS ERROR CAN GROW - BECAUSE OF ROUNDING TO INTEGER ON EACH SET
     // GPS coordinate of center or (xpos, ypos) position - my position - to decide
-    private double xpos, ypos;
+    private double xpos, ypos; // x and y pos of center!!! - always size/2, except for recenter
     private int xmin, xmax, ymin, ymax; // range of used area of a map
 
     // all functions (except getRelativeToCurrentMapPosition) take relative positions as arguments!
@@ -55,12 +55,16 @@ public class AvMap {
         //availableTerrain[(int)xpos][(int)ypos] = true;
     }
 
+    public void setZeroPos() {
+        positionGPSofCenter = new Position(0,0);
+    }
+
     public boolean availableTerrain(int i, int j) {
         return availableTerrain[i][j];
     }
 
-    public void markMapPosition(MapPosition relativeToCurrent) {
-        int x1 = (int) (relativeToCurrent.getX() + xpos), y1 = (int) (relativeToCurrent.getY() + ypos);
+    public void markCenterRelativeMapPosition(MapPosition relativeToCenter) {
+        int x1 = (int) (relativeToCenter.getX() + xpos), y1 = (int) (relativeToCenter.getY() + ypos);
         availableTerrain[x1][y1] = true;
         xmin = Basic.min(xmin, x1);
         xmax = Basic.max(xmax, x1);
@@ -68,11 +72,13 @@ public class AvMap {
         ymax = Basic.max(ymax, y1);
     }
 
-    public void markMapPositions(Collection<MapPosition> relativeToCurrentList) {
-        for (MapPosition p : relativeToCurrentList) {
-            markMapPosition(p);
+
+    public void markCenterRelativeMapPositions(Collection<MapPosition> relativeToCenterList) {
+        for (MapPosition p : relativeToCenterList) {
+            markCenterRelativeMapPosition(p);
         }
     }
+
 
     public void markPosition(Position posGPS) {
 
@@ -87,11 +93,9 @@ public class AvMap {
         ymin = Basic.min(ymin, y1);
         ymax = Basic.max(ymax, y1);
 
-        xpos = x1;
-        ypos = y1;
-
         recenter(posGPS);
     }
+
 
     public void markPositions(Collection<Position> posGPSlist) {
         for (Position p : posGPSlist) {
@@ -99,15 +103,24 @@ public class AvMap {
         }
     }
 
-    public void moveToRelativeToCurrentMapPosition(MapPosition relativeToCurrent) {
-        xpos += relativeToCurrent.getX();
-        ypos += relativeToCurrent.getY();
+    //public void moveToRelativeToCurrentMapPosition(MapPosition relativeToCurrent) {
+    //    xpos += relativeToCurrent.getX();
+    //    ypos += relativeToCurrent.getY();
+    //}
+
+    //public MapPosition getCenterRelativeMapPosition(MapPosition relativeToCurrent) {
+    //    return new MapPosition(relativeToCurrent.getX()+xpos, relativeToCurrent.getY()+ypos);
+    //}
+
+    public MapPosition getCenterRelativeMapPositionFromAbsolute(MapPosition absolute) {
+        return new MapPosition(absolute.getX() - xpos, absolute.getY() - ypos);
     }
 
-    public MapPosition getCenterRelativeMapPosition(MapPosition relativeToCurrent) {
-        return new MapPosition(relativeToCurrent.getX()+xpos, relativeToCurrent.getY()+ypos);
+    public MapPosition getAbsoluteMapPositionFromCenterRelative(MapPosition centerRel) {
+        return new MapPosition(centerRel.getX() + xpos, centerRel.getY() + ypos);
     }
 
+    // center relative means absolute position, so to some corner...
     public MapPosition getCenterRelativeMapPositionFromGPS(Position posGPS) {
         double xGPS = posGPS.getX();
         double yGPS = posGPS.getY();
@@ -132,6 +145,14 @@ public class AvMap {
     }
 
     public void recenter(Position posGPS) {
+
+        MapPosition centerRelative = getCenterRelativeMapPositionFromGPS(posGPS);
+
+        int x1_ = centerRelative.getIntX();
+        int y1_ = centerRelative.getIntY();
+
+        xpos = x1_;
+        ypos = y1_;  //does part of the job for recentering
 
         positionGPSofCenter = posGPS;
 

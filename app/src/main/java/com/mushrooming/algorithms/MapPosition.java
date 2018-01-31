@@ -33,11 +33,11 @@ public class MapPosition{
     }
 
     public int getIntX() {
-        return ((int) _x);
+        return ((int) Math.round(_x));
     }
 
     public int getIntY() {
-        return ((int) _y);
+        return ((int) Math.round(_y));
     }
 
     public double getX() {

@@ -29,14 +29,14 @@ public class DijkstraAssemblyManager implements AssemblyManager {
         return instance;
     }
 
-    private void computeNewDijkstra(double[][] map, AvMap avMap, MapPosition relpos) {
-        if (relpos == null || map == null || avMap == null) return;
+    private void computeNewDijkstra(double[][] map, AvMap avMap, MapPosition centerRel) {
+        if (centerRel == null || map == null || avMap == null) return;
         for(int i=0 ; i<map.length; ++i) {
             for (int j=0; j<map[i].length; ++j) {
                 map[i][j] = infty;
             }
         }
-        MapPosition pos = avMap.getCenterRelativeMapPosition(relpos);
+        MapPosition pos = avMap.getAbsoluteMapPositionFromCenterRelative(centerRel);
         map[pos.getIntX()][pos.getIntY()] = 0;
         q.clear();
         q.add(new PairSortedBy1(0.0,pos));
@@ -98,7 +98,8 @@ public class DijkstraAssemblyManager implements AssemblyManager {
 
         // bestx, besty are center-relative (called)
 
-        return terrainOKmap.getCenterRelativeMapPosition(new MapPosition(bestx, besty));
+        return terrainOKmap.getCenterRelativeMapPositionFromAbsolute(new MapPosition(bestx, besty));
+               //terrainOKmap.getCenterRelativeMapPosition(new MapPosition(bestx, besty));
                //terrainOKmap.getRelativeToCurrentMapPosition(new MapPosition(bestx, besty));
         // NOPE - we need to get GPS position to show; same as with "available" terrain
         // we want non-relative GPS position
@@ -106,8 +107,8 @@ public class DijkstraAssemblyManager implements AssemblyManager {
 
     @Override
     public Position chooseGPSAssemblyPlace(Team team, AvMap terrainOKmap) {
-        MapPosition mp = chooseMapAssemblyPlace(team, terrainOKmap);
-        return terrainOKmap.getNonRelativeGPSposition(mp);
+        MapPosition mpCenterRelative = chooseMapAssemblyPlace(team, terrainOKmap);
+        return terrainOKmap.getNonRelativeGPSposition(mpCenterRelative);
     }
 
 
