@@ -11,10 +11,6 @@ import com.mushrooming.base.User;
 
 import java.util.ArrayList;
 
-/**
- * Created by barto on 20.11.2017.
- */
-
 public class DefaultBluetoothHandler implements BluetoothEventHandler {
 
     private Context _applicationContext;
@@ -29,7 +25,11 @@ public class DefaultBluetoothHandler implements BluetoothEventHandler {
     public void connected(String device){
         Logger.info(this, _applicationContext.getString(R.string.connected, device));
 
-        App.instance().getTeam().createUser(device);
+        // Try to create new user. If this user already exists, change its status to connected
+        if( !App.instance().getTeam().createUser(device) ){
+            User u = App.instance().getTeam().getUser(device);
+            u.setConnectionStatus(User.ConnectionStatus.TimeDependent);
+        }
     }
 
     public void connectionFailed(String device){
@@ -38,6 +38,11 @@ public class DefaultBluetoothHandler implements BluetoothEventHandler {
 
     public void connectionLost(String device){
         Logger.info(this, _applicationContext.getString(R.string.connection_lost, device));
+
+        // Change user status to disconnected
+        User u = App.instance().getTeam().getUser(device);
+        if( u != null )
+            u.setConnectionStatus(User.ConnectionStatus.ForceDisconnected);
     }
 
     public void positionReceived(String device, double x, double y){

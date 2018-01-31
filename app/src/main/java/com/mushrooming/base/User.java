@@ -73,6 +73,7 @@ public class User {
     public void setConnectionStatus(ConnectionStatus status)
     {
         _status = status;
+        _lastUpdate = System.currentTimeMillis();
     }
 
     public static final int MAX_INACTIVITY_TIME = 10000;
