@@ -24,7 +24,7 @@ public class User {
 
     public User(int id) {
         this._id = id;
-        _GPSpos = new Position(0,0);
+        _GPSpos = null; // SO THAT NO NONSENCE POSITION WILL BE MARKED new Position(0,0);
         //_MAPpos = new MapPosition(0,0);
     }
     public User(int id, Position pos) {

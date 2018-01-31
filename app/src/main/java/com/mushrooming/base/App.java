@@ -154,16 +154,24 @@ public class App {
         for(User user : _team.getUsers())
         {
             Position userPos = user.getGpsPosition();
-            GeoPoint geoPos = new GeoPoint(userPos.getX(), userPos.getY());
-            _map.markPosition(true, geoPos, user.getName(), user.getColor());
+            if (userPos != null) {
+                GeoPoint geoPos = new GeoPoint(userPos.getX(), userPos.getY());
+                _map.markPosition(true, geoPos, user.getName(), user.getColor());
+                _algorithms.markVisited(new Position(userPos.getX(), userPos.getY()));
+            }
+            // TODO check how old the position is and mark with sure==false when too old
+            // TODO fix marking visited when indexOutOfBounds
         }
+        // TODO some centering on current user (not here)
     }
 
     public void focusMyPosition()
     {
         Position userPos = _myUser.getGpsPosition();
-        GeoPoint geoPos = new GeoPoint(userPos.getX(), userPos.getY());
-        _map.centerMap(geoPos);
+        if (userPos != null) {
+            GeoPoint geoPos = new GeoPoint(userPos.getX(), userPos.getY());
+            _map.centerMap(geoPos);
+        }
     }
 
     private void checkDisconnectionProblem() {

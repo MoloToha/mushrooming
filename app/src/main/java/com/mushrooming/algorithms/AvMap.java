@@ -93,7 +93,7 @@ public class AvMap {
         ymin = Basic.min(ymin, y1);
         ymax = Basic.max(ymax, y1);
 
-        recenter(posGPS);
+        recenter(posGPS);  //every position marking does this
     }
 
 
@@ -122,6 +122,7 @@ public class AvMap {
 
     // center relative means absolute position, so to some corner...
     public MapPosition getCenterRelativeMapPositionFromGPS(Position posGPS) {
+        if (posGPS == null) return null;
         double xGPS = posGPS.getX();
         double yGPS = posGPS.getY();
         return new MapPosition(
@@ -131,6 +132,7 @@ public class AvMap {
     }
 
     public MapPosition getRelativeToCurrentMapPosition(MapPosition relativeToCenter) {
+        if (relativeToCenter == null) return null;
         return new MapPosition(relativeToCenter.getX()-xpos, relativeToCenter.getY()-ypos);
     }
 
@@ -156,7 +158,7 @@ public class AvMap {
 
         positionGPSofCenter = posGPS;
 
-        if (xpos< size/3 || xpos > (2*size)/3 || ypos < size/3 || ypos > (2*size)/3) {
+        if (xpos< size/6 || xpos > (5*size)/6 || ypos < (2*size)/3 || ypos > (5*size)/6) {
 
             int xdelta = (int)xpos - center;
             int ydelta = (int)ypos - center;

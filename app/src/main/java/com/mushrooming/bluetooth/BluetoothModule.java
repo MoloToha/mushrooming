@@ -140,7 +140,7 @@ public class BluetoothModule{
 
     public void sendPosition(Position pos) {
         Logger.debug(this, "sendPosition()");
-
+        if (pos == null) return;
         ByteBuffer buffer = ByteBuffer.allocate(20);
         buffer.putInt(BluetoothModule.MESSAGE_POSITION);
         buffer.putDouble(pos.getX());

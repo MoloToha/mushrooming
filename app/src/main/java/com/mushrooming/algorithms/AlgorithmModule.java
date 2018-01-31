@@ -3,6 +3,8 @@ package com.mushrooming.algorithms;
 import com.mushrooming.base.Position;
 import com.mushrooming.base.Team;
 
+import org.osmdroid.util.GeoPoint;
+
 /**
  * Created by piotrek on 29.11.17.
  */
@@ -20,6 +22,11 @@ public class AlgorithmModule {
     public Position chooseAssemblyPlace(Team team){
         return _assemblyManager.chooseGPSAssemblyPlace(team, _terrainOKmap); // not map position
     }
+
+    public void markVisited(Position pos) {
+        _terrainOKmap.markPosition(pos);
+    }
+
 
     public boolean checkIfAssemblyNeeded(Team team) {
         return _graphManager.checkIfAssemblyNeeded(team);

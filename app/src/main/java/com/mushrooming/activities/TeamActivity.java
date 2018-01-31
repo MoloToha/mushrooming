@@ -37,9 +37,10 @@ public class TeamActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(TeamActivity.this, UserActivity.class);
                 intent.putExtra("ID", itemClicked.getId());
-                intent.putExtra("PosX", itemClicked.getGpsPosition().getX());
-                intent.putExtra("PosY", itemClicked.getGpsPosition().getY());
-
+                if (itemClicked != null && itemClicked.getGpsPosition() != null) {
+                    intent.putExtra("PosX", itemClicked.getGpsPosition().getX());
+                    intent.putExtra("PosY", itemClicked.getGpsPosition().getY());
+                }
                 startActivity(intent);
             }
         });
