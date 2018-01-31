@@ -1,5 +1,6 @@
 package com.mushrooming.algorithms;
 
+import com.mushrooming.base.Position;
 import com.mushrooming.base.Team;
 
 /**
@@ -7,5 +8,6 @@ import com.mushrooming.base.Team;
  */
 
 public interface AssemblyManager {
-    MapPosition chooseAssemblyPlace (Team team, AvMap terrainOKmap);
+    Position chooseGPSAssemblyPlace(Team team, AvMap terrainOKmap);
+    MapPosition chooseMapAssemblyPlace(Team team, AvMap terrainOKmap);
 }

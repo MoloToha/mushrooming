@@ -169,7 +169,7 @@ public class App {
     private void checkDisconnectionProblem() {
         Logger.debug(this, "checkDisconnectionProblem()");
         if (_algorithms.checkIfAssemblyNeeded(_team)) {
-            //MapPosition assemblyPos = _assemblyManager.chooseAssemblyPlace(_team);
+            //MapPosition assemblyPos = _assemblyManager.chooseMapAssemblyPlace(_team);
 
             Logger.error(this, "checkDisconnectionProblem() : assembly needed");
             // assembly may also be ordered when graph is still consistent, depending on used manager

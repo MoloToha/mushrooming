@@ -1,6 +1,6 @@
 package com.mushrooming.algorithms;
 
-import com.mushrooming.base.App;
+import com.mushrooming.base.Position;
 import com.mushrooming.base.Team;
 import com.mushrooming.base.User;
 
@@ -36,7 +36,7 @@ public class DijkstraAssemblyManager implements AssemblyManager {
                 map[i][j] = infty;
             }
         }
-        MapPosition pos = avMap.getNonRelativePosition(relpos);
+        MapPosition pos = avMap.getCenterRelativeMapPosition(relpos);
         map[pos.getIntX()][pos.getIntY()] = 0;
         q.clear();
         q.add(new PairSortedBy1(0.0,pos));
@@ -63,19 +63,19 @@ public class DijkstraAssemblyManager implements AssemblyManager {
             }
         }
     }
-    // TODO fill empty test
 
 
     // can be static, but when no interface
+    // TODO this is only for tests, maybe delete it and move code to function returning GPS position
     @Override
-    public MapPosition chooseAssemblyPlace(Team team, AvMap terrainOKmap) {
+    public MapPosition chooseMapAssemblyPlace(Team team, AvMap terrainOKmap) {
         // one grid for Dijkstra from current device and one for sum of distances (squares) from previous Dijkstras
         double[][] thisDijkstra = new double[AvMap.size][AvMap.size];
         double[][] sumDijkstra = new double[AvMap.size][AvMap.size];
 
         //run one Dijkstra for each user, accumulate results and choose best place (from marked as available)
         for (User u : team.getUsers() ){
-            computeNewDijkstra(thisDijkstra, terrainOKmap, u.getMapPosition());
+            computeNewDijkstra(thisDijkstra, terrainOKmap, terrainOKmap.getCenterRelativeMapPositionFromGPS(u.getGpsPosition())/*u.getMapPosition()*/);
             for (int i=0; i<AvMap.size; ++i) {
                 for (int j=0; j<AvMap.size; ++j) {
                     sumDijkstra[i][j] += (thisDijkstra[i][j])*(thisDijkstra[i][j]);
@@ -96,8 +96,18 @@ public class DijkstraAssemblyManager implements AssemblyManager {
             }
         }
 
-        return terrainOKmap.getRelativePosition(new MapPosition(bestx, besty));
+        // bestx, besty are center-relative (called)
 
+        return terrainOKmap.getCenterRelativeMapPosition(new MapPosition(bestx, besty));
+               //terrainOKmap.getRelativeToCurrentMapPosition(new MapPosition(bestx, besty));
+        // NOPE - we need to get GPS position to show; same as with "available" terrain
+        // we want non-relative GPS position
+    }
+
+    @Override
+    public Position chooseGPSAssemblyPlace(Team team, AvMap terrainOKmap) {
+        MapPosition mp = chooseMapAssemblyPlace(team, terrainOKmap);
+        return terrainOKmap.getNonRelativeGPSposition(mp);
     }
 
 

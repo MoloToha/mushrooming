@@ -1,9 +1,9 @@
 package com.mushrooming.algorithms;
 
+import com.mushrooming.base.App;
 import com.mushrooming.base.Position;
 
 import java.util.Collection;
-import java.util.List;
 
 
 /**
@@ -13,6 +13,10 @@ import java.util.List;
 public class AvMap {
     public static int size = 905;
     public static int center = size/2; 
+
+    // https://gis.stackexchange.com/questions/2951/algorithm-for-offsetting-a-latitude-longitude-by-some-amount-of-meters/2964
+    public static double XSCALE = 111111; // approx 111111 meters for one degree
+    public static double YSCALE = 111111; // approx 111111*cos(xGPS) is one degree
 
     private boolean[][] availableTerrain = new boolean[size][size];
     // TODO maybe also draw directions in which someone went ??
@@ -26,13 +30,22 @@ public class AvMap {
     // taken into consideration by assembly place ordering algorithm?
     // or maybe would be taken into consideration
 
-    private Position positionGPSofcenter;
+    private Position positionGPSofCenter; // use latitude and longitude as int coordinate on plane
+    // update this on every mark?
+    // OF CENTER BECAUSE WHEN UPDATING CURRENT POS ERROR CAN GROW - BECAUSE OF ROUNDING TO INTEGER ON EACH SET
+    // GPS coordinate of center or (xpos, ypos) position - my position - to decide
     private double xpos, ypos;
     private int xmin, xmax, ymin, ymax; // range of used area of a map
 
-    // all functions (except getRelativePosition) take relative positions as arguments!
+    // all functions (except getRelativeToCurrentMapPosition) take relative positions as arguments!
 
     public AvMap() {
+        Position pos = null;
+        if (App.instance().getLocationService() != null) {
+            pos = App.instance().getLocationService().getLastPosition();
+        }
+        if (pos == null) pos = new Position(0,0);
+        positionGPSofCenter = pos;
         xpos = size/2;
         ypos = size/2;
         xmin = (int)xpos;
@@ -46,8 +59,8 @@ public class AvMap {
         return availableTerrain[i][j];
     }
 
-    public void markPosition(MapPosition relpos) {
-        int x1 = (int) (relpos.getX() + xpos), y1 = (int) (relpos.getY() + ypos);
+    public void markMapPosition(MapPosition relativeToCurrent) {
+        int x1 = (int) (relativeToCurrent.getX() + xpos), y1 = (int) (relativeToCurrent.getY() + ypos);
         availableTerrain[x1][y1] = true;
         xmin = Basic.min(xmin, x1);
         xmax = Basic.max(xmax, x1);
@@ -55,30 +68,73 @@ public class AvMap {
         ymax = Basic.max(ymax, y1);
     }
 
-    public void markPositions(Collection<MapPosition> posl) {
-        for (MapPosition p : posl) {
+    public void markMapPositions(Collection<MapPosition> relativeToCurrentList) {
+        for (MapPosition p : relativeToCurrentList) {
+            markMapPosition(p);
+        }
+    }
+
+    public void markPosition(Position posGPS) {
+
+        MapPosition centerRelative = getCenterRelativeMapPositionFromGPS(posGPS);
+
+        int x1 = centerRelative.getIntX();
+        int y1 = centerRelative.getIntY();
+
+        availableTerrain[x1][y1] = true;
+        xmin = Basic.min(xmin, x1);
+        xmax = Basic.max(xmax, x1);
+        ymin = Basic.min(ymin, y1);
+        ymax = Basic.max(ymax, y1);
+
+        xpos = x1;
+        ypos = y1;
+
+        recenter(posGPS);
+    }
+
+    public void markPositions(Collection<Position> posGPSlist) {
+        for (Position p : posGPSlist) {
             markPosition(p);
         }
     }
 
-    public void moveToRelativePosition(MapPosition relpos) {
-        xpos += relpos.getX();
-        ypos += relpos.getY();
+    public void moveToRelativeToCurrentMapPosition(MapPosition relativeToCurrent) {
+        xpos += relativeToCurrent.getX();
+        ypos += relativeToCurrent.getY();
     }
 
-    public MapPosition getNonRelativePosition(MapPosition relpos) {
-        return new MapPosition(relpos.getX()+xpos, relpos.getY()+ypos);
+    public MapPosition getCenterRelativeMapPosition(MapPosition relativeToCurrent) {
+        return new MapPosition(relativeToCurrent.getX()+xpos, relativeToCurrent.getY()+ypos);
     }
 
-    public MapPosition getRelativePosition(MapPosition pos) {
-        return new MapPosition(pos.getX()-xpos, pos.getY()-ypos);
+    public MapPosition getCenterRelativeMapPositionFromGPS(Position posGPS) {
+        double xGPS = posGPS.getX();
+        double yGPS = posGPS.getY();
+        return new MapPosition(
+            (xGPS - positionGPSofCenter.getX())*XSCALE,
+            (yGPS - positionGPSofCenter.getY())*YSCALE*Math.cos(xGPS)
+        );
+    }
+
+    public MapPosition getRelativeToCurrentMapPosition(MapPosition relativeToCenter) {
+        return new MapPosition(relativeToCenter.getX()-xpos, relativeToCenter.getY()-ypos);
+    }
+
+    public Position getNonRelativeGPSposition(MapPosition centerRelative){
+        double xGPS = centerRelative.getX() * (1.0/XSCALE) + positionGPSofCenter.getX();
+        double yGPS = centerRelative.getY() * (1.0/ (YSCALE*Math.cos(xGPS)) ) + positionGPSofCenter.getY();
+        return new Position(xGPS, yGPS);
     }
 
     public static boolean notIn(int p) {
         return (p<0 || p>=size); //compare with defined
     }
 
-    public void recenter() {
+    public void recenter(Position posGPS) {
+
+        positionGPSofCenter = posGPS;
+
         if (xpos< size/3 || xpos > (2*size)/3 || ypos < size/3 || ypos > (2*size)/3) {
 
             int xdelta = (int)xpos - center;
