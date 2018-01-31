@@ -1,6 +1,5 @@
 package com.mushrooming.algorithms;
 
-import com.mushrooming.base.Position;
 import com.mushrooming.base.Team;
 
 /**
@@ -17,8 +16,8 @@ public class AlgorithmModule {
         _assemblyManager = assemblyM;
     }
 
-    public Position chooseAssemblyPlace(Team team){
-        return _assemblyManager.chooseGPSAssemblyPlace(team, _terrainOKmap); // not map position
+    public MapPosition chooseAssemblyPlace(Team team){
+        return _assemblyManager.chooseAssemblyPlace(team, _terrainOKmap);
     }
 
     public boolean checkIfAssemblyNeeded(Team team) {

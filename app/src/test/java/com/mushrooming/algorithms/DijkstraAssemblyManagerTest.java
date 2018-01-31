@@ -16,7 +16,7 @@ public class DijkstraAssemblyManagerTest {
         for (int i=0; i<what.length; ++i) {
             for (int j=0; j<what[i].length; ++j) {
                 if (what[i][j] != 0) {
-                    map.markCenterRelativeMapPosition(new MapPosition(i - what.length / 2,
+                    map.markPosition(new MapPosition(i - what.length / 2,
                             j - what[i].length / 2));
                     //System.out.println((AvMap.size / 2 + i - what.length / 2) +" " + (AvMap.size / 2 + j - what[i].length / 2));
                 }
@@ -46,9 +46,9 @@ public class DijkstraAssemblyManagerTest {
         team.updateUserPosition(1, new Position(0,0));
         team.updateUserPosition(2, new Position(0,0));
 
-        MapPosition mpos = d.chooseMapAssemblyPlace(team, avmap);
+        MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 
-        assertEquals(new MapPosition(0,0), d.chooseMapAssemblyPlace(team,avmap));
+        assertEquals(new MapPosition(0,0), d.chooseAssemblyPlace(team,avmap));
 
     }
 
@@ -67,21 +67,15 @@ public class DijkstraAssemblyManagerTest {
                 {0,0,0,0,0},
                 {0,0,0,0,0}
         });
-        avmap.setZeroPos();
 
         Team team = new Team();
 
+        team.updateUserPosition(1, new Position(2,2));
+        team.updateUserPosition(2, new Position(2,-2));
 
+        MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 
-        team.updateUserPosition(1,
-                avmap.getNonRelativeGPSposition(new MapPosition(2,2)));
-        // out of bounds, because 2 degrees are like many km
-        team.updateUserPosition(2,
-                avmap.getNonRelativeGPSposition(new MapPosition(2,-2)));
-
-        MapPosition mpos = d.chooseMapAssemblyPlace(team, avmap);
-
-        assertEquals(new MapPosition(2,0), d.chooseMapAssemblyPlace(team, avmap));
+        assertEquals(new MapPosition(2,0), d.chooseAssemblyPlace(team, avmap));
 
     }
 
@@ -100,18 +94,15 @@ public class DijkstraAssemblyManagerTest {
                 {0,0,0,1,0},
                 {0,0,1,0,0}
         });
-        avmap.setZeroPos();
 
         Team team = new Team();
 
-        team.updateUserPosition(1,
-                avmap.getNonRelativeGPSposition(new MapPosition(-2,0)));
-        team.updateUserPosition(2,
-                avmap.getNonRelativeGPSposition(new MapPosition(2,0)));
+        team.updateUserPosition(1, new Position(-2,0));
+        team.updateUserPosition(2, new Position(2,0));
 
-        MapPosition mpos = d.chooseMapAssemblyPlace(team, avmap);
+        MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 
-        assertEquals(new MapPosition(0,1), d.chooseMapAssemblyPlace(team, avmap));
+        assertEquals(new MapPosition(0,1), d.chooseAssemblyPlace(team, avmap));
 
     }
 
@@ -129,18 +120,15 @@ public class DijkstraAssemblyManagerTest {
                 {1,0,0,0,1},
                 {1,1,1,1,1}
         });
-        avmap.setZeroPos();
 
         Team team = new Team();
 
-        team.updateUserPosition(1,
-                avmap.getNonRelativeGPSposition(new MapPosition(-2,0)));
-        team.updateUserPosition(2,
-                avmap.getNonRelativeGPSposition(new MapPosition(1,-2)));
+        team.updateUserPosition(1, new Position(-2,0));
+        team.updateUserPosition(2, new Position(1,-2));
 
-        MapPosition mpos = d.chooseMapAssemblyPlace(team, avmap);
+        MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 
-        assertEquals(new MapPosition(-1,-2), d.chooseMapAssemblyPlace(team, avmap));
+        assertEquals(new MapPosition(-1,-2), d.chooseAssemblyPlace(team, avmap));
 
     }
 
@@ -159,22 +147,18 @@ public class DijkstraAssemblyManagerTest {
                 {1,0,0,0,1},
                 {1,1,1,1,1}
         });
-        avmap.setZeroPos();
 
         Team team = new Team();
 
-        team.updateUserPosition(1,
-                avmap.getNonRelativeGPSposition(new MapPosition(-2,2)));
+        team.updateUserPosition(1, new Position(-2,2));
         //team.updateUser(2, new Position(-1,2));
-        team.updateUserPosition(3,
-                avmap.getNonRelativeGPSposition(new MapPosition(0,2)));
-        team.updateUserPosition(4,
-                avmap.getNonRelativeGPSposition(new MapPosition(2,-1)));
+        team.updateUserPosition(3, new Position(0,2));
+        team.updateUserPosition(4, new Position(2,-1));
 
-        MapPosition mpos = d.chooseMapAssemblyPlace(team, avmap);
+        MapPosition mpos = d.chooseAssemblyPlace(team, avmap);
 
         //this is the correct answer because we minimize the sum of squares
-        assertEquals(new MapPosition(1,2), d.chooseMapAssemblyPlace(team, avmap));
+        assertEquals(new MapPosition(1,2), d.chooseAssemblyPlace(team, avmap));
 
     }
 

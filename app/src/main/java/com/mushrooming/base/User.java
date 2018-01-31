@@ -16,7 +16,7 @@ public class User {
     private int _id; // uniqe id for every user
     private String _name = "DefaultName";
     private Position _GPSpos;
-    //private MapPosition _MAPpos; // position on THIS device's map, may be different on other devices
+    private MapPosition _MAPpos; // position on THIS device's map, may be different on other devices
 
     private int _color;
     private long _lastUpdate = 0;
@@ -25,7 +25,7 @@ public class User {
     public User(int id) {
         this._id = id;
         _GPSpos = new Position(0,0);
-        //_MAPpos = new MapPosition(0,0);
+        _MAPpos = new MapPosition(0,0);
     }
     public User(int id, Position pos) {
         this(id);
@@ -35,7 +35,7 @@ public class User {
     public void update(Position pos) {
         _lastUpdate = System.currentTimeMillis();
         setGpsPosition(pos);
-        //setMapPosition(new MapPosition(pos), App.instance().updateMapPositions(););
+        setMapPosition(new MapPosition(pos));
     }
 
     public String getName() {
@@ -66,13 +66,13 @@ public class User {
         this._GPSpos = pos;
     }
 
-//    public MapPosition getMapPosition() {
-//        return _MAPpos;
-//    }
-//
-//    public void setMapPosition(MapPosition _MAPpos) {
-//        this._MAPpos = _MAPpos;
-//    }
+    public MapPosition getMapPosition() {
+        return _MAPpos;
+    }
+
+    public void setMapPosition(MapPosition _MAPpos) {
+        this._MAPpos = _MAPpos;
+    }
 
     public void setConnectionStatus(ConnectionStatus status)
     {
